@@ -79,15 +79,34 @@ pipeline {
                 echo "🔍 检出代码..."
                 
                 // 使用git步骤直接从GitHub检出代码
-                git branch: 'main', url: 'https://github.com/jianjian12138/automation-test-platform.git'
+                try {
+                    git branch: 'master', url: 'https://github.com/jianjian12138/automation.git'
+                } catch (Exception e) {
+                    echo "❌ 从GitHub检出代码失败，尝试使用本地路径..."
+                    // 如果GitHub检出失败，使用本地路径作为fallback
+                    sh '''
+                        if [ -d "/var/jenkins_home/workspace/JJ_TEST" ]; then
+                            echo "✅ 从Jenkins工作目录复制文件..."
+                            cp -r /var/jenkins_home/workspace/JJ_TEST/* .
+                        elif [ -d "f:/JJ_test/automation-test-platform" ]; then
+                            echo "✅ 从本地路径复制文件..."
+                            cp -r f:/JJ_test/automation-test-platform/* .
+                        else
+                            echo "❌ 无法找到项目文件，构建失败！"
+                            exit 1
+                        fi
+                    '''
+                }
                 
                 script {
                     sh '''
                         echo "========================================"
                         echo "工作目录: ${WORKSPACE}"
-                        echo "分支: ${BRANCH_NAME:-main}"
+                        echo "分支: ${BRANCH_NAME:-master}"
                         echo "构建号: $BUILD_NUMBER"
                         echo "构建URL: $BUILD_URL"
+                        echo "当前用户: $(whoami)"
+                        echo "当前目录: $(pwd)"
                         echo "========================================"
                         
                         # 列出工作目录内容，确认代码已检出
@@ -131,43 +150,38 @@ pipeline {
                                 ls -la cases/
                             fi
                         else
-                            echo "❌ cases目录不存在"
-                            echo "当前目录所有文件："
-                            find . -type f | head -20
-                            echo "\n=== 检查是否是git仓库 ==="
-                            if [ -d ".git" ]; then
-                                echo "✅ 是git仓库"
-                                echo "git状态："
-                                git status
-                                echo "git远程仓库："
-                                git remote -v
+                            echo "❌ cases目录不存在，尝试从本地路径复制..."
+                            
+                            # 尝试从多个本地路径复制cases目录
+                            POSSIBLE_LOCAL_PATHS=( 
+                                "/var/jenkins_home/workspace/JJ_TEST/cases" 
+                                "/var/jenkins_home/workspace/cases" 
+                                "/var/jenkins_home/cases" 
+                                "f:/JJ_test/automation-test-platform/cases" 
+                                "/f/JJ_test/automation-test-platform/cases" 
+                                "../cases" 
+                                "../../cases" 
+                            )
+                            
+                            CASES_COPIED=false
+                            for SOURCE_PATH in "${POSSIBLE_LOCAL_PATHS[@]}"; do
+                                if [ -d "$SOURCE_PATH" ]; then
+                                    echo "✅ 从本地路径复制cases目录：$SOURCE_PATH"
+                                    cp -r "$SOURCE_PATH" .
+                                    CASES_COPIED=true
+                                    break
+                                fi
+                            done
+                            
+                            if [ "$CASES_COPIED" = false ]; then
+                                echo "❌ 无法从任何本地路径找到cases目录"
+                                echo "当前目录所有文件："
+                                find . -type f | head -20
+                                echo "\n=== 检查当前目录结构 ==="
+                                ls -la
                             else
-                                echo "❌ 不是git仓库"
-                                # 尝试手动复制cases目录
-                                echo "\n=== 尝试手动复制cases目录 ==="
-                                if [ -d "/var/jenkins_home/workspace/JJ_TEST/cases" ]; then
-                                    echo "✅ 从Jenkins工作目录复制cases目录..."
-                                    cp -r /var/jenkins_home/workspace/JJ_TEST/cases .
-                                elif [ -d "/var/jenkins_home/workspace/cases" ]; then
-                                    echo "✅ 从根工作目录复制cases目录..."
-                                    cp -r /var/jenkins_home/workspace/cases .
-                                elif [ -d "f:/JJ_test/automation-test-platform/cases" ]; then
-                                    echo "✅ 从本地路径复制cases目录..."
-                                    cp -r f:/JJ_test/automation-test-platform/cases .
-                                else
-                                    echo "✅ 尝试从GitHub克隆cases目录..."
-                                    git clone --depth 1 https://github.com/your-username/automation-test-platform temp_repo
-                                    cp -r temp_repo/cases .
-                                    rm -rf temp_repo
-                                fi
-                                
-                                # 再次检查cases目录
-                                if [ -d "cases" ]; then
-                                    echo "✅ cases目录复制成功"
-                                    ls -la cases/
-                                else
-                                    echo "❌ cases目录复制失败"
-                                fi
+                                echo "✅ cases目录复制成功"
+                                ls -la cases/
                             fi
                         fi
                     '''
@@ -409,17 +423,9 @@ pipeline {
                                 "../../cases" 
                             )
                             
-                            # 先尝试从GitHub克隆
-                            echo "✅ 尝试从GitHub克隆cases目录..."
-                            git clone --depth 1 https://github.com/jianjian12138our-username/automation-test-platform temp_repo
-                            if [ -d "temp_repo/cases" ]; then
-                                echo "✅ 从GitHub成功克隆cases目录"
-                                cp -r temp_repo/cases .
-                                rm -rf temp_repo
-                            else
-                                echo "❌ 从GitHub克隆cases目录失败，尝试其他路径..."
-                                rm -rf temp_repo
-                            fi
+                            # 跳过GitHub克隆，直接使用本地路径
+                            echo "⚠️  跳过GitHub克隆，直接使用本地路径..."
+                            # 直接检查本地路径，不尝试GitHub克隆
                             
                             for SOURCE_PATH in "${POSSIBLE_PATHS[@]}"; do
                                 if [ -d "$SOURCE_PATH" ]; then
