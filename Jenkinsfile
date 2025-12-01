@@ -97,6 +97,9 @@ pipeline {
                 echo "检查.git目录是否存在..."
                 ls -la .git 2>/dev/null || echo ".git目录不存在"
                 
+                // 标记git操作是否成功
+                GIT_SUCCESS=0
+                
                 if [ -d ".git" ]; then
                     echo "当前目录是git仓库，执行git pull更新代码..."
                     git status
@@ -107,12 +110,43 @@ pipeline {
                         echo "git pull失败，尝试git fetch + git checkout"
                         git fetch origin master
                         git checkout -B master origin/master
+                        if [ $? -ne 0 ]; then
+                            echo "git fetch + git checkout也失败"
+                            GIT_SUCCESS=1
+                        fi
                     fi
                 else
                     echo "当前目录不是git仓库，执行git clone检出代码..."
                     git clone https://github.com/jianjian12138/automation .
-                    echo "git clone完成，检查目录结构..."
-                    ls -la
+                    if [ $? -ne 0 ]; then
+                        echo "git clone失败"
+                        GIT_SUCCESS=1
+                    else
+                        echo "git clone完成，检查目录结构..."
+                        ls -la
+                    fi
+                fi
+                
+                // 检查git操作是否成功
+                if [ $GIT_SUCCESS -eq 1 ]; then
+                    echo "git操作失败，尝试使用本地代码..."
+                    
+                    // 检查Jenkins工作目录中是否有代码
+                    JENKINS_LOCAL_CODE="/var/jenkins_home/workspace/JJ_TEST"
+                    if [ -d "$JENKINS_LOCAL_CODE" ]; then
+                        echo "✅ 找到Jenkins本地代码目录: $JENKINS_LOCAL_CODE"
+                        echo "检查本地代码目录结构..."
+                        ls -la "$JENKINS_LOCAL_CODE"
+                        
+                        // 复制本地代码到当前工作目录
+                        echo "复制本地代码到当前工作目录..."
+                        cp -r "$JENKINS_LOCAL_CODE"/* .
+                        
+                        echo "✅ 本地代码复制完成，检查当前目录结构..."
+                        ls -la
+                    else
+                        echo "⚠️  Jenkins本地代码目录不存在: $JENKINS_LOCAL_CODE"
+                    fi
                 fi
             '''
             
@@ -129,7 +163,7 @@ pipeline {
                 sh "ls -la"
                 
                 // 检查用户指定的代码目录作为备选方案
-                def userCodeDir = '/var/jenkins_home/workspace/JJ_TEST/JJ_test/automation-test-platform'
+                def userCodeDir = '/var/jenkins_home/workspace/JJ_TEST'
                 def codeExists = fileExists("${userCodeDir}/main.py")
                 
                 if (codeExists) {
