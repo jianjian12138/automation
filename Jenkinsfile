@@ -90,36 +90,61 @@ pipeline {
                 echo "========================================"
             '''
             
-            // 检查用户指定的代码目录
-            def userCodeDir = '/var/jenkins_home/workspace/JJ_TEST/JJ_test/automation-test-platform'
-            def codeExists = fileExists("${userCodeDir}/main.py")
+            // 首先尝试从GitHub仓库克隆代码
+            sh '''
+                echo "尝试从GitHub仓库克隆代码..."
+                if [ -d ".git" ]; then
+                    echo "当前目录是git仓库，执行git pull更新代码..."
+                    git pull origin master || echo "git pull失败，尝试git fetch + git checkout"
+                else
+                    echo "当前目录不是git仓库，执行git clone检出代码..."
+                    git clone https://github.com/jianjian12138/automation .
+                fi
+            '''
             
-            if (codeExists) {
-                echo "✅ 找到用户指定的代码目录: ${userCodeDir}"
-                echo "复制代码到当前工作目录..."
-                
-                // 复制用户代码到当前工作目录
-                sh "cp -r ${userCodeDir}/* ."
-                
-                echo "✅ 代码复制完成，当前目录结构:"
+            // 检查main.py文件是否存在
+            def mainExists = fileExists("main.py")
+            
+            if (mainExists) {
+                echo "✅ 代码检出成功，main.py文件存在"
+                echo "当前目录结构:"
                 sh "ls -la"
             } else {
-                echo "⚠️  用户指定的代码目录不存在或缺少main.py文件"
-                echo "检查用户代码目录: ${userCodeDir}"
-                sh "ls -la ${userCodeDir} 2>/dev/null || echo '目录不存在'"
+                echo "⚠️  代码检出失败，main.py文件不存在"
+                echo "检查当前目录:"
+                sh "ls -la"
                 
-                // 创建必要的目录结构
-                sh '''
-                    echo "创建必要的目录结构..."
-                    mkdir -p cases/api/decimal_place
-                    mkdir -p reports/api
-                    mkdir -p reports/jacoco
-                    mkdir -p logs
+                // 检查用户指定的代码目录作为备选方案
+                def userCodeDir = '/var/jenkins_home/workspace/JJ_TEST/JJ_test/automation-test-platform'
+                def codeExists = fileExists("${userCodeDir}/main.py")
+                
+                if (codeExists) {
+                    echo "✅ 找到用户指定的代码目录: ${userCodeDir}"
+                    echo "复制代码到当前工作目录..."
                     
-                    echo "✅ 基本目录结构创建完成"
-                    echo "当前目录结构:"
-                    ls -la
-                '''
+                    // 复制用户代码到当前工作目录
+                    sh "cp -r ${userCodeDir}/* ."
+                    
+                    echo "✅ 代码复制完成，当前目录结构:"
+                    sh "ls -la"
+                } else {
+                    echo "⚠️  用户指定的代码目录也不存在或缺少main.py文件"
+                    echo "检查用户代码目录: ${userCodeDir}"
+                    sh "ls -la ${userCodeDir} 2>/dev/null || echo '目录不存在'"
+                    
+                    // 创建必要的目录结构
+                    sh '''
+                        echo "创建必要的目录结构..."
+                        mkdir -p cases/api/decimal_place
+                        mkdir -p reports/api
+                        mkdir -p reports/jacoco
+                        mkdir -p logs
+                        
+                        echo "✅ 基本目录结构创建完成"
+                        echo "当前目录结构:"
+                        ls -la
+                    '''
+                }
             }
                 }
                 
