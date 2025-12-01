@@ -103,19 +103,10 @@ pipeline {
                             echo "尝试从本地路径获取代码..."
                             echo "========================================"
                             
-                            # 列出可能的本地路径
-                            POSSIBLE_PATHS=( 
-                                "/var/jenkins_home/automation" 
-                                "/home/jenkins/automation" 
-                                "/opt/automation" 
-                                "/root/automation" 
-                                "./automation" 
-                                "../automation" 
-                                "../../automation" 
-                            )
-                            
                             CODE_FOUND=false
-                            for SOURCE_PATH in "${POSSIBLE_PATHS[@]}"; do
+                            
+                            # 检查可能的本地路径，使用更兼容的方式
+                            for SOURCE_PATH in "/var/jenkins_home/automation" "/home/jenkins/automation" "/opt/automation" "/root/automation" "./automation" "../automation" "../../automation"; do
                                 if [ -d "$SOURCE_PATH" ] && [ -f "$SOURCE_PATH/main.py" ]; then
                                     echo "✅ 找到代码目录: $SOURCE_PATH"
                                     echo "复制代码到当前工作目录..."
