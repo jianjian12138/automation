@@ -93,12 +93,25 @@ pipeline {
             // 首先尝试从GitHub仓库克隆代码
             sh '''
                 echo "尝试从GitHub仓库克隆代码..."
+                echo "当前目录: $(pwd)"
+                echo "检查.git目录是否存在..."
+                ls -la .git 2>/dev/null || echo ".git目录不存在"
+                
                 if [ -d ".git" ]; then
                     echo "当前目录是git仓库，执行git pull更新代码..."
-                    git pull origin master || echo "git pull失败，尝试git fetch + git checkout"
+                    git status
+                    git branch -a
+                    git remote -v
+                    git pull origin master || {
+                        echo "git pull失败，尝试git fetch + git checkout"
+                        git fetch origin master
+                        git checkout -B master origin/master
+                    }
                 else
                     echo "当前目录不是git仓库，执行git clone检出代码..."
                     git clone https://github.com/jianjian12138/automation .
+                    echo "git clone完成，检查目录结构..."
+                    ls -la
                 fi
             '''
             
