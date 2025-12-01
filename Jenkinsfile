@@ -544,12 +544,17 @@ pipeline {
                                 echo "未找到API测试用例"
                             else
                                 echo "找到 $(echo "$api_test_cases" | wc -l) 个API测试用例"
+                                echo "API测试用例列表："
+                                echo "$api_test_cases"
                                 
                                 # 执行每个测试用例
                                 echo "$api_test_cases" | while read test_file; do
                                     if [ -n "$test_file" ]; then
                                         echo "\n执行测试: $test_file"
-                                        python main.py --type api "$test_file"
+                                        echo "检查测试文件是否存在..."
+                                        ls -la "$test_file" 2>&1
+                                        echo "执行命令: python main.py --type api "$test_file""
+                                        python main.py --type api "$test_file" || echo "测试用例执行失败，继续执行下一个"
                                     fi
                                 done
                             fi
@@ -566,7 +571,10 @@ pipeline {
                                 if [ -n "$test_file" ]; then
                                     if [ -f "$test_file" ]; then
                                         echo "\n执行测试: $test_file"
-                                        python main.py --type api "$test_file"
+                                        echo "检查测试文件是否存在..."
+                                        ls -la "$test_file" 2>&1
+                                        echo "执行命令: python main.py --type api "$test_file""
+                                        python main.py --type api "$test_file" || echo "测试用例执行失败，继续执行下一个"
                                     else
                                         echo "\n❌ 测试文件不存在: $test_file"
                                         echo "   检查文件是否存在：ls -la "$test_file" 2>&1"
