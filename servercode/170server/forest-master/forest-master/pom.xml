@@ -293,7 +293,6 @@
                     <destFile>${project.build.directory}/jacoco.exec</destFile>
                     <dataFile>${project.build.directory}/jacoco.exec</dataFile>
                     <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
-                    <outputFormats>HTML,XML,CSV</outputFormats>
                     <includes>
                         <include>**/org/aerie/forest/**/*.class</include>
                     </includes>
@@ -318,6 +317,9 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <outputFormats>HTML,XML,CSV</outputFormats>
+                        </configuration>
                     </execution>
                     <!-- 验证覆盖率 -->
                     <execution>

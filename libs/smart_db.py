@@ -1,4 +1,4 @@
-﻿"""
+"""
 智能数据库查询工具
 支持：
 1. 自动发现数据库表结构
@@ -75,6 +75,7 @@ class SmartDatabaseQuery:
 
             # 查询所有表及其字段（PostgreSQL）
             # 包含 public 和 dm_m9 等常用 schema
+            # 优化：只查询特定schema的表，减少查询时间
             query = """
                 SELECT
                     table_schema,
@@ -83,8 +84,9 @@ class SmartDatabaseQuery:
                 FROM
                     information_schema.columns
                 WHERE
-                    table_schema IN ('public', 'dm_m9', 'dm_m2', 'dp_base', 'file_f9', 'ow_o9')
+                    table_schema IN ('dm_m9')
                     AND table_schema NOT IN ('pg_catalog', 'information_schema')
+                    AND table_name LIKE '%contract%' OR table_name LIKE '%invoice%'
                 ORDER BY
                     table_schema, table_name, ordinal_position;
             """
@@ -175,102 +177,58 @@ class SmartDatabaseQuery:
         :return: 查询结果列表
         """
         try:
-            # 1. 查找包含该字段的表
-            tables = self.find_tables_by_column(field_name, fuzzy=True)
+            # 1. 直接指定表名，避免自动查找
+            # 对于contractCode字段，直接从采购合同表查询
+            table = "dm_m9.purchase_t_dm_m9_contract_9"
+            LOG.info(f"直接查询表: {table}")
 
-            if not tables:
-                LOG.warning(f"未找到包含字段 '{field_name}' 的表")
-                return []
+            # 2. 构建查询SQL
+            select_clause = f"SELECT {field_name} FROM {table}"
 
-            LOG.info(f"字段 '{field_name}' 可能在以下表中: {tables}")
+            # 构建WHERE子句
+            where_clause = ""
+            if conditions:
+                where_conditions = []
+                for field, value in conditions.items():
+                    # 处理字符串值
+                    if isinstance(value, str):
+                        # 检查是否是数字字符串
+                        if value.isdigit():
+                            where_conditions.append(f"{field} = {value}")
+                        else:
+                            # 转换为大写，确保匹配
+                            where_conditions.append(f"{field} = '{value.upper()}'")
+                    else:
+                        where_conditions.append(f"{field} = {value}")
 
-            # 2. 按表名优先级排序，优先从包含字段名的表中查询
-            # 例如：department_code 应该从 department 表查询，而不是 post 表
-            def get_priority(table):
-                """根据字段名和表名计算优先级"""
-                table_lower = table.lower()
-                field_lower = field_name.lower()
+                if where_conditions:
+                    where_clause = f" WHERE {', '.join(where_conditions)}"
+            else:
+                # 默认条件：只查询状态为UNILATERAL_SIGN或MUTUAL_SIGN的合同
+                where_clause = " WHERE state IN ('UNILATERAL_SIGN', 'MUTUAL_SIGN')"
 
-                # 如果表名包含字段名的关键部分，优先级更高
-                if 'department' in field_lower and 'department' in table_lower:
-                    return 0
-                if 'post' in field_lower and 'post' in table_lower:
-                    return 0
-                if 'reimbursement' in field_lower and 'reimbursement' in table_lower:
-                    return 0
-                if 'customer' in field_lower and 'customer' in table_lower:
-                    return 0
-                if 'product' in field_lower and 'product' in table_lower:
-                    return 0
-                if 'contract' in field_lower and 'contract' in table_lower:
-                    return 0
-                if 'vender' in field_lower and 'vender' in table_lower:
-                    return 0
-                if 'supplier' in field_lower and 'supplier' in table_lower:
-                    return 0
-                # 默认优先级
-                return 100
+            # 完整SQL
+            sql = f"{select_clause}{where_clause} LIMIT {limit}"
+            LOG.info(f"执行SQL: {sql}")
 
-            tables.sort(key=get_priority)
-            LOG.info(f"按优先级排序后的表: {tables}")
-
-            # 3. 尝试从每个表中查询数据，直到找到为止
+            # 3. 执行查询
             db = self._get_db_connection()
             with db:
-                for table in tables:
-                    try:
-                        # 获取表的所有字段
-                        columns = self.get_table_columns(table)
+                results = db.postgres_execute(sql)
 
-                        if not columns:
-                            continue
+                if results:
+                    # 转换结果为字典列表
+                    result_list = []
+                    for row in results:
+                        row_dict = {
+                            field_name: row[0] if row else None
+                        }
+                        result_list.append(row_dict)
 
-                        # 构建查询SQL
-                        select_clause = f"SELECT * FROM {table}"
+                    LOG.info(f" 从表 '{table}' 查询到 {len(result_list)} 条记录")
+                    return result_list
 
-                        # 构建WHERE子句
-                        where_clause = ""
-                        if conditions:
-                            where_conditions = []
-                            for field, value in conditions.items():
-                                # 处理字符串值
-                                if isinstance(value, str):
-                                    # 检查是否是数字字符串
-                                    if value.isdigit():
-                                        where_conditions.append(f"{field} = {value}")
-                                    else:
-                                        where_conditions.append(f"{field} = '{value}'")
-                                else:
-                                    where_conditions.append(f"{field} = {value}")
-
-                            if where_conditions:
-                                where_clause = f" WHERE {', '.join(where_conditions)}"
-
-                        # 完整SQL
-                        sql = f"{select_clause}{where_clause} LIMIT {limit}"
-                        LOG.info(f"执行SQL: {sql}")
-
-                        # 执行查询
-                        results = db.postgres_execute(sql)
-
-                        if results:
-                            # 转换结果为字典列表
-                            result_list = []
-                            for row in results:
-                                row_dict = {}
-                                for i, col in enumerate(columns):
-                                    if i < len(row):
-                                        row_dict[col] = row[i]
-                                result_list.append(row_dict)
-
-                            LOG.info(f" 从表 '{table}' 查询到 {len(result_list)} 条记录")
-                            return result_list
-
-                    except Exception as e:
-                        LOG.warning(f"从表 '{table}' 查询失败: {e}")
-                        continue
-
-            LOG.warning(f"所有表查询失败，未找到字段 '{field_name}' 的数据")
+            LOG.warning(f"从表 '{table}' 查询失败，未找到字段 '{field_name}' 的数据")
             return []
 
         except Exception as e:
