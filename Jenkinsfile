@@ -354,6 +354,9 @@ pipeline {
                         JACOCO_AGENT="-javaagent:${HOME}/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=${WORKSPACE}/servercode/170server/forest-master/forest-master/target/jacoco.exec,append=true,includes=**/org/aerie/forest/**/*.class,excludes=**/*Test*,**/test/**/*"
                         echo "Jacoco代理参数: ${JACOCO_AGENT}"
                         echo "${JACOCO_AGENT}" > ${WORKSPACE}/jacoco_agent.txt
+                        
+                        # 确保Jacoco执行数据文件目录存在
+                        mkdir -p ${WORKSPACE}/servercode/170server/forest-master/forest-master/target
                     '''
                 }
             }
