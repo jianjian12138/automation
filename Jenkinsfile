@@ -105,16 +105,16 @@ pipeline {
                             echo "检查本地代码目录结构..."
                             ls -la "$LOCAL_CODE_DIR"
                             
-                            // 检查本地代码中是否有main.py文件
+                            # 检查本地代码中是否有main.py文件
                             if [ -f "$LOCAL_CODE_DIR/main.py" ]; then
                                 echo "✅ 本地代码中存在main.py文件"
                                 echo "直接使用本地代码，复制到当前工作目录..."
                                 
-                                // 清空当前目录，确保没有旧代码
+                                # 清空当前目录，确保没有旧代码
                                 echo "清空当前目录..."
                                 rm -rf * .git
                                 
-                                // 复制本地代码到当前工作目录
+                                # 复制本地代码到当前工作目录
                                 echo "复制本地代码到当前工作目录..."
                                 cp -r "$LOCAL_CODE_DIR"/* .
                                 
@@ -122,7 +122,7 @@ pipeline {
                                 echo "检查当前目录结构..."
                                 ls -la
                                 
-                                // 检查复制后是否有main.py文件
+                                # 检查复制后是否有main.py文件
                                 if [ -f "main.py" ]; then
                                     echo "✅ 复制后main.py文件存在"
                                 else
@@ -135,11 +135,11 @@ pipeline {
                             echo "❌ 本地代码目录不存在: $LOCAL_CODE_DIR"
                             echo "尝试从GitHub仓库克隆代码..."
                             
-                            // 清空当前目录，确保没有旧代码
+                            # 清空当前目录，确保没有旧代码
                             echo "清空当前目录..."
                             rm -rf * .git
                             
-                            // 尝试从GitHub仓库克隆代码
+                            # 尝试从GitHub仓库克隆代码
                             git clone https://github.com/jianjian12138/automation .
                             if [ $? -ne 0 ]; then
                                 echo "❌ git clone失败"
