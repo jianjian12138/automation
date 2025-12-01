@@ -102,11 +102,12 @@ pipeline {
                     git status
                     git branch -a
                     git remote -v
-                    git pull origin master || {
+                    git pull origin master
+                    if [ $? -ne 0 ]; then
                         echo "git pull失败，尝试git fetch + git checkout"
                         git fetch origin master
                         git checkout -B master origin/master
-                    }
+                    fi
                 else
                     echo "当前目录不是git仓库，执行git clone检出代码..."
                     git clone https://github.com/jianjian12138/automation .
