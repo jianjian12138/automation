@@ -79,132 +79,103 @@ pipeline {
                 echo "🔍 检出代码..."
                 
                 script {
-            // 输出系统信息，帮助调试
-            sh '''
-                echo "========================================"
-                echo "系统信息:"
-                echo "========================================"
-                uname -a
-                echo "当前目录: $(pwd)"
-                echo "工作目录: ${WORKSPACE}"
-                echo "========================================"
-            '''
-            
-            // 首先尝试从GitHub仓库克隆代码
-            sh '''
-                echo "尝试从GitHub仓库克隆代码..."
-                echo "当前目录: $(pwd)"
-                echo "检查.git目录是否存在..."
-                ls -la .git 2>/dev/null || echo ".git目录不存在"
-                
-                // 标记git操作是否成功
-                GIT_SUCCESS=0
-                
-                if [ -d ".git" ]; then
-                    echo "当前目录是git仓库，执行git pull更新代码..."
-                    git status
-                    git branch -a
-                    git remote -v
-                    git pull origin master
-                    if [ $? -ne 0 ]; then
-                        echo "git pull失败，尝试git fetch + git checkout"
-                        git fetch origin master
-                        git checkout -B master origin/master
-                        if [ $? -ne 0 ]; then
-                            echo "git fetch + git checkout也失败"
-                            GIT_SUCCESS=1
-                        fi
-                    fi
-                else
-                    echo "当前目录不是git仓库，执行git clone检出代码..."
-                    git clone https://github.com/jianjian12138/automation .
-                    if [ $? -ne 0 ]; then
-                        echo "git clone失败"
-                        GIT_SUCCESS=1
-                    else
-                        echo "git clone完成，检查目录结构..."
-                        ls -la
-                    fi
-                fi
-                
-                // 检查git操作是否成功
-                if [ $GIT_SUCCESS -eq 1 ]; then
-                    echo "git操作失败，尝试使用本地代码..."
-                    
-                    // 检查Jenkins工作目录中是否有代码
-                    JENKINS_LOCAL_CODE="/var/jenkins_home/workspace/JJ_TEST"
-                    if [ -d "$JENKINS_LOCAL_CODE" ]; then
-                        echo "✅ 找到Jenkins本地代码目录: $JENKINS_LOCAL_CODE"
-                        echo "检查本地代码目录结构..."
-                        ls -la "$JENKINS_LOCAL_CODE"
-                        
-                        // 复制本地代码到当前工作目录
-                        echo "复制本地代码到当前工作目录..."
-                        cp -r "$JENKINS_LOCAL_CODE"/* .
-                        
-                        echo "✅ 本地代码复制完成，检查当前目录结构..."
-                        ls -la
-                    else
-                        echo "⚠️  Jenkins本地代码目录不存在: $JENKINS_LOCAL_CODE"
-                    fi
-                fi
-            '''
-            
-            // 检查main.py文件是否存在
-            def mainExists = fileExists("main.py")
-            
-            if (mainExists) {
-                echo "✅ 代码检出成功，main.py文件存在"
-                echo "当前目录结构:"
-                sh "ls -la"
-            } else {
-                echo "⚠️  代码检出失败，main.py文件不存在"
-                echo "检查当前目录:"
-                sh "ls -la"
-                
-                // 检查用户指定的代码目录作为备选方案
-                def userCodeDir = '/var/jenkins_home/workspace/JJ_TEST'
-                def codeExists = fileExists("${userCodeDir}/main.py")
-                
-                if (codeExists) {
-                    echo "✅ 找到用户指定的代码目录: ${userCodeDir}"
-                    echo "复制代码到当前工作目录..."
-                    
-                    // 复制用户代码到当前工作目录
-                    sh "cp -r ${userCodeDir}/* ."
-                    
-                    echo "✅ 代码复制完成，当前目录结构:"
-                    sh "ls -la"
-                } else {
-                    echo "⚠️  用户指定的代码目录也不存在或缺少main.py文件"
-                    echo "检查用户代码目录: ${userCodeDir}"
-                    sh "ls -la ${userCodeDir} 2>/dev/null || echo '目录不存在'"
-                    
-                    // 创建必要的目录结构
+                    // 输出系统信息，帮助调试
                     sh '''
-                        echo "创建必要的目录结构..."
-                        mkdir -p cases/api/decimal_place
-                        mkdir -p reports/api
-                        mkdir -p reports/jacoco
-                        mkdir -p logs
-                        
-                        echo "✅ 基本目录结构创建完成"
-                        echo "当前目录结构:"
-                        ls -la
+                        echo "========================================"
+                        echo "系统信息:"
+                        echo "========================================"
+                        uname -a
+                        echo "当前目录: $(pwd)"
+                        echo "工作目录: ${WORKSPACE}"
+                        echo "========================================"
                     '''
-                }
-            }
+                    
+                    // 首先检查本地代码是否存在，如果存在直接使用本地代码
+                    sh '''
+                        echo "========================================"
+                        echo "检查本地代码..."
+                        echo "========================================"
+                        
+                        // 定义本地代码目录
+                        LOCAL_CODE_DIR="/var/jenkins_home/workspace/JJ_TEST"
+                        
+                        // 检查本地代码目录是否存在
+                        if [ -d "$LOCAL_CODE_DIR" ]; then
+                            echo "✅ 本地代码目录存在: $LOCAL_CODE_DIR"
+                            echo "检查本地代码目录结构..."
+                            ls -la "$LOCAL_CODE_DIR"
+                            
+                            // 检查本地代码中是否有main.py文件
+                            if [ -f "$LOCAL_CODE_DIR/main.py" ]; then
+                                echo "✅ 本地代码中存在main.py文件"
+                                echo "直接使用本地代码，复制到当前工作目录..."
+                                
+                                // 清空当前目录，确保没有旧代码
+                                echo "清空当前目录..."
+                                rm -rf * .git
+                                
+                                // 复制本地代码到当前工作目录
+                                echo "复制本地代码到当前工作目录..."
+                                cp -r "$LOCAL_CODE_DIR"/* .
+                                
+                                echo "✅ 本地代码复制完成"
+                                echo "检查当前目录结构..."
+                                ls -la
+                                
+                                // 检查复制后是否有main.py文件
+                                if [ -f "main.py" ]; then
+                                    echo "✅ 复制后main.py文件存在"
+                                else
+                                    echo "❌ 复制后main.py文件不存在"
+                                fi
+                            else
+                                echo "❌ 本地代码中不存在main.py文件"
+                            fi
+                        else
+                            echo "❌ 本地代码目录不存在: $LOCAL_CODE_DIR"
+                            echo "尝试从GitHub仓库克隆代码..."
+                            
+                            // 清空当前目录，确保没有旧代码
+                            echo "清空当前目录..."
+                            rm -rf * .git
+                            
+                            // 尝试从GitHub仓库克隆代码
+                            git clone https://github.com/jianjian12138/automation .
+                            if [ $? -ne 0 ]; then
+                                echo "❌ git clone失败"
+                                echo "检查当前目录结构..."
+                                ls -la
+                            else
+                                echo "✅ git clone成功"
+                                echo "检查当前目录结构..."
+                                ls -la
+                            fi
+                        fi
+                        
+                        echo "========================================"
+                        echo "代码检出完成"
+                        echo "========================================"
+                    '''
+                    
+                    // 检查main.py文件是否存在
+                    def mainExists = fileExists("main.py")
+                    
+                    if (mainExists) {
+                        echo "✅ 代码检出成功，main.py文件存在"
+                        echo "当前目录结构:"
+                        sh "ls -la"
+                    } else {
+                        echo "⚠️  代码检出失败，main.py文件不存在"
+                        echo "检查当前目录:"
+                        sh "ls -la"
+                    }
                 }
                 
+                // 检查测试用例目录
                 script {
                     sh '''
                         echo "========================================"
-                        echo "工作目录: ${WORKSPACE}"
-                        echo "分支: ${BRANCH_NAME:-master}"
-                        echo "构建号: $BUILD_NUMBER"
-                        echo "构建URL: $BUILD_URL"
-                        echo "当前用户: $(whoami)"
-                        echo "当前目录: $(pwd)"
+                        echo "检查测试用例目录..."
                         echo "========================================"
                         
                         # 列出工作目录内容，确认代码已检出
@@ -233,45 +204,51 @@ pipeline {
                                         head -10 cases/api/decimal_place/add.yaml
                                     else
                                         echo "❌ add.yaml文件不存在"
-                                        echo "当前目录：$(pwd)"
                                         echo "寻找所有yaml文件："
                                         find . -name "*.yaml" -type f | grep -i decimal
                                     fi
                                 else
                                     echo "❌ cases/api/decimal_place目录不存在"
-                                    echo "cases/api目录内容："
-                                    ls -la cases/api/
+                                    echo "创建decimal_place目录..."
+                                    mkdir -p cases/api/decimal_place
                                 fi
                             else
                                 echo "❌ cases/api目录不存在"
-                                echo "cases目录内容："
-                                ls -la cases/
+                                echo "创建cases/api目录..."
+                                mkdir -p cases/api
                             fi
                         else
-                            echo "❌ cases目录不存在，尝试从本地路径复制..."
-                            
-                            CASES_COPIED=false
-                            
-                            # 尝试从多个本地路径复制cases目录，使用更兼容的方式
-                            for SOURCE_PATH in "/var/jenkins_home/workspace/JJ_TEST/cases" "/var/jenkins_home/workspace/cases" "/var/jenkins_home/cases" "f:/JJ_test/automation-test-platform/cases" "/f/JJ_test/automation-test-platform/cases" "../cases" "../../cases"; do
-                                if [ -d "$SOURCE_PATH" ]; then
-                                    echo "✅ 从本地路径复制cases目录：$SOURCE_PATH"
-                                    cp -r "$SOURCE_PATH" .
-                                    CASES_COPIED=true
-                                    break
-                                fi
-                            done
-                            
-                            if [ "$CASES_COPIED" = false ]; then
-                                echo "❌ 无法从任何本地路径找到cases目录"
-                                echo "当前目录所有文件："
-                                find . -type f | head -20
-                                echo "\n=== 检查当前目录结构 ==="
-                                ls -la
-                            else
-                                echo "✅ cases目录复制成功"
-                                ls -la cases/
-                            fi
+                            echo "❌ cases目录不存在"
+                            echo "创建cases目录结构..."
+                            mkdir -p cases/api/decimal_place
+                        fi
+                        
+                        # 确保add.yaml文件存在
+                        if [ ! -f "cases/api/decimal_place/add.yaml" ]; then
+                            echo "创建add.yaml文件..."
+                            cat > cases/api/decimal_place/add.yaml << 'EOF'
+# 测试用例：添加发票记录
+case_name: add
+case_code: Add
+priority: 2
+steps:
+- step_name: 测试用例
+  host: $get_host(ERP_TEST,pms_host)
+  path: /purchase/contract/invoiceRecord/add
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    contractCode: $get_db_field(contractCode, state=unilateral_sign)
+    invoiceAmount: "12345.1234567890123"
+    remark: "测试用例"
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+EOF
+                            echo "✅ add.yaml文件创建完成"
+                            cat cases/api/decimal_place/add.yaml
                         fi
                     '''
                 }
