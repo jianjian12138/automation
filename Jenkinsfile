@@ -193,19 +193,10 @@ pipeline {
                         else
                             echo "❌ cases目录不存在，尝试从本地路径复制..."
                             
-                            # 尝试从多个本地路径复制cases目录
-                            POSSIBLE_LOCAL_PATHS=( 
-                                "/var/jenkins_home/workspace/JJ_TEST/cases" 
-                                "/var/jenkins_home/workspace/cases" 
-                                "/var/jenkins_home/cases" 
-                                "f:/JJ_test/automation-test-platform/cases" 
-                                "/f/JJ_test/automation-test-platform/cases" 
-                                "../cases" 
-                                "../../cases" 
-                            )
-                            
                             CASES_COPIED=false
-                            for SOURCE_PATH in "${POSSIBLE_LOCAL_PATHS[@]}"; do
+                            
+                            # 尝试从多个本地路径复制cases目录，使用更兼容的方式
+                            for SOURCE_PATH in "/var/jenkins_home/workspace/JJ_TEST/cases" "/var/jenkins_home/workspace/cases" "/var/jenkins_home/cases" "f:/JJ_test/automation-test-platform/cases" "/f/JJ_test/automation-test-platform/cases" "../cases" "../../cases"; do
                                 if [ -d "$SOURCE_PATH" ]; then
                                     echo "✅ 从本地路径复制cases目录：$SOURCE_PATH"
                                     cp -r "$SOURCE_PATH" .
