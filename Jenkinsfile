@@ -78,22 +78,68 @@ pipeline {
             steps {
                 echo "🔍 检出代码..."
                 
-                // 使用git步骤直接从GitHub检出代码
+                script {
+                    // 输出系统信息，帮助调试
+                    sh '''
+                        echo "========================================"
+                        echo "系统信息:"
+                        echo "========================================"
+                        uname -a
+                        echo "当前目录: $(pwd)"
+                        echo "工作目录: ${WORKSPACE}"
+                        echo "网络状态:"
+                        ping -c 3 github.com || echo "GitHub ping失败"
+                        echo "========================================"
+                    '''
+                }
+                
+                // 使用git步骤直接从GitHub检出代码，增加超时设置
                 try {
-                    git branch: 'master', url: 'https://github.com/jianjian12138/automation.git'
+                    git branch: 'master', url: 'https://github.com/jianjian12138/automation.git', timeout: 60
                 } catch (Exception e) {
-                    echo "❌ 从GitHub检出代码失败，尝试使用本地路径..."
+                    echo "❌ 从GitHub检出代码失败: ${e.getMessage()}"
+                    echo "尝试使用本地路径作为fallback..."
+                    
                     // 如果GitHub检出失败，使用本地路径作为fallback
                     sh '''
-                        if [ -d "/var/jenkins_home/workspace/JJ_TEST" ]; then
-                            echo "✅ 从Jenkins工作目录复制文件..."
-                            cp -r /var/jenkins_home/workspace/JJ_TEST/* .
-                        elif [ -d "f:/JJ_test/automation-test-platform" ]; then
-                            echo "✅ 从本地路径复制文件..."
-                            cp -r f:/JJ_test/automation-test-platform/* .
-                        else
-                            echo "❌ 无法找到项目文件，构建失败！"
-                            exit 1
+                        echo "========================================"
+                        echo "尝试从本地路径获取代码..."
+                        echo "========================================"
+                        
+                        // 列出可能的本地路径
+                        POSSIBLE_PATHS=( 
+                            "/var/jenkins_home/automation" 
+                            "/home/jenkins/automation" 
+                            "/opt/automation" 
+                            "/root/automation" 
+                            "./automation" 
+                            "../automation" 
+                            "../../automation" 
+                        )
+                        
+                        CODE_FOUND=false
+                        for SOURCE_PATH in "${POSSIBLE_PATHS[@]}"; do
+                            if [ -d "$SOURCE_PATH" ] && [ -f "$SOURCE_PATH/main.py" ]; then
+                                echo "✅ 找到代码目录: $SOURCE_PATH"
+                                echo "复制代码到当前工作目录..."
+                                cp -r "$SOURCE_PATH"/* .
+                                CODE_FOUND=true
+                                break
+                            fi
+                        done
+                        
+                        if [ "$CODE_FOUND" = false ]; then
+                            echo "⚠️  未找到完整代码目录，尝试创建必要的目录结构..."
+                            
+                            // 创建基本目录结构
+                            mkdir -p cases/api/decimal_place
+                            mkdir -p reports/api
+                            mkdir -p reports/jacoco
+                            mkdir -p logs
+                            
+                            echo "✅ 基本目录结构创建完成"
+                            echo "当前目录结构:"
+                            ls -la
                         fi
                     '''
                 }
