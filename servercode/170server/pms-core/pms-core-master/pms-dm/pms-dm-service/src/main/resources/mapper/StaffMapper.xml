@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dm.service.dao.StaffDao">
+    <resultMap id="staffModel" type="com.futurecraftsmen.pms.dm.service.po.base.StaffModel">
+        <result column="primary_key" property="staffCode"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="phone" property="phoneNumber"/>
+        <result column="staff_sign" property="staffName"/>
+        <result column="password" property="password"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="enable_flag" property="enableFlag"/>
+        <result column="user_avatar" property="userAvatar"/>
+        <result column="department" property="departmentCode"/>
+        <result column="permission" property="permission"/>
+        <result column="post" property="postCode"/>
+        <result column="personalization" property="personalization"/>
+        <result column="type" property="type"/>
+        <result column="technical_level" property="technicalLevel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+
+    <select id="getLoginRelatedStaffModelInfoByPhoneNumber"
+            resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               enable_flag,
+               department,
+               permission,
+               post
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND phone = #{phone}
+    </select>
+
+    <select id="getByPhoneNumber"
+            resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND phone = #{phone}
+    </select>
+
+    <select id="getByStaffCode" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type,
+               technical_level
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND primary_key = #{staffCode}
+    </select>
+
+    <select id="getStaffByCodes" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND primary_key IN
+        <foreach collection="staffCodes" index="index" item="staffCode" open="(" separator="," close=")">
+            #{staffCode}
+        </foreach>
+    </select>
+
+    <select id="getStaffPaging"
+            resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               id_number,
+               enable_flag,
+               department,
+               permission,
+               post,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+            AND enterprise_code = #{enterpriseCode}
+        <if test="filterCondition.name != null and filterCondition.name != ''">
+            AND staff_sign LIKE '%'|| #{filterCondition.name} ||'%'
+        </if>
+        <if test="filterCondition.permission != null">
+            AND permission = #{filterCondition.permission}
+        </if>
+        <if test="filterCondition.enableFlag != null">
+            AND enable_flag = #{filterCondition.enableFlag}
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="filterCondition.phoneNumber != null and filterCondition.phoneNumber != ''">
+            AND phone LIKE  '%'|| #{filterCondition.phoneNumber} ||'%'
+        </if>
+        <if test="filterCondition.onDuty != null and filterCondition.onDuty == false">
+            AND post IS NULL
+        </if>
+        <if test="filterCondition.onDuty != null and filterCondition.onDuty == true">
+            AND post IS NOT NULL
+        </if>
+        <if test="postCodeList != null and !postCodeList.isEmpty()">
+            AND post IN
+            <foreach collection="postCodeList" index="index" item="postCode" open="(" separator="," close=")">
+                #{postCode}
+            </foreach>
+        </if>
+        <if test="filterCondition.unityNo != null and filterCondition.unityNo != ''">
+            AND EXISTS (
+                SELECT 1
+                FROM ${staffRecordTableName} sr
+                WHERE sr.delete_flag = false
+                  AND sr.enterprise_code = #{enterpriseCode}
+                  AND sr.staff_code = ${tableName}.primary_key
+                  AND sr.unity_no ILIKE '%'|| #{filterCondition.unityNo} ||'%'
+            )
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+
+    <select id="staffInfoExport"
+            resultMap="staffModel">
+        SELECT primary_key,
+        enterprise_code,
+        phone,
+        staff_sign,
+        id_number,
+        enable_flag,
+        department,
+        permission,
+        post,
+        type
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="filterCondition.name != null and filterCondition.name != ''">
+            AND staff_sign LIKE '%'|| #{filterCondition.name} ||'%'
+        </if>
+        <if test="filterCondition.permission != null">
+            AND permission = #{filterCondition.permission}
+        </if>
+        <if test="filterCondition.enableFlag != null">
+            AND enable_flag = #{filterCondition.enableFlag}
+        </if>
+        <if test="filterCondition.phoneNumber != null and filterCondition.phoneNumber != ''">
+            AND phone LIKE  '%'|| #{filterCondition.phoneNumber} ||'%'
+        </if>
+        <if test="filterCondition.onDuty != null and filterCondition.onDuty == false">
+            AND post IS NULL
+        </if>
+        <if test="filterCondition.onDuty != null and filterCondition.onDuty == true">
+            AND post IS NOT NULL
+        </if>
+        <if test="postCodeList != null and !postCodeList.isEmpty()">
+            AND post IN
+            <foreach collection="postCodeList" index="index" item="postCode" open="(" separator="," close=")">
+                #{postCode}
+            </foreach>
+        </if>
+        <if test="filterCondition.unityNo != null and filterCondition.unityNo != ''">
+            AND EXISTS (
+            SELECT 1
+            FROM ${staffRecordTableName} sr
+            WHERE sr.delete_flag = false
+            AND sr.enterprise_code = #{enterpriseCode}
+            AND sr.staff_code = ${tableName}.primary_key
+            AND sr.unity_no ILIKE '%'|| #{filterCondition.unityNo} ||'%'
+            )
+        </if>
+        <if test="codes != null and codes.size() > 0">
+            AND primary_key IN
+            <foreach collection="codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        ORDER BY create_time DESC,id DESC
+        <if test="pageSize != null and offset != null and pageSize &gt; 0 and offset &gt;= 0">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
+    </select>
+
+
+    <insert id="addStaff">
+        INSERT INTO ${tableName}
+        (primary_key, enterprise_code, phone, staff_sign, id_number, password, department, post, enable_flag,
+         permission, type)
+        VALUES (#{staffModel.staffCode}, #{staffModel.enterpriseCode}, #{staffModel.phoneNumber},
+                #{staffModel.staffName}, #{staffModel.idNumber}, #{staffModel.password}, #{staffModel.departmentCode},
+                #{staffModel.postCode}, #{staffModel.enableFlag}, #{staffModel.permission}, #{staffModel.type})
+    </insert>
+
+    <update id="uploadUserAvatar">
+        UPDATE ${tableName}
+        SET user_avatar = #{userAvatar}
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+    </update>
+
+    <update id="updatePersonalization">
+        UPDATE ${tableName}
+        SET personalization = #{personalization}
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE ${tableName}
+        SET password = #{password}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND primary_key = #{staffCode}
+          AND enable_flag = true
+    </update>
+
+    <select id="getStaffByStaffNamePaging" resultMap="staffModel">
+        SELECT staff_sign,
+               phone,
+               department,
+               primary_key,
+               enable_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enable_flag = true
+        AND enterprise_code = #{enterpriseCode}
+        <if test="staffName != null and staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffName} ||'%'
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffCode != null">
+            AND primary_key = #{staffCode}
+        </if>
+        ORDER BY department,create_time DESC,id DESC
+    </select>
+
+    <select id="getAllStaffByStaffName" resultMap="staffModel">
+        SELECT staff_sign,
+        phone,
+        department,
+        primary_key,
+        enable_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enable_flag = true
+        AND enterprise_code = #{enterpriseCode}
+        <if test="staffName != null and staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffName} ||'%'
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffCode != null">
+            AND primary_key = #{staffCode}
+        </if>
+        ORDER BY department, create_time DESC,id DESC
+    </select>
+
+
+    <select id="getStaffByStaffName" resultMap="staffModel">
+        SELECT staff_sign,
+               phone,
+               department,
+               primary_key
+        FROM ${tableName}
+        WHERE delete_flag = false
+        <if test="staffName != null and staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffName} ||'%'
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+    <select id="getStaffByDepartmentCodes" resultMap="staffModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND department IN
+        <foreach collection="departmentCodes" index="index" item="departmentCode" open="(" separator="," close=")">
+            #{departmentCode}
+        </foreach>
+    </select>
+
+    <update id="updateBasicInformation">
+        UPDATE ${tableName}
+        SET delete_flag = false
+        , post = #{staffModel.postCode}
+        , department = #{staffModel.departmentCode}
+        <if test="staffModel.phoneNumber != null and staffModel.phoneNumber != ''">
+            , phone = #{staffModel.phoneNumber}
+        </if>
+        <if test="staffModel.staffName != null and staffModel.staffName != ''">
+            , staff_sign = #{staffModel.staffName}
+        </if>
+        <if test="staffModel.enableFlag != null">
+            , enable_flag = #{staffModel.enableFlag}
+        </if>
+
+        <if test="staffModel.type != null">
+            , type = #{staffModel.type}
+        </if>
+        WHERE delete_flag = false
+        AND primary_key = #{staffModel.staffCode}
+    </update>
+
+    <select id="getStaffByPostCode" resultMap="staffModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND post = #{postCode}
+    </select>
+
+    <select id="getStaffByPostCodes" resultMap="staffModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND post IN
+        <foreach collection="postCodeList" index="index" item="postCode" open="(" separator="," close=")">
+            #{postCode}
+        </foreach>
+    </select>
+
+    <update id="updateDepartment">
+        UPDATE ${tableName}
+        SET department = #{departmentCode}
+        WHERE delete_flag = false
+          AND post IN
+        <foreach collection="postCodeList" index="index" item="postCode" open="(" separator="," close=")">
+            #{postCode}
+        </foreach>
+    </update>
+
+    <update id="leavePost">
+        UPDATE ${tableName}
+        SET department = null,
+            post       = null
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+    <select id="getStaffExcludeSuperAdminPaging" resultMap="staffModel">
+        SELECT staff_sign,
+               phone,
+               enterprise_code,
+               enable_flag,
+               primary_key,
+               permission,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+            AND enterprise_code = #{enterpriseCode}
+            AND permission &lt;&gt; 0
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="administratorFilterConditionRpcDTO.permission != null">
+            AND permission &lt;&gt; #{administratorFilterConditionRpcDTO.permission}
+        </if>
+        <if test="administratorFilterConditionRpcDTO.name != null and administratorFilterConditionRpcDTO.name != ''">
+            AND staff_sign LIKE '%'|| #{administratorFilterConditionRpcDTO.name} ||'%'
+        </if>
+        <if test="administratorFilterConditionRpcDTO.phoneNumber != null and administratorFilterConditionRpcDTO.phoneNumber != ''">
+            AND phone LIKE #{administratorFilterConditionRpcDTO.phoneNumber}
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+
+    <select id="getStaffPageByDepartmentCodes" resultMap="staffModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE delete_flag = false
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+          AND department IN
+        <foreach collection="departmentCodes" index="index" item="departmentCode" open="(" separator="," close=")">
+            #{departmentCode}
+        </foreach>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+
+    <update id="updatePermission">
+        UPDATE ${tableName}
+        SET permission = #{permission}
+        WHERE primary_key = #{staffCode}
+          AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+    </update>
+
+    <select id="getOperationAdministratorCount" resultType="int">
+        SELECT count(*)
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND permission = 2
+    </select>
+
+    <select id="getAdministratorsByEnterprise" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND permission != -1
+    </select>
+
+
+    <select id="getAllPermissionOwnersByEnterprise" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND (permission = 0 OR permission = 1 )
+    </select>
+
+    <insert id="batchInsert">
+        INSERT INTO ${tableName} (primary_key, enterprise_code, phone, staff_sign, enable_flag, permission, type)
+        VALUES
+        <foreach collection="staffModels" item="item" separator=",">
+            (#{item.staffCode}, #{item.enterpriseCode}, #{item.phoneNumber}, #{item.staffName}, #{item.enableFlag},
+                #{item.permission}, #{item.type})
+        </foreach>
+    </insert>
+
+    <select id="getAllStaffsByEnterprise" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               id_number,
+               enable_flag,
+               department,
+               permission,
+               post,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="getStaffByNames" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+          AND staff_sign IN
+        <foreach collection="staffNames" index="index" item="staffName" open="(" separator="," close=")">
+            #{staffName}
+        </foreach>
+    </select>
+
+    <select id="getEnableStaffByNames" resultMap="staffModel">
+        SELECT primary_key,
+        enterprise_code,
+        phone,
+        staff_sign,
+        password,
+        id_number,
+        enable_flag,
+        user_avatar,
+        department,
+        permission,
+        post,
+        personalization,
+        type
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND enable_flag = true
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        AND staff_sign IN
+        <foreach collection="staffNames" index="index" item="staffName" open="(" separator="," close=")">
+            #{staffName}
+        </foreach>
+    </select>
+
+
+    <select id="getStaffByPhone" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND phone IN
+        <foreach collection="phones" index="index" item="p" open="(" separator="," close=")">
+            #{p}
+        </foreach>
+    </select>
+    <select id="getStaff" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               id_number,
+               enable_flag,
+               department,
+               permission,
+               post,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+        ORDER BY create_time DESC, id DESC
+    </select>
+
+    <select id="getStaffByCodesList" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type,
+               COALESCE(enable_flag, true) as enable_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+          AND primary_key IN
+        <foreach collection="staffCodes" index="index" item="staffCodes" open="(" separator="," close=")">
+            #{staffCodes}
+        </foreach>
+        ORDER BY department,create_time DESC,id DESC
+    </select>
+
+    <select id="getStaffByInfo" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+            AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffModel.staffCode != null">
+            AND primary_key = #{staffModel.staffCode}
+        </if>
+    </select>
+
+    <select id="getStaffByInfoList" resultMap="staffModel">
+        SELECT primary_key,
+               enterprise_code,
+               phone,
+               staff_sign,
+               password,
+               id_number,
+               enable_flag,
+               user_avatar,
+               department,
+               permission,
+               post,
+               personalization,
+               type
+        FROM ${tableName}
+        WHERE delete_flag = false
+            and enable_flag = true
+            AND enterprise_code = #{enterpriseCode}
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffModel.staffCode != null">
+            AND primary_key = #{staffModel.staffCode}
+        </if>
+        <if test="staffModel.staffName != null and staffModel.staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffModel.staffName} ||'%'
+        </if>
+    </select>
+
+    <select id="getStaffByDpCodes" resultMap="staffModel">
+        SELECT
+            primary_key,
+            enterprise_code,
+            phone,
+            staff_sign,
+            password,
+            id_number,
+            enable_flag,
+            user_avatar,
+            department,
+            permission,
+            post,
+            personalization,
+            type,
+            COALESCE(enable_flag, true) as enable_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        and enable_flag = true
+        <if test="departmentCodes != null and departmentCodes.size() > 0">
+            AND department IN
+            <foreach collection="departmentCodes" index="index" item="departmentCode" open="(" separator="," close=")">
+                #{departmentCode}
+            </foreach>
+        </if>
+        <if test="staffName != null and staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffName} ||'%'
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffCode != null">
+            AND primary_key = #{staffCode}
+        </if>
+        ORDER BY department,create_time DESC,id DESC
+    </select>
+
+    <select id="getStaffByPCodes" resultMap="staffModel">
+        SELECT
+            primary_key,
+            enterprise_code,
+            phone,
+            staff_sign,
+            password,
+            id_number,
+            enable_flag,
+            user_avatar,
+            department,
+            permission,
+            post,
+            personalization,
+            type,
+            COALESCE(enable_flag, true) as enable_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        <if test="postCodes != null and postCodes.size() > 0">
+            AND post IN
+            <foreach collection="postCodes" index="index" item="postCode" open="(" separator="," close=")">
+                #{postCode}
+            </foreach>
+        </if>
+        <if test="staffName != null and staffName != ''">
+            AND staff_sign LIKE '%'|| #{staffName} ||'%'
+        </if>
+        <if test="actualOptionalTypes != null and !actualOptionalTypes.isEmpty()">
+            AND type IN
+            <foreach collection="actualOptionalTypes" index="index" item="actualOptionalType" open="(" separator="," close=")">
+                #{actualOptionalType}
+            </foreach>
+        </if>
+        <if test="staffCode != null">
+            AND primary_key = #{staffCode}
+        </if>
+        ORDER BY department,create_time DESC,id DESC
+    </select>
+
+    <select id="getStaffByCodes4Enable" resultMap="staffModel">
+        SELECT primary_key,
+        enterprise_code,
+        phone,
+        staff_sign,
+        password,
+        id_number,
+        enable_flag,
+        user_avatar,
+        department,
+        permission,
+        post,
+        personalization,
+        type
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND enable_flag = true
+        AND primary_key IN
+        <foreach collection="staffCodes" index="index" item="staffCode" open="(" separator="," close=")">
+            #{staffCode}
+        </foreach>
+    </select>
+
+
+    <update id="deleteStaff">
+        DELETE FROM ${tableName}
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+          AND enterprise_code = #{enterpriseCode}
+          AND type != 1
+    </update>
+
+    <update id="updateTypeToStaff">
+        UPDATE ${tableName}
+        SET type = #{type}
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <update id="unbindPostAndDepartment">
+        UPDATE ${tableName}
+        SET department = null,
+            post = null
+        WHERE delete_flag = false
+        AND primary_key IN
+        <foreach collection="staffCodes" index="index" item="staffCode" open="(" separator="," close=")">
+            #{staffCode}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+    </update>
+
+    <update id="batchUpdatePost">
+        <foreach collection="updateList" item="item" separator=";">
+            UPDATE ${tableName}
+            SET post = #{item.postCode}
+            WHERE delete_flag = false
+              AND primary_key = #{item.staffCode}
+        </foreach>
+    </update>
+
+    <update id="updateDepartmentByStaffCode">
+        UPDATE ${tableName}
+        SET department = #{departmentCode}
+        WHERE delete_flag = false
+          AND primary_key = #{staffCode}
+    </update>
+</mapper>

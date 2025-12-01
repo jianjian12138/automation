@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.receiving.SelfReceivingRecordDao">
+
+    <resultMap id="SelfReceivingRecordModel" type="com.futurecraftsmen.pms.pas.service.po.receiving.SelfReceivingRecordModel">
+        <result column="primary_key" property="selfReceivingRecordCode"/>
+        <result column="self_receiving_detail_code" property="selfReceivingDetailCode"/>
+        <result column="purchase_contract" property="purchaseContract"/>
+        <result column="receive" property="receive"/>
+        <result column="receive_staff" property="receiveStaff"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="inspection" property="inspection"/>
+        <result column="inspection_finish_time" property="inspectionFinishTime"/>
+        <result column="batch" property="batch"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+    </resultMap>
+
+
+    <insert id="addRecords">
+        INSERT INTO ${tableName} (primary_key, self_receiving_detail_code,purchase_contract,
+        receive, receive_staff, receive_time,inspection,inspection_finish_time,batch,enterprise_code)
+        VALUES
+        <foreach collection="selfReceivingRecordModels" index="index" item="model" separator=",">
+            ( #{model.selfReceivingRecordCode}, #{model.selfReceivingDetailCode},#{model.purchaseContract},
+            #{model.receive}, #{model.receiveStaff}, #{model.receiveTime},
+            #{model.inspection},#{model.inspectionFinishTime},#{model.batch},#{model.enterpriseCode})
+        </foreach>
+    </insert>
+
+
+
+
+    <select id="recordForDetailPage" resultMap="SelfReceivingRecordModel">
+        SELECT  primary_key, self_receiving_detail_code,purchase_contract,
+                receive,
+                receive_staff,
+                receive_time,
+                inspection,
+                inspection_finish_time,
+                batch,
+                enterprise_code
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND self_receiving_detail_code = #{selfReceivingDetailCode}
+        AND purchase_contract = #{purchaseContract}
+        ORDER BY receive_time DESC
+    </select>
+
+    <select id="getMinReceiveTimeByCodes" resultMap="SelfReceivingRecordModel">
+        WITH RankedRecords AS (
+        SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY self_receiving_detail_code ORDER BY receive_time ASC) AS rn
+        FROM
+        ${selfReceivingRecordTableName}
+        where delete_flag = false
+        and enterprise_code = #{currentEnterpriseCode}
+        and self_receiving_detail_code in
+        <foreach item="code" collection="selfReceivingDetailCodes" separator="," open="(" close=")">
+            #{code}
+        </foreach>
+        )
+        SELECT
+        *
+        FROM
+        RankedRecords
+        WHERE
+        rn = 1
+    </select>
+
+    <select id="getReceiveRecordPageList" resultType="com.futurecraftsmen.pms.pas.api.rpc.receiving.PurchaseSelfReceivingRecordRpcDTO">
+        select
+            t.primary_key as selfReceivingRecordCode,
+            t.receive,
+            t.inspection,
+            t.receive_staff,
+            t.receive_time,
+            t.inspection_finish_time,
+            t.batch,
+            t.enterprise_code,
+            t1.primary_key as selfReceivingDetailCode,
+            t1.purchase_contract as purchaseContract,
+            t1.unity_no as partUnityNo,
+            t1.name,
+            t1.model,
+            t1.material_code,
+            t1.un_modifiable_material_code,
+            t1.contract_quantity,
+            t2.contract_number
+        from
+            ${selfReceivingRecordTableName} t
+        left join ${selfReceivingDetailTableName} t1 on t.self_receiving_detail_code = t1.primary_key
+        left join ${purchaseContractTableName} t2 on t1.purchase_contract = t2.primary_key
+        where t.delete_flag = false
+        and t.enterprise_code = #{currentEnterpriseCode}
+        <if test="requestData.contractNumber != null and requestData.contractNumber !=''">
+            and t2.contract_number ilike '%'|| #{requestData.contractNumber} ||'%'
+        </if>
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo !=''">
+            and t1.unity_no like '%'|| #{requestData.partUnityNo} ||'%'
+        </if>
+        <if test="requestData.searchName != null and requestData.searchName !=''">
+            and (t1.name like '%'|| #{requestData.searchName} ||'%'  or t1.model like '%'|| #{requestData.searchName} ||'%')
+        </if>
+        <if test="requestData.batch != null and requestData.batch !=''">
+            and t.batch like '%'|| #{requestData.batch} ||'%'
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        order by t.create_time desc
+    </select>
+
+
+    <select id="getReceiveRecordPageListNew" resultType="com.futurecraftsmen.pms.pas.api.rpc.receiving.PurchaseSelfReceivingRecordRpcDTO">
+        WITH receipt_summary AS (SELECT sd.primary_key,
+        COUNT(sr.primary_key) AS record_count,
+        COALESCE(SUM(sr.receive),0) AS total_received,
+        MAX(sr.create_time) AS latest_receive_time
+        FROM ${selfReceivingDetailTableName} sd
+        INNER JOIN
+        ${selfReceivingRecordTableName} sr
+        ON sr.self_receiving_detail_code = sd.primary_key
+        INNER JOIN
+        ${purchaseContractTableName} pc
+        ON pc.primary_key = sd.purchase_contract
+        WHERE sd.delete_flag = false
+        AND sr.delete_flag = false
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo !=''">
+            and sd.unity_no ilike '%'|| #{requestData.partUnityNo} ||'%'
+        </if>
+        <if test="requestData.searchName != null and requestData.searchName !=''">
+            and (sd.name ilike '%'|| #{requestData.searchName} ||'%' or sd.model ilike '%'|| #{requestData.searchName} ||'%')
+        </if>
+        <if test="requestData.batch != null and requestData.batch !=''">
+            and sr.batch like '%'|| #{requestData.batch} ||'%'
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        GROUP BY sd.primary_key)
+        SELECT pc.contract_number,
+               pc.primary_key as purchaseContractCode,
+        srd.unity_no as partUnityNo,
+        srd.name,
+        srd.model,
+        srd.material_code as materialCode,
+        srd.un_modifiable_material_code as unModifiableMaterialCode,
+        srd.contract_quantity,
+        srd.primary_key as selfReceivingDetailCode,
+        rs.record_count,
+        rs.total_received,
+        rs.latest_receive_time
+        FROM receipt_summary rs
+        INNER JOIN
+        ${selfReceivingDetailTableName} srd
+        ON rs.primary_key = srd.primary_key
+        INNER JOIN
+        ${purchaseContractTableName} pc
+        ON pc.primary_key = srd.purchase_contract
+        WHERE pc.delete_flag = false
+        <if test="requestData.contractNumber != null and requestData.contractNumber !=''">
+            and pc.contract_number ilike '%'|| #{requestData.contractNumber} ||'%'
+        </if>
+        ORDER BY rs.latest_receive_time DESC
+    </select>
+
+    <select id="getReceiveRecordByKey" resultType="com.futurecraftsmen.pms.pas.api.rpc.receiving.PurchaseSelfReceivingRecordRpcDTO">
+        select
+            batch,
+            receive,
+            inspection,
+            receive_staff,
+            receive_time
+        from
+            ${selfReceivingRecordTableName}
+        where delete_flag = false
+        and self_receiving_detail_code = #{detailCode}
+        and enterprise_code = #{currentEnterpriseCode}
+        order by create_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,168 @@
+case_code: Distributedata
+case_name: distributeData
+priority: 2
+steps:
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 12345.12345678
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: &id001 []
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 12345.12345678
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 12345.12345678
+    remark: ''
+    routeId: 123456789
+    scrapNum: 12345.12345678
+    userCodeList: &id002
+    - 123456789
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 1.0e-08
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 1.0e-08
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 1.0e-08
+    remark: ''
+    routeId: 123456789
+    scrapNum: 1.0e-08
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 99999999.99999999
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 99999999.99999999
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 99999999.99999999
+    remark: ''
+    routeId: 123456789
+    scrapNum: 99999999.99999999
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 123.123456785
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 123.123456785
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 123.123456785
+    remark: ''
+    routeId: 123456789
+    scrapNum: 123.123456785
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 非法字符串
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 非法字符串
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 非法字符串
+    remark: ''
+    routeId: 123456789
+    scrapNum: 非法字符串
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: -100.5
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: -100.5
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: -100.5
+    remark: ''
+    routeId: 123456789
+    scrapNum: -100.5
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    batchNum: batchnum_value
+    cid: 123456789
+    complementNum: 0.0
+    contractCode: $get_db_field(contract_code)
+    distributeDetailList: *id001
+    needFinishDate: '2025-01-01 12:00:00'
+    num: 0.0
+    parentPartCode: $get_db_field(parentpartcode)
+    partCode: $get_db_field(partcode)
+    pickDataNum: 0.0
+    remark: ''
+    routeId: 123456789
+    scrapNum: 0.0
+    userCodeList: *id002
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/produce/distributeData
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

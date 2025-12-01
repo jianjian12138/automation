@@ -1,0 +1,23 @@
+case_code: UserJobController
+case_name: UserJobController接口测试
+priority: 2
+steps:
+- data:
+    UserJobBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /config/list
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: list
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /execut
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: execut

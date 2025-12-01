@@ -1,0 +1,33 @@
+case_code: LeaveMessageController
+case_name: LeaveMessageController接口测试
+priority: 2
+steps:
+- data:
+    CreateSellEnquiryFromOwRpcDTO: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /enquiry/add
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 官网留言 bff
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /get/captcha
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 官网留言 bff
+- data:
+    BatchOperationResumeBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /resume/batch/delete
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 官网留言 bff

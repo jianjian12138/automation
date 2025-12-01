@@ -1,0 +1,233 @@
+# 编辑库存场景
+# 使用的数据库表：
+# 1. dm_m9.technology_t_dm_m9_inventory_9 - 库存表（主要表）
+# 2. dm_m9.base_module_t_dm_m9_product_part_9 - 产品部件表（产品部件信息）
+# 3. dm_m9.base_module_t_dm_m9_stock_9 - 库存代码表（库存代码信息）
+# 注意：safeInventory 和 stockLimit 字段支持最高12位整数，没有小数校验
+# 测试参数：只对 safeInventory 和 stockLimit 进行12位整数测试
+
+case_code: Updatestock
+case_name: updateStock
+priority: 2
+steps:
+- step_name: 正常场景-safeInventory和stockLimit（12位整数）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "122222222222"
+    stockLimit: "133333333333"
+    remark: "正常场景测试"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 编辑库存信息成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-safeInventory最大值（12位整数）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "999999999999"
+    stockLimit: "133333333333"
+    remark: "边界值测试-最大值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 边界值测试-stockLimit最大值（12位整数）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "122222222222"
+    stockLimit: "999999999999"
+    remark: "边界值测试-最大值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 编辑库存信息成功
+    status_code_assert: 200
+- step_name: 边界值测试-最小值（1）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "1"
+    stockLimit: "1"
+    remark: "边界值测试-最小值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 编辑库存信息成功
+    status_code_assert: 200
+- step_name: 边界值测试-零值（应返回错误）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "0"
+    stockLimit: "0"
+    remark: "边界值测试-零值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 数值错误
+    status_code_assert: 200
+- step_name: 异常场景-safeInventory非法值（字符串）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "非法字符串"
+    stockLimit: "133333333333"
+    remark: "异常场景-非法值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 请求参数格式错误
+    status_code_assert: 200
+- step_name: 异常场景-stockLimit非法值（字符串）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "122222222222"
+    stockLimit: "非法字符串"
+    remark: "异常场景-非法值"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 请求参数格式错误
+    status_code_assert: 200
+- step_name: 异常场景-safeInventory负数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "-100"
+    stockLimit: "133333333333"
+    remark: "异常场景-负数测试"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 数值错误
+    status_code_assert: 200
+- step_name: 异常场景-stockLimit负数（负数可能被允许，返回成功）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "122222222222"
+    stockLimit: "-100"
+    remark: "异常场景-负数测试"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 编辑库存信息成功
+    status_code_assert: 200
+- step_name: 异常场景-safeInventory超过12位
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "1234567890123"
+    stockLimit: "133333333333"
+    remark: "异常场景-超过12位"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    response_assert_data: 数值错误
+    status_code_assert: 200
+- step_name: 异常场景-stockLimit超过12位（服务器错误）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/updateStock
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    countCycle: $get_db_field(countCycle)
+    state: true
+    safeInventory: "122222222222"
+    stockLimit: "1234567890123"
+    remark: "异常场景-超过12位"
+    productPartTypeCode: $get_db_field(productPartTypeCode)
+    pcs: $get_db_field(pcs)
+    model: "-"
+    name: $get_db_field(name)
+    stockCode: $get_db_field(stockCode)
+    unityNo: $get_db_field(unityNo)
+  response_assert:
+    status_code_assert: 500

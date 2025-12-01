@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.operation.service.dao.OperationGroupDao">
+    <insert id="addOperationGroup">
+        INSERT INTO operation_base.t_operation_base_group
+            (group_code, group_name, group_principal_user_code, remark)
+        VALUES (#{operationGroupModel.groupCode}, #{operationGroupModel.groupName},
+                #{operationGroupModel.groupPrincipalUserCode}, #{operationGroupModel.remark})
+    </insert>
+    <insert id="addUserToOperationGroup">
+        INSERT INTO operation_base.t_operation_base_group_map_user
+            (map_code, group_code, user_code, remark)
+        VALUES (#{operationGroupMapUserRpcDTO.mapCode}, #{operationGroupMapUserRpcDTO.groupCode},
+                #{operationGroupMapUserRpcDTO.userCode}, #{operationGroupMapUserRpcDTO.remark})
+    </insert>
+    <insert id="addEnterpriseToOperationGroup">
+        INSERT INTO operation_base.t_operation_base_group_map_enterprise (map_code, enterprise_code, enterprise_name)
+        VALUES (#{operationGroupMapEnterpriseRpcDTO.mapCode}, #{operationGroupMapEnterpriseRpcDTO.enterpriseCode},
+                #{operationGroupMapEnterpriseRpcDTO.enterpriseName})
+    </insert>
+
+
+    <select id="groupMapEnterpriseRecordCount" resultType="int">
+        SELECT COUNT(*)
+        FROM operation_base.t_operation_base_group_map_enterprise
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode};
+    </select>
+
+    <update id="updateEnterpriseToOperationGroup">
+        UPDATE operation_base.t_operation_base_group_map_enterprise
+        SET group_code = #{operationGroupMapEnterpriseRpcDTO.groupCode},
+            remark     = #{operationGroupMapEnterpriseRpcDTO.remark}
+        WHERE delete_flag = false
+          AND enterprise_code = #{operationGroupMapEnterpriseRpcDTO.enterpriseCode}
+    </update>
+    <update id="allocateGroupEnterpriseToUser">
+        UPDATE operation_base.t_operation_base_group_map_enterprise
+        SET principal_user_code = #{operationGroupMapEnterpriseRpcDTO.principalUserCode}
+        WHERE delete_flag = false
+          AND group_code = #{operationGroupMapEnterpriseRpcDTO.groupCode}
+          AND enterprise_code = #{operationGroupMapEnterpriseRpcDTO.enterpriseCode}
+    </update>
+    <update id="updateOperationGroup">
+        UPDATE operation_base.t_operation_base_group
+        SET delete_flag = false
+        <if test="operationGroupRpcDTO.groupName != null and operationGroupRpcDTO.groupName != ''">
+            , group_name = #{operationGroupRpcDTO.groupName}
+        </if>
+        <if test="operationGroupRpcDTO.groupPrincipalUserCode != 0">
+            , group_principal_user_code = #{operationGroupRpcDTO.groupPrincipalUserCode}
+        </if>
+        , remark = #{operationGroupRpcDTO.remark}
+        WHERE delete_flag = false
+        AND group_code = #{operationGroupRpcDTO.groupCode}
+    </update>
+    <select id="getAllOperationGroup"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel">
+        SELECT id,
+               group_code,
+               group_name,
+               group_principal_user_code,
+               group_temporary_principal_user_code,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_group
+        WHERE delete_flag = false
+    </select>
+    <select id="getOperationGroupByUserCodeForPermission"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel">
+        SELECT id,
+               group_code,
+               group_name,
+               group_principal_user_code,
+               group_temporary_principal_user_code,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_group
+        WHERE delete_flag = false
+          AND (group_principal_user_code = #{userCode} OR group_temporary_principal_user_code = #{userCode})
+    </select>
+    <select id="getOperationGroupByCode"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel">
+        SELECT id,
+               group_code,
+               group_name,
+               group_principal_user_code,
+               group_temporary_principal_user_code,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_group
+        WHERE delete_flag = false
+          AND group_code = #{groupCode}
+    </select>
+    <select id="getPageOperationUserCodeOfGroup" resultType="java.lang.Long">
+        SELECT user_code
+        FROM operation_base.t_operation_base_group_map_user
+        WHERE delete_flag = false
+          AND group_code = #{groupCode}
+    </select>
+    <select id="isUserGroup" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_group_map_user
+        WHERE delete_flag = false
+          AND group_code = #{groupCode}
+          AND user_code = #{userCode}
+    </select>
+    <select id="isEnterpriseGroup" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_group_map_enterprise
+        WHERE delete_flag = false
+          AND group_code = #{groupCode}
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+    <select id="getOperationEnterpriseCodeOfGroup" resultType="java.lang.Long">
+        SELECT enterprise_code
+        FROM operation_base.t_operation_base_group_map_enterprise
+        WHERE delete_flag = false
+        <if test="operationGroupFilterConditionDTO.groupCode == null">
+            AND group_code IS NULL
+        </if>
+        <if test="operationGroupFilterConditionDTO.groupCode != null">
+            AND group_code = #{operationGroupFilterConditionDTO.groupCode}
+        </if>
+        <if test="operationGroupFilterConditionDTO.enterpriseName != null">
+            AND enterprise_name LIKE '%'|| #{operationGroupFilterConditionDTO.enterpriseName}|| '%'
+        </if>
+        <if test="operationGroupFilterConditionDTO.allocationFlag == false">
+            AND principal_user_code IS NULL
+        </if>
+        <if test="operationGroupFilterConditionDTO.allocationFlag == true">
+            AND principal_user_code IS NOT NULL
+        </if>
+        <if test="operationGroupFilterConditionDTO.principalUserCode != null">
+            AND principal_user_code = #{operationGroupFilterConditionDTO.principalUserCode}
+        </if>
+    </select>
+    <select id="allocatedEnterprise" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_group_map_enterprise
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND group_code IS NOT NULL
+    </select>
+    <select id="allocatedUser" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_group_map_user
+        WHERE delete_flag = false
+          AND user_code = #{userCode}
+          AND group_code IS NOT NULL
+    </select>
+    <select id="getOperationUserCodeOfGroup" resultType="java.lang.Long">
+        SELECT user_code
+        FROM operation_base.t_operation_base_group_map_user
+        WHERE delete_flag = false
+        <if test="groupCode != null">
+            AND group_code = #{groupCode}
+        </if>
+    </select>
+    <select id="getOperationUserCodeWithGroup" resultType="java.lang.Long">
+        SELECT user_code
+        FROM operation_base.t_operation_base_group_map_user
+        WHERE delete_flag = false
+    </select>
+    <select id="getPrincipalUser" resultType="java.lang.Long">
+        SELECT principal_user_code
+        FROM operation_base.t_operation_base_group_map_enterprise
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+    </select>
+    <select id="getPrincipalUserByEnterpriseCode"
+            resultType="com.futurecraftsmen.pms.operation.service.po.EnterpriseUserMapModel">
+        SELECT t1.enterprise_code,
+        t1.principal_user_code,
+        t2.operation_user_name AS principal_user_name
+        FROM operation_base.t_operation_base_group_map_enterprise t1
+        LEFT JOIN operation_base.t_operation_base_user t2 ON t1.principal_user_code = t2.operation_user_code
+        WHERE t1.enterprise_code IN
+        <foreach collection="enterpriseCodes" index="index" item="enterpriseCode" open="(" separator="," close=")">
+            #{enterpriseCode}
+        </foreach>
+        AND t1.delete_flag = false
+        AND t2.delete_flag = false
+    </select>
+    <select id="getOperationGroupsByCodes"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel">
+        SELECT id,
+        group_code,
+        group_name,
+        group_principal_user_code,
+        group_temporary_principal_user_code,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM operation_base.t_operation_base_group
+        WHERE delete_flag = false
+        AND group_code IN
+        <foreach collection="groupCodes" index="index" item="groupCode" open="(" separator="," close=")">
+            #{groupCode}
+        </foreach>
+    </select>
+    <select id="getOperationGroupModelByEnterpriseCodes"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupOfEnterprise">
+        SELECT t1.enterprise_code,
+        t2.group_code AS operationGroupCode,
+        t2.group_name AS operationGroupName
+        FROM operation_base.t_operation_base_group_map_enterprise t1
+        LEFT JOIN operation_base.t_operation_base_group t2 ON t1.group_code = t2.group_code
+        WHERE t1.delete_flag = false
+        AND t2.delete_flag = false
+        AND t1.enterprise_code IN
+        <foreach collection="enterpriseCodes" index="index" item="enterpriseCode" open="(" separator="," close=")">
+            #{enterpriseCode}
+        </foreach>
+    </select>
+    <select id="getOperationGroupModelByOperationUserCodes"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationGroupOfOperationUser">
+        SELECT t1.user_code AS operationUserCode,
+        t2.group_code AS operationGroupCode,
+        t2.group_name AS operationGroupName
+        FROM operation_base.t_operation_base_group_map_user t1
+        LEFT JOIN operation_base.t_operation_base_group t2 ON t1.group_code = t2.group_code
+        WHERE t1.delete_flag = false
+        AND t2.delete_flag = false
+        AND t1.user_code IN
+        <foreach collection="operationUsers" index="index" item="operationUser" open="(" separator="," close=")">
+            #{operationUser}
+        </foreach>
+    </select>
+</mapper>

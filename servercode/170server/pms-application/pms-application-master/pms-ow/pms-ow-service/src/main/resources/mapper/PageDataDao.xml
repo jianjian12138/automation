@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.PageDataDao">
+    <resultMap id="pageDataModel" type="com.futurecraftsmen.pms.ow.service.model.PageDataModel">
+        <result property="pageDataCode" column="page_data_code"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="templateCode" column="template_code"/>
+        <result property="pageIndex" column="page_index"/>
+        <result property="pageData" column="page_data"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+    <insert id="savePageData">
+        insert into ${tableName} (page_data_code, enterprise_code, template_code, page_index, page_data)
+        values (#{pageDataModel.pageDataCode}, #{pageDataModel.enterpriseCode}, #{pageDataModel.templateCode},
+                #{pageDataModel.pageIndex}, #{pageDataModel.pageData})
+        ON CONFLICT (page_data_code) DO UPDATE SET page_data = EXCLUDED.page_data
+    </insert>
+
+    <select id="getPageDatasByCodes" resultMap="pageDataModel">
+        SELECT page_data_code,
+        enterprise_code,
+        template_code,
+        page_index,
+        page_data,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND page_data_code IN
+        <foreach collection="pageDataCodes" index="index" item="pageDataCode" open="("
+                 separator="," close=")">
+            #{pageDataCode}
+        </foreach>
+    </select>
+
+    <select id="getAllPageDataModel" resultMap="pageDataModel">
+        SELECT page_data_code,
+               enterprise_code,
+               template_code,
+               page_index,
+               page_data,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+    </select>
+</mapper>

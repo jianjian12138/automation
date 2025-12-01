@@ -1,0 +1,38 @@
+# 测试Jacoco集成的简单API测试用例
+case_name: 测试Jacoco集成
+case_code: TestJacocoIntegration
+priority: 1
+steps:
+  - step_name: 验证Jenkinsfile Jacoco配置
+    host: http://httpbin.org
+    path: /get
+    headers: {}
+    method: GET
+    data: {}
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $..url != null
+        - $..headers != null
+
+  - step_name: 验证项目结构
+    host: http://httpbin.org
+    path: /status/200
+    headers: {}
+    method: GET
+    data: {}
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 验证Jacoco配置存在
+    host: http://httpbin.org
+    path: /headers
+    headers: {
+      "X-Jacoco-Configured": "true"
+    }
+    method: GET
+    data: {}
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $..headers.X-Jacoco-Configured == "true"

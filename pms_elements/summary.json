@@ -1,0 +1,21 @@
+{
+  "total_pages": 1,
+  "total_ids": 289,
+  "total_classes": 3,
+  "total_forms": 0,
+  "total_links": 0,
+  "total_buttons": 0,
+  "total_inputs": 0,
+  "pages": [
+    {
+      "url": "http://192.168.2.112:3356/?code=426089190049054721",
+      "title": "pms",
+      "ids_count": 289,
+      "classes_count": 3,
+      "forms_count": 0,
+      "links_count": 0,
+      "buttons_count": 0,
+      "inputs_count": 0
+    }
+  ]
+}

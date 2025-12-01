@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Artisan Hovel Technology Co. Ltd. 1992-2062 All rights reserved
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.aerie.forest</groupId>
+        <artifactId>forest</artifactId>
+        <version>v4.1.1.GA</version>
+    </parent>
+    <artifactId>forest-dynamic</artifactId>
+    <name>forest-dynamic</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>forest-dynamic-common</module>
+        <module>forest-dynamic-form</module>
+        <module>forest-dynamic-process</module>
+        <module>forest-dynamic-database</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.aerie.forest</groupId>
+            <artifactId>forest-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

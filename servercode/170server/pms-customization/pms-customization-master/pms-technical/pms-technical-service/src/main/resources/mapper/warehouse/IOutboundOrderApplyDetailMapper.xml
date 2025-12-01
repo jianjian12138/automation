@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.warehouse.IOutboundOrderApplyDetailMapper">
+    <resultMap id="outboundOrderDetailModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.warehouse.OutboundOrderApplyDetailModel">
+        <result property="applyDetailCode" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+
+        <result property="applyTime" column="apply_time"/>
+        <result property="applyStaff" column="apply_staff"/>
+        <result property="applyNum" column="apply_num"/>
+        <result property="remark" column="remark"/>
+        <result property="batchGlobalCode" column="batch_global_code"/>
+    </resultMap>
+
+
+    <insert id="saveData">
+        insert into ${tableName}
+        (primary_key, enterprise_code, apply_time, apply_staff, apply_num, remark, batch_global_code, stock_type)
+        values (#{data.applyDetailCode}, #{data.enterpriseCode}, #{data.applyTime}, #{data.applyStaff},
+                #{data.applyNum}, #{data.remark}, #{data.batchGlobalCode}, #{data.stockType})
+
+    </insert>
+
+    <select id="list" resultType="com.futurecraftsmen.pms.technical.api.domain.warehouse.WarehouseOutboundApplyDetailRpcDTO">
+        select
+        apply_num,
+        apply_staff,
+        apply_time,
+        remark,
+        primary_key as outboundApplyDetailCode,
+        COALESCE(out_apply_num,0) out_apply_num,
+        batch_global_code,
+        stock_type
+        from
+        ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and primary_key in
+        <foreach collection="list" item="item" open="(" close=")" separator="," index="index">
+            #{item}
+        </foreach>
+        order by create_time desc
+    </select>
+
+
+    <insert id="batchInsert">
+        INSERT INTO ${tableName} (
+        primary_key,
+        apply_num,
+        enterprise_code,
+        remark,
+        apply_staff,
+        apply_time,
+        batch_global_code,
+        out_apply_num,
+        stock_type
+        )
+        VALUES
+        <foreach collection="outboundOrderApplyDetailModels" index="index" item="model" separator=",">
+            (
+            #{model.applyDetailCode},
+            #{model.applyNum},
+            #{enterpriseCode},
+            #{model.remark},
+            #{model.applyStaff},
+            now(),
+             #{model.batchGlobalCode},
+             #{model.outApplyNum},
+             #{model.stockType}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBatchOutApplyNumByCode">
+        <foreach collection="upList" item="item" index="index" separator=";">
+            UPDATE ${tableName}
+            SET
+            out_apply_num = #{item.outApplyNum}
+            WHERE primary_key = #{item.applyDetailCode}
+        </foreach>
+    </update>
+
+
+    <update id="updateProduceBubble">
+        update ${dynamicTableNameProxy.outboundApplyDetail}
+        set produce_Bubble=COALESCE(produce_Bubble, 0) | ${data.writeBubbleValue()},
+            contract_Number = #{data.contractNumber},
+            outbound_Type = #{data.outboundType}
+        where primary_key = #{data.applyId}
+    </update>
+
+
+    <update id="closeProduceBubble">
+        update ${dynamicTableNameProxy.outboundApplyDetail}
+        set produce_Bubble=COALESCE(produce_Bubble, 0) | ${data.readBubbleValue()}
+        where primary_key = #{data.applyId}
+    </update>
+
+
+    <select id="queryGlobalCodeByIds" resultType="java.lang.Long">
+        select batch_global_code
+        from ${dynamicTableNameProxy.outboundApplyDetail} a
+        where primary_key in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

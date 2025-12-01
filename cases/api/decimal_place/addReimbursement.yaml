@@ -1,0 +1,169 @@
+# 财务管理--报销单添加
+# 使用的数据库表：
+# 1. dm_m9.financing_t_dm_m9_reimbursement_9 - 报销申请表（主要表）
+# 2. dm_m9.financing_t_dm_m9_expense_account_9 - 报销明细表（费用科目明细）
+# 3. dm_m9.base_module_t_dm_m9_staff_9 - 员工表（申请人信息：applicant, applicantName）
+# 4. dm_m9.personnel_t_dm_m9_staff_record_9 - 员工档案表（备用：员工详细信息）
+# 注意：reimbursementType 字段的值应该是费用科目类型ID，存储在报销明细表的 reimbursement_type 字段中
+case_code: Addreimbursement
+case_name: addReimbursement
+priority: 2
+steps:
+  - step_name: 正常场景-BigDecimal精度测试（8位小数）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList: &id001
+      - amount: "12345.12345678"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 12345.12345678
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200
+      jsonpath_assert:
+      - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+  - step_name: 边界值测试-最小精度（0.00000001）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "0.00000001"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 0.00000001
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200
+  - step_name: 边界值测试-最大值（8位整数+8位小数）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "99999999.99999999"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 99999999.99999999
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200
+  - step_name: 四舍五入测试-超过8位小数截断
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "123.123456785"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 123.123456785
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200
+  - step_name: 异常场景-非法值（字符串）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "非法字符串"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 非法字符串
+    response_assert:
+      response_assert_data: 请求参数格式错误
+      status_code_assert: 200
+  - step_name: 异常场景-负数测试
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "-100.5"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: -100.5
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200
+      jsonpath_assert:
+      - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+  - step_name: 正常场景-零值测试
+    host: $get_host(ERP_TEST,pms_host)
+    path: /finance/reimbursement/addReimbursement
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      applicant: "218817272071061504"
+      applicantName: "葛镇杨"
+      staffName: ''
+      staffCode: ''
+      file: []
+      expenseAccountList:
+      - amount: "0.0"
+        isHaveInvoice: false
+        reimbursementType: "196047703397105664"
+        remark: ''
+      nextApprovePostCode: ''
+      remark: ''
+      totalAmount: 0.0
+    response_assert:
+      response_assert_data: 成功
+      status_code_assert: 200

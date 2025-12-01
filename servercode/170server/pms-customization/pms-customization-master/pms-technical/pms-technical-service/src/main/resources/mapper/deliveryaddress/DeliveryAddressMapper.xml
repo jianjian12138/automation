@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.deliveryaddress.DeliveryAddressMapper">
+
+    <resultMap id="DeliveryAddressModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.deliveryaddress.DeliveryAddressModel">
+        <result column="primary_key" property="deliveryAddressCode"/>
+        <result column="owner" property="owner"/>
+        <result column="consignee_name" property="consigneeName"/>
+        <result column="consignee_phone" property="consigneePhone"/>
+        <result column="address_region" property="addressRegion"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="default_address" property="defaultAddress"/>
+        <result column="customer" property="customer"/>
+        <result column="vender" property="vender"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+    </resultMap>
+
+
+
+    <select id="customerDeliveryAddressPaging" resultMap="DeliveryAddressModel">
+        SELECT
+        primary_key,
+        owner,
+        consignee_name,
+        consignee_phone,
+        address_region,
+        address_detail,
+        default_address,
+        customer,
+        vender,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND customer = #{customer}
+        AND owner = 0
+        ORDER BY  COALESCE(default_address, false) DESC, id DESC
+    </select>
+
+
+</mapper>

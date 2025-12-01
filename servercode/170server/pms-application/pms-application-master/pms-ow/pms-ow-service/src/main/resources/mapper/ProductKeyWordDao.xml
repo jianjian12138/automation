@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.ProductKeyWordDao">
+    <resultMap id="productKeyWordModel" type="com.futurecraftsmen.pms.ow.service.model.ProductKeyWordModel">
+        <result property="keyWordCode" column="key_word_code"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="word" column="word"/>
+        <result property="cumulative" column="cumulative"/>
+        <result property="language" column="language"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <insert id="addKeyWord">
+        insert into ${tableName} (key_word_code, enterprise_code, word, cumulative, language)
+        values (#{keyWord.keyWordCode}, #{keyWord.enterpriseCode}, #{keyWord.word}, #{keyWord.cumulative},
+                #{keyWord.language})
+    </insert>
+
+    <update id="accumulate">
+        UPDATE ${tableName}
+        SET cumulative = #{cumulative}
+        WHERE key_word_code = #{keyWordCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+    <select id="getAllKeyWords" resultMap="productKeyWordModel">
+        SELECT key_word_code,
+               enterprise_code,
+               word,
+               cumulative,
+               language,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="getKeyWordsByCodes" resultMap="productKeyWordModel">
+        SELECT key_word_code,
+        enterprise_code,
+        word,
+        cumulative,
+        language,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND key_word_code IN
+        <foreach collection="keyWordCodes" index="index" item="keyWordCode" open="(" separator="," close=")">
+            #{keyWordCode}
+        </foreach>
+    </select>
+</mapper>

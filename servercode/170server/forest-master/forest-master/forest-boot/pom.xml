@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) Artisan Hovel Technology Co. Ltd. 1992-2062 All rights reserved
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.aerie.forest</groupId>
+        <artifactId>forest</artifactId>
+        <version>v4.1.1.GA</version>
+    </parent>
+    <artifactId>forest-boot</artifactId>
+    <name>forest-boot</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.aerie.forest</groupId>
+            <artifactId>forest-core</artifactId>
+            <version>${forest.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

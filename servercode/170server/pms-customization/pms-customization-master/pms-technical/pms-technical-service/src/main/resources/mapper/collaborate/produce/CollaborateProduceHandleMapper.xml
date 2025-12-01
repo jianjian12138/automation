@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.produce.CollaborateProduceHandleMapper">
+
+
+    <select id="checkReportNum" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+
+        with a as (select contract_code, product_code, manage_user_code, sum(task_num) task_num ,BOOL_OR(report_show) report_show
+        from ${dynamicTableNameProxy.collaborateProduceDistribute} a
+        where contract_code =#{cid}
+
+        <if test="data != null and data.size  &gt; 0">
+            and product_code in
+            <foreach item="id" collection="data" separator="," open="(" close=")">
+                #{id.did}
+            </foreach>
+        </if>
+
+
+        and manage_user_code =${dynamicTableNameProxy.currentCode}
+        group by contract_code, product_code, manage_user_code)
+        ,
+        b as (select contract_code, product_code, b.operation_user_code, sum(b.finish_num) finish_num
+        from ${dynamicTableNameProxy.collaborateProduceResult} b
+        where contract_code =#{cid}
+
+        <if test="data != null and data.size  &gt; 0">
+            and product_code in
+            <foreach item="id" collection="data" separator="," open="(" close=")">
+                #{id.did}
+            </foreach>
+        </if>
+        and operation_user_code =${dynamicTableNameProxy.currentCode}
+        group by contract_code, product_code, b.operation_user_code)
+
+        select a.contract_code, a.product_code, a.manage_user_code, coalesce(a.task_num,0) task_num , coalesce(b.finish_num,0) finish_num
+        , coalesce(a.report_show ,false) report_show
+        from a
+        left join b
+        on a.contract_code = b.contract_code
+        and a.product_code = b.product_code
+        and a.manage_user_code = b.operation_user_code
+    </select>
+
+
+    <select id="willHandle" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+
+        select coalesce(sum(order_quantity), 0) task_num
+        from ${dynamicTableNameProxy.collaborateScheduleItem}
+        where collaborate_type = 0
+          and delete_flag = false
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and can_produce = true
+
+        <if test="data.startTime != null">
+            and create_time &gt;= #{data.startTime}
+        </if>
+
+
+        <if test="data.endTime != null">
+            and create_time &lt;= #{data.endTime}
+        </if>
+
+    </select>
+
+    <select id="handleEd" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+        select coalesce(sum(finish_num), 0) finish_num
+        from ${dynamicTableNameProxy.collaborateProduceResult}
+        where report_status in (1, 2)
+          and delete_flag = false
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+
+        <if test="data.startTime != null">
+            and create_time &gt;= #{data.startTime}
+        </if>
+
+
+        <if test="data.endTime != null">
+            and create_time &lt;= #{data.endTime}
+        </if>
+
+    </select>
+
+
+    <select id="queryFinishCount" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+
+
+        with a as (
+
+        select coalesce(sum(finish_num), 0) finish_num, product_code
+        from ${dynamicTableNameProxy.collaborateProduceResult}
+        where report_status in (1, 2)
+        and delete_flag = false
+        and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and contract_code = #{contractCode}
+        group by product_code
+
+
+        ),
+
+        b as (
+
+        select coalesce(sum(task_num), 0) task_num ,product_code
+        from (select batch_global_code, product_code, min(task_num) task_num
+        from ${dynamicTableNameProxy.collaborateProduceDistribute} ptdmcpd
+        where delete_flag = false
+        and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and contract_code = #{contractCode}
+        group by batch_global_code, product_code) group by product_code
+        )
+        select b.task_num , a.finish_num, b.product_code from b left join a on a.product_code=b.product_code
+        where b.task_num > coalesce( a.finish_num,0)
+
+
+        <!--
+        select product_code, sum(finish_num) finish_num
+        from (select coalesce(sum(finish_num), 0) finish_num, product_code
+              from ${dynamicTableNameProxy.collaborateProduceResult}
+              where report_status in (1, 2)
+                and delete_flag = false
+                and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                and contract_code = #{contractCode}
+              group by product_code
+
+              union all
+
+              select coalesce(sum(inbound_quantity), 0), collaborate_material
+              from ${dynamicTableNameProxy.collaborateInboundItem}
+              where collaborate_type = 0
+                and contract_type = 1
+                and delete_flag = false
+                and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                and contract_code = #{contractCode}
+              group by collaborate_material)
+        group by product_code   -->
+
+    </select>
+
+
+    <select id="queryReportFinishCount" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+        select coalesce(sum(finish_num), 0) finish_num, product_code
+        from ${dynamicTableNameProxy.collaborateProduceResult}
+        where report_status in (1, 2)
+          and delete_flag = false
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and contract_code = #{contractCode}
+        group by product_code
+    </select>
+
+
+    <select id="handleIng" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+        select coalesce(sum(task_num), 0) task_num
+        from (select batch_global_code, product_code, min(task_num) task_num
+        from ${dynamicTableNameProxy.collaborateProduceDistribute} ptdmcpd
+        where delete_flag = false
+        and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+
+        <if test="data.startTime != null">
+            and create_time &gt;= #{data.startTime}
+        </if>
+
+
+        <if test="data.endTime != null">
+            and create_time &lt;= #{data.endTime}
+        </if>
+
+
+        group by batch_global_code, product_code)
+    </select>
+
+
+    <select id="overFlowHandle" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceHandle">
+        with a as (select product_code, sum(finish_num) finish_num, contract_code
+                   from ${dynamicTableNameProxy.collaborateProduceResult}
+                   where report_status in (1, 2)
+                     and delete_flag = false
+                     and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                     and contract_code = #{contractCode}
+                     and product_code = #{productCode}
+                   group by product_code, contract_code),
+
+             c as (select coalesce(sum(task_num), 0) task_num, product_code, contract_code
+                   from (select batch_global_code, product_code, min(task_num) task_num, contract_code
+                         from ${dynamicTableNameProxy.collaborateProduceDistribute}
+                         where delete_flag = false
+                           and delete_flag = false
+                           and contract_code = #{contractCode}
+                           and product_code = #{productCode}
+                           and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                         group by batch_global_code, product_code, contract_code)
+                   group by product_code, contract_code)
+
+        select b.collaborate_material    product_code,
+               coalesce(a.finish_num, 0) finish_num,
+               b.order_quantity,
+               b.schedule_quantity,
+               c.task_num,
+               b.primary_key
+        from ${dynamicTableNameProxy.collaborateScheduleItem} b
+
+                 join c on b.collaborate_material = c.product_code and c.contract_code = b.contract_code
+                 left join a on a.product_code = b.collaborate_material and b.contract_code = a.contract_code
+        where b.delete_flag = false
+          and b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and b.contract_code = #{contractCode}
+          and b.collaborate_type = 0
+          and b.collaborate_material = #{productCode}
+    </select>
+
+</mapper>

@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.quality.IInspectIntoMapper">
+
+    <resultMap id="queryTotalList"
+               type="com.futurecraftsmen.pms.technical.service.domain.quality.inspect.into.InspectIntoTotalModel">
+        <id property="procedureName" column="procedure_name"/>
+        <id property="batchNum" column="batch_num"/>
+        <result property="operatorUserCode" column="operator_user_code"/>
+        <result property="operatorUserName" column="operator_user_name"/>
+        <result property="files" column="files" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="inspectType" column="inspect_type"/>
+        <result property="inspectNum" column="inspect_num"/>
+        <result property="inspectRatio" column="inspect_ratio"/>
+        <result property="shouldInspectNum" column="should_inspect_num"/>
+        <result property="passedNum" column="passed_num"/>
+        <result property="unPassedNum" column="un_passed_num"/>
+        <result property="unPassedDeal" column="un_passed_deal"/>
+        <result property="unPassedRemark" column="un_passed_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="inspectUserName" column="inspect_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="passRate" column="pass_rate"/>
+        <result property="checkItems" column="check_items"/>
+        <result property="model" column="model"/>
+        <result property="pcsName" column="pcs_name"/>
+        <result property="relatedName" column="related_name"/>
+        <result property="relatedCode" column="related_code"/>
+        <result property="relatedType" column="related_type"/>
+        <result property="productOrPart" column="product_or_part"/>
+        <result property="productOrPartName" column="product_or_part_name"/>
+    </resultMap>
+
+    <!-- 批量插入新记录 -->
+    <insert id="save">
+        INSERT INTO ${tableName} (primary_key,
+                                  enterprise_code,
+                                  procedure_code,
+                                  procedure_name,
+                                  operator_user_code,
+                                  task_num,
+                                  overdue_date,
+                                  should_inspect_num,
+                                  status,
+                                  remark,
+                                  main_id,
+                                  batch_num,
+                                  model,
+                                  pcs_name,
+                                  related_name,
+                                  related_code,
+                                  related_type,
+                                  product_or_part,
+                                  product_or_part_name,
+                                  receive_num,
+                                  report_batch_no,
+                                  buss_number,
+                                  contract_code,
+                                  self_receiving_detail,
+                                  receiving_detail,
+                                  contract_quantity,
+                                  batch,
+                                  batch_global_code,
+                                  product_flag,
+                                  delivery_date,
+                                  check_items)
+        VALUES (#{data.primaryKeyValue},
+                #{data.enterpriseCode},
+                #{data.procedureCode},
+                #{data.procedureName},
+                #{data.operatorUserCode},
+                #{data.taskNum},
+                #{data.overdueDate},
+                #{data.shouldInspectNum},
+                #{data.status},
+                #{data.remark},
+                #{data.mainId},
+                #{data.batchNum},
+                #{data.model},
+                #{data.pcsName},
+                #{data.relatedName},
+                #{data.relatedCode},
+                #{data.relatedType},
+                #{data.productOrPart},
+                #{data.productOrPartName},
+                #{data.receiveNum},
+                #{data.reportBatchNo},
+                #{data.bussNumber},
+                #{data.contractCode},
+                #{data.selfReceivingDetail},
+                #{data.receivingDetail},
+                #{data.contractQuantity},
+                #{data.batch},
+                #{data.batchGlobalCode},
+                #{data.productFlag},
+                #{data.deliveryDate},
+                #{data.checkItems})
+    </insert>
+
+    <select id="queryMainPageByCondition">
+        with a as(
+        select DISTINCT aa.into_main_id ,aa.should_inspect_num
+        from ${inspectIntoDispatcherTable} aa
+        where aa.delete_flag = false
+        GROUP BY aa.into_main_id ,aa.should_inspect_num
+        ) ,
+        b as(
+        select a.into_main_id,sum(a.should_inspect_num) as should_inspect_num
+        from a GROUP BY a.into_main_id
+        ),
+        c as(
+        select cc.into_main_id, sum(cc.inspect_num) as inspect_num ,sum(cc.passed_num) as
+        passed_num,sum(cc.un_passed_num) as un_passed_num
+        from ${inspectIntoReportTable} cc
+        GROUP BY cc.into_main_id
+        ),
+        d as(
+        select aa.into_main_id,aa.inspect_type,string_agg(CAST(bb.staff_sign as TEXT),',') as inspectUserName
+        from ${inspectIntoDispatcherTable} aa , ${staffTable} bb
+        where aa.inspect_user_code = bb.primary_key
+        GROUP BY aa.into_main_id,aa.inspect_type
+        )
+        select * from (
+        select aa.buss_number,aa.create_time,aa.batch,aa.product_flag,aa.contract_code,
+        aa.main_id,aa.model,aa.pcs_name,aa.related_name,aa.related_code,aa.related_type,aa.product_or_part,aa.product_or_part_name,
+        aa.batch_num,aa.report_batch_no,
+        aa.procedure_name,aa.operator_user_code,aa.task_num,aa.overdue_date,aa.status,aa.remark,aa.primary_key
+        as primaryKeyValue,aa.enterprise_code,aa.primary_key,
+        b.should_inspect_num,c.inspect_num, c.passed_num , c.un_passed_num ,
+        ROUND((c.passed_num/c.inspect_num) * 100,2) as
+        passed_rate,d.inspectUserName,aa.check_items,d.inspect_type,e.status as approve_status
+        from ${inspectIntoTable} aa
+        LEFT JOIN b on aa.primary_key = b.into_main_id
+        LEFT JOIN c on aa.primary_key = c.into_main_id
+        LEFT JOIN d on aa.primary_key = d.into_main_id
+        left join ${approveTable} e on aa.primary_key = e.inspect_main_id
+        where aa.delete_flag = false
+        ) t
+        where t.enterprise_code = #{enterpriseCode}
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            AND (
+            t.buss_number like concat('%', #{data.bussNumber}, '%')
+            or t.batch like concat('%',#{data.bussNumber}, '%')
+            )
+        </if>
+        <if test="data.productOrPartName != null and data.productOrPartName != '' ">
+            AND t.product_or_part_name like concat('%',#{data.productOrPartName}, '%')
+        </if>
+        <if test="data.model != null and data.model != '' ">
+            AND t.model like concat('%',#{data.model}, '%')
+        </if>
+        <if test="data.relatedName != null and data.relatedName != '' ">
+            AND t.related_name like concat('%',#{data.relatedName}, '%')
+        </if>
+        <if test="data.status != null">
+            AND t.status = #{data.status}
+        </if>
+
+        <if test="data.beginDate != null ">
+            AND t.overdue_date >= #{data.beginDate}
+        </if>
+
+        <if test="data.endDate != null ">
+            AND t.overdue_date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.operatorUserCode != null ">
+            AND t.operator_user_code = #{data.operatorUserCode}
+        </if>
+
+        <if test="data.inspectUserCode != null and data.inspectUserCode.size() >0">
+            AND exists ( select 1 from ${inspectIntoDispatcherTable} b
+            where b.inspect_user_code IN
+            <foreach collection="data.inspectUserCode" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+            and b.into_main_id=t.primary_key)
+        </if>
+        <if test="data.passRate != null ">
+            AND t.passed_rate >= #{data.passRate}
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("t.product_or_part","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("t.product_or_part",data.searchName)}
+
+
+        order by t.create_time desc
+
+    </select>
+
+    <select id="queryStaffPageByCondition">
+        WITH t as(
+        select cc.into_main_id, batch_no,status, sum(cc.inspect_num) as inspect_num ,sum(cc.passed_num) as
+        passed_num,sum(cc.un_passed_num) as un_passed_num
+        from ${inspectIntoReportTable} cc
+        where cc.inspect_user = #{data.inspectUserCode[0]}
+        GROUP BY cc.into_main_id,batch_no,status
+        )
+        select * from (
+        select b.buss_number,b.batch,b.product_flag,b.contract_code,
+        b.model,b.pcs_name,b.related_name,b.related_code,b.related_type,b.product_or_part,b.product_or_part_name,
+        b.batch_num,b.report_batch_no,
+        b.procedure_name,b.operator_user_code,b.task_num,a.finish_date as overdue_date,t.status,b.status as main_status,
+        a.remark,b.enterprise_code,b.create_time,b.check_items,
+        t.inspect_num,t.passed_num,t.un_passed_num,
+        ROUND((t.passed_num/t.inspect_num) * 100,2) as passed_rate,
+        a.primary_key as primaryKeyValue,a.allocation_num as should_inspect_num,a.batch_no,a.into_main_id as mainId,
+        e.status as approve_status
+        from ${inspectIntoDispatcherTable} a
+        LEFT JOIN ${inspectIntoTable} b on a.into_main_id = b.primary_key
+        LEFT JOIN t on t.into_main_id = a.into_main_id and t.batch_no = a.batch_no
+        left join ${approveTable} e on b.primary_key = e.inspect_main_id
+        where a.inspect_user_code = #{data.inspectUserCode[0]}
+        and a.delete_flag = false
+        )tt
+        where tt.enterprise_code = #{enterpriseCode}
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            AND (
+            tt.buss_number like concat('%', #{data.bussNumber}, '%')
+            or tt.batch like concat('%',#{data.bussNumber}, '%')
+            )
+        </if>
+
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("tt.product_or_part","xihang",data.partUnityNo)}
+        </if>
+        <if test="data.productOrPartName != null and data.productOrPartName != '' ">
+            AND tt.product_or_part_name like concat('%',#{data.productOrPartName}, '%')
+        </if>
+        <if test="data.model != null and data.model != '' ">
+            AND tt.model like concat('%',#{data.model}, '%')
+        </if>
+        <if test="data.relatedName != null and data.relatedName != '' ">
+            AND tt.related_name like concat('%',#{data.relatedName}, '%')
+        </if>
+        <if test="data.status != null">
+            <if test="data.status == 30">
+                AND (tt.status is null or tt.status = 30)
+                AND tt.main_status != 50
+            </if>
+            <if test="data.status != 30">
+                AND (tt.status = #{data.status} or tt.main_status = #{data.status})
+            </if>
+        </if>
+
+        <if test="data.beginDate != null ">
+            AND tt.overdue_date >= #{data.beginDate}
+        </if>
+
+        <if test="data.endDate != null ">
+            AND tt.overdue_date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.operatorUserCode != null ">
+            AND tt.operator_user_code = #{data.operatorUserCode}
+        </if>
+        <if test="data.passRate != null ">
+            AND tt.passed_rate >= #{data.passRate}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("tt.product_or_part",data.searchName)}
+
+        order by tt.create_time desc
+
+
+    </select>
+
+
+    <select id="queryMainTotalList" resultMap="queryTotalList">
+        with t as (select into_main_id, a.should_inspect_num
+                   from ${inspectIntoDispatcherTable} a
+                   GROUP BY a.into_main_id, a.should_inspect_num)
+        select b.procedure_name,
+               b.product_or_part,
+               b.product_or_part_name,
+               b.model,
+               b.pcs_name,
+               b.related_name,
+               b.related_code,
+               b.related_type,
+               b.operator_user_code,
+               d.staff_sign  as operator_user_name,
+               a.inspect_type,
+               a.inspect_ratio,
+               a.create_time,
+               t.should_inspect_num,
+               a.inspect_num,
+               a.passed_num,
+               a.un_passed_num,
+               a.un_passed_deal,
+               a.un_passed_remark,
+               a.remark,
+               a.inspect_user,
+               c.staff_sign  as inspect_user_name,
+               a.primary_key,
+               ROUND((a.passed_num / a.inspect_num) * 100, 2) as pass_rate,
+               a.check_items,
+               b.primary_key as primaryKeyValue,
+               a.primary_key as reportPrimaryKeyValue,
+               a.files
+        from ${inspectIntoReportTable} a
+                 inner join t on t.into_main_id = a.into_main_id
+                 inner join ${inspectIntoTable} b on a.into_main_id = b.primary_key
+                 inner join ${staffTable} c on a.inspect_user = c.primary_key
+                 inner join ${staffTable} d on b.operator_user_code = d.primary_key
+        where a.into_main_id = #{mainId}
+          and a.enterprise_code = #{enterpriseCode}
+          and a.delete_flag = false
+        order by a.create_time desc
+    </select>
+
+    <select id="queryStaffTotalList" resultMap="queryTotalList">
+        with t as (select into_main_id, sum(a.allocation_num) as should_inspect_num
+                   from ${inspectIntoDispatcherTable} a
+                   where a.into_main_id = #{mainId}
+                     and a.enterprise_code = #{enterpriseCode}
+                     and a.inspect_user_code = #{inspectUserCode}
+                     and a.batch_no = #{batchNo}
+                   GROUP BY into_main_id)
+        select b.procedure_name,
+               b.product_or_part,
+               b.product_or_part_name,
+               b.model,
+               b.pcs_name,
+               b.related_name,
+               b.related_code,
+               b.related_type,
+               b.operator_user_code,
+               d.staff_sign  as operator_user_name,
+               a.inspect_type,
+               a.inspect_ratio,
+               a.create_time,
+               a.id,
+               t.should_inspect_num,
+               a.inspect_num,
+               a.passed_num,
+               a.un_passed_num,
+               a.un_passed_deal,
+               a.un_passed_remark,
+               a.remark,
+               a.inspect_user,
+               c.staff_sign  as inspect_user_name,
+               a.primary_key,
+               ROUND((a.passed_num / a.inspect_num) * 100, 2) as pass_rate,
+               a.check_items,
+               b.primary_key as primaryKeyValue,
+               a.primary_key as reportPrimaryKeyValue,
+               a.files
+        from ${inspectIntoReportTable} a
+                 inner join ${inspectIntoTable} b on a.into_main_id = b.primary_key
+                 inner join ${staffTable} c on a.inspect_user = c.primary_key
+                 inner join ${staffTable} d on b.operator_user_code = d.primary_key
+                 inner join t on t.into_main_id = b.primary_key
+        where a.into_main_id = #{mainId}
+          and a.enterprise_code = #{enterpriseCode}
+          and a.delete_flag = false
+          and a.inspect_user = #{inspectUserCode}
+          and a.batch_no = #{batchNo}
+        ORDER BY a.create_time desc
+
+    </select>
+
+    <select id="getDetailPage">
+        with t as (select into_main_id, a.should_inspect_num
+        from ${inspectIntoDispatcherTable} a
+        GROUP BY a.into_main_id, a.should_inspect_num)
+        select * from(
+        select b.batch_num,a.primary_key as primaryKeyValue,
+        b.procedure_name,b.buss_number,b.batch,b.product_flag,
+        b.pcs_name,b.related_name,b.related_code,b.related_type,
+        b.product_or_part,b.model,
+        b.product_or_part_name,
+        b.operator_user_code,d.staff_sign as operatorUserName,
+        b.task_num,
+        b.overdue_date,
+        t.should_inspect_num,
+        a.finish_date,
+        a.inspect_type,
+        a.inspect_ratio,
+        a.passed_num,
+        a.inspect_num as inspectNum,
+        a.un_passed_num,
+        a.create_time,
+        a.into_main_id as mainId,
+        a.batch_no,
+        a.inspect_user,c.staff_sign as inspectUserName,
+        a.enterprise_code,
+        a.remark,
+        ROUND((a.passed_num/a.inspect_num) * 100,2) as pass_rate
+        from ${inspectIntoReportTable} a
+        inner join t on t.into_main_id = a.into_main_id
+        LEFT JOIN ${inspectIntoTable} b on a.into_main_id = b.primary_key
+        LEFT JOIN ${staffTable} c on a.inspect_user = c.primary_key
+        LEFT JOIN ${staffTable} d on b.operator_user_code = d.primary_key
+        where a.delete_flag = false
+        )tt
+        where tt.enterprise_code = #{enterpriseCode}
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            AND (tt.buss_number like concat('%', #{data.bussNumber}, '%')
+            or tt.batch like concat('%',#{data.bussNumber}, '%')
+            )
+        </if>
+        <if test="data.productOrPartName != null and data.productOrPartName != '' ">
+            AND tt.product_or_part_name like concat('%',#{data.productOrPartName}, '%')
+        </if>
+        <if test="data.model != null and data.model != '' ">
+            AND tt.model like concat('%',#{data.model}, '%')
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("tt.product_or_part","xihang",data.partUnityNo)}
+        </if>
+
+        <if test="data.relatedName != null and data.relatedName != '' ">
+            AND tt.related_name like concat('%',#{data.relatedName}, '%')
+        </if>
+
+        <if test="data.beginDate != null ">
+            AND tt.create_time >= #{data.beginDate}
+        </if>
+
+        <if test="data.endDate != null ">
+            AND tt.create_time &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.operatorUserCode != null ">
+            AND tt.operator_user_code = #{data.operatorUserCode}
+        </if>
+
+        <if test="data.inspectUserCode != null and data.inspectUserCode.size() > 0">
+            AND tt.inspect_user IN
+            <foreach collection="data.inspectUserCode" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="data.passRate != null ">
+            AND tt.pass_rate >= #{data.passRate}
+        </if>
+        <if test="data.inspectType != null ">
+            AND tt.inspect_type = #{data.inspectType}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("tt.product_or_part",data.searchName)}
+
+        <if test="data.codes !=null and data.codes.size() > 0">
+            AND primaryKeyValue IN
+            <foreach collection="data.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        order by
+        MAX(tt.create_time) OVER (PARTITION BY tt.mainId) DESC,
+        tt.mainId,
+        tt.create_time desc
+
+        <if test="data.pageSize != null and data.offset != null
+              and data.pageSize > 0 and data.offset >=0">
+            LIMIT #{data.pageSize} OFFSET #{data.offset}
+        </if>
+
+    </select>
+
+    <select id="getStaffDetailPage">
+        with t as (
+        select into_main_id, sum(a.allocation_num) as should_inspect_num
+        from ${inspectIntoDispatcherTable} a
+        where a.enterprise_code = #{enterpriseCode}
+        and a.inspect_user_code = #{data.inspectUserCode[0]}
+        GROUP BY into_main_id
+        )
+        select * from(
+        select b.batch_num,a.primary_key as primaryKeyValue,
+        b.procedure_name,b.buss_number,b.batch,b.product_flag,
+        b.pcs_name,b.related_name,b.related_code,b.related_type,
+        b.product_or_part,
+        b.product_or_part_name,b.model,
+        b.operator_user_code,d.staff_sign as operatorUserName,
+        b.task_num,
+        b.overdue_date,
+        t.should_inspect_num,
+        a.finish_date,
+        a.inspect_type,
+        a.inspect_ratio,
+        a.passed_num,
+        a.inspect_num,
+        a.un_passed_num,
+        a.create_time,
+        a.into_main_id as mainId,
+        a.batch_no,
+        a.inspect_user,c.staff_sign as inspectUserName,
+        a.enterprise_code,
+        a.remark,
+        ROUND((a.passed_num/a.inspect_num) * 100,2) as pass_rate
+        from ${inspectIntoReportTable} a
+        inner join t on t.into_main_id = a.into_main_id
+        LEFT JOIN ${inspectIntoTable} b on a.into_main_id = b.primary_key
+        LEFT JOIN ${staffTable} c on a.inspect_user = c.primary_key
+        LEFT JOIN ${staffTable} d on b.operator_user_code = d.primary_key
+        where a.delete_flag = false
+        and b.delete_flag = false
+        )tt
+        where tt.enterprise_code = #{enterpriseCode}
+        and tt.inspect_user = #{data.inspectUserCode[0]}
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            AND (
+            tt.buss_number like concat('%', #{data.bussNumber}, '%')
+            or tt.batch like concat('%',#{data.bussNumber}, '%')
+            )
+        </if>
+        <if test="data.productOrPartName != null and data.productOrPartName != '' ">
+            AND tt.product_or_part_name like concat('%',#{data.productOrPartName}, '%')
+        </if>
+        <if test="data.model != null and data.model != '' ">
+            AND tt.model like concat('%',#{data.model}, '%')
+        </if>
+        <if test="data.relatedName != null and data.relatedName != '' ">
+            AND tt.related_name like concat('%',#{data.relatedName}, '%')
+        </if>
+
+        <if test="data.beginDate != null ">
+            AND tt.create_time >= #{data.beginDate}
+        </if>
+
+        <if test="data.endDate != null ">
+            AND tt.create_time &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.operatorUserCode != null ">
+            AND tt.operator_user_code = #{data.operatorUserCode}
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("tt.product_or_part","xihang",data.partUnityNo)}
+        </if>
+
+        <if test="data.passRate != null ">
+            AND tt.pass_rate >= #{data.passRate}
+        </if>
+        <if test="data.inspectType != null ">
+            AND tt.inspect_type = #{data.inspectType}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("tt.product_or_part",data.searchName)}
+
+        <if test="data.codes !=null and data.codes.size() > 0">
+            AND primaryKeyValue IN
+            <foreach collection="data.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        order by
+        MAX(tt.create_time) OVER (PARTITION BY tt.mainId) DESC,
+        tt.mainId,
+        tt.create_time desc
+        <if test="data.limitNum != null and data.limitNum > 0">
+            limit #{data.limitNum}
+        </if>
+    </select>
+
+    <update id="update">
+        update ${tableName}
+        set status = #{data.status}
+        <if test="data.remark != null and data.remark != ''">
+            , remark = #{data.remark}
+        </if>
+        where primary_key = #{data.mainId}
+    </update>
+
+    <select id="getInspectIntoByPrimaryKey">
+        select *
+        from ${tableName}
+        where primary_key = #{mainId}
+          and delete_flag = false
+    </select>
+
+    <select id="getGiveInspectDetail">
+        select a.batch_num,
+               b.create_time as inspect_date,
+               b.creator,
+               d.staff_sign  as creator_name,
+               a.task_num,
+               c.task_num    as order_num,
+               a.pcs_name,
+               b.remark
+        from ${inspectTableName} a
+                 inner join ${produceSubReportTableName} b on a.report_batch_no = b.primary_key
+                 inner join ${produceMainTableName} c on b.main_id = c.primary_key
+                 left join ${staffTable} d on b.creator = d.primary_key
+        where a.report_batch_no = #{reportBatchNo}
+          and a.delete_flag = false
+    </select>
+
+    <select id="getDetailByMainId">
+        select *
+        from ${tableName}
+        where primary_key = #{mainId}
+          and delete_flag = false
+    </select>
+
+    <select id="getListByPrimaryKeys">
+        select *
+        from ${tableName}
+        where delete_flag = false
+        and primary_key in
+        <foreach collection="primaryKeys" item="primaryKey" open="(" separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </select>
+</mapper>

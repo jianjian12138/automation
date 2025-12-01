@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.quotation.NewPurchaseQuotationDao">
+
+    <insert id="addVisibleData">
+        INSERT INTO ${tableName} (primary_key, type, quotation_name, quotation_number,
+                                  buyer, seller,seller_name, vender_data_code, enterprise_code,
+                                  user_code, user_name, language, payment_strategy, column_titles,
+                                  amount_title, product_detail, clauses_chs, clauses_en,
+                                  quotation_time, state, data_version,
+                                  sell_quotation, sign_areas,son_enterprise_code, delete_flag,business_belong)
+        VALUES (#{model.quotationCode}, #{model.type}, #{model.quotationName}, #{model.quotationNumber},
+                #{model.buyer}, #{model.seller}, #{model.sellerName}, #{model.venderDataCode},
+                #{model.ownedEnterpriseCode}, #{model.userCode}, #{model.userName}, #{model.language},
+                #{model.paymentStrategy}, #{model.columnTitles}, #{model.amountTitle},
+                #{model.productDetail},
+                #{model.clausesChs}, #{model.clausesEn}, #{model.quotationTime}, #{model.state}, #{model.dataVersion},
+                #{model.sellQuotation}, #{model.signAreas}, #{model.sonEnterpriseCode},'f',#{model.businessBelong})
+    </insert>
+
+    <select id="page" resultType="com.futurecraftsmen.pms.pas.service.po.quotation.NewPurchaseQuotationModel">
+        SELECT  primary_key as quotationCode ,type , quotation_name, quotation_number,
+        buyer, seller, seller_name,vender_data_code, enterprise_code as ownedEnterpriseCode,
+        user_code as userCode, user_name, language, payment_strategy, column_titles,
+        amount_title, product_detail,clauses_chs,clauses_en,quotation_time, state,
+        data_version,
+        sell_quotation,son_enterprise_code,delete_flag,business_belong
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="userCodes != null and userCodes.size()!=0">
+            AND user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="quotationNumber != null and quotationNumber !=''">
+            AND quotation_number LIKE '%'|| #{quotationNumber} ||'%'
+        </if>
+        <if test="sellerName != null and sellerName !=''">
+            AND seller_name  LIKE '%'|| #{sellerName} ||'%'
+        </if>
+        <if test="state != null ">
+            AND state = #{state}
+        </if>
+        <if test="quotationTimePreDate != null">
+            AND quotation_time &gt;= #{quotationTimePreDate}
+        </if>
+        <if test="quotationTimePostDate != null">
+            AND quotation_time &lt;= #{quotationTimePostDate}
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+
+    <select id="purchaseQuotationDetail" resultType="com.futurecraftsmen.pms.pas.service.po.quotation.NewPurchaseQuotationModel">
+        SELECT  primary_key as quotationCode ,type , quotation_name, quotation_number,
+        buyer, seller,seller_name, vender_data_code, enterprise_code as ownedEnterpriseCode,
+        user_code as userCode, user_name, language, payment_strategy, column_titles,
+        amount_title, product_detail,clauses_chs,clauses_en,quotation_time, state,
+        data_version,
+        sell_quotation,sign_areas,son_enterprise_code,delete_flag,business_belong
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key = #{quotationCode}
+        <if test="visibleAll == false">
+            AND delete_flag= 'f'
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+    <select id="purchaseQuotationInnerDetail" resultType="com.futurecraftsmen.pms.pas.service.po.quotation.NewPurchaseQuotationModel">
+        SELECT  primary_key as quotationCode ,type , quotation_name, quotation_number,
+        buyer, seller,seller_name, vender_data_code, enterprise_code as ownedEnterpriseCode,
+        user_code as userCode, user_name, language, payment_strategy, column_titles,
+        amount_title, product_detail,clauses_chs,clauses_en,quotation_time, state,
+        data_version,
+        sell_quotation,sign_areas,son_enterprise_code,delete_flag,business_belong
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key = #{quotationCode}
+        <if test="visibleAll == false">
+            AND delete_flag= 'f'
+        </if>
+    </select>
+
+    <update id="updateAfterDistribute">
+        UPDATE ${tableName}
+        SET buyer        = #{model.buyer},
+            user_code    = #{model.userCode},
+            user_name    = #{model.userName},
+            data_version = #{model.dataVersion},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.quotationCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+
+
+    <delete id="deleteWhileReturnQuotation">
+        DELETE FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{quotationCode}
+          AND data_version = #{clientDataVersion}
+    </delete>
+
+
+    <update id="updateState">
+        UPDATE ${tableName}
+        SET state = #{model.state},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.quotationCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+    <update id="compareDataVersionAndUpdate">
+        UPDATE ${tableName}
+        SET quotation_name   = #{model.quotationName},
+            buyer            = #{model.buyer},
+            seller           = #{model.seller},
+            seller_name      = #{model.sellerName},
+            language         = #{model.language},
+            payment_strategy = #{model.paymentStrategy},
+            column_titles    = #{model.columnTitles},
+            amount_title     = #{model.amountTitle},
+            clauses_chs       = #{model.clausesChs},
+            clauses_en        = #{model.clausesEn},
+            product_detail   = #{model.productDetail},
+            state            = #{model.state},
+            quotation_time   = #{model.quotationTime},
+            sign_areas       = #{model.signAreas},
+            data_version     = #{model.dataVersion},
+            son_enterprise_code = #{model.sonEnterpriseCode},
+            delete_flag      = 'f'
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.quotationCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+    <update id="updateProductDetail">
+        UPDATE ${tableName}
+        SET product_detail = #{model.productDetail},
+            delete_flag    = 'f'
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.quotationCode}
+    </update>
+
+</mapper>

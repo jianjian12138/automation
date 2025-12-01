@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.system.service.dao.AppVersionDao">
+    <select id="getLatestVersion"
+            resultType="com.futurecraftsmen.pms.system.service.po.AppVersionModel">
+        SELECT id,
+        download_path,
+        icon_url,
+        md5,
+        app_name,
+        android_package_name,
+        version_num,
+        adapt_phone_system,
+        online,
+        use_able,
+        version_description,
+        update_time
+        FROM system_base.t_app_version_msg t
+        WHERE t.online = true
+        AND t.use_able = true
+        AND t.adapt_phone_system = #{adaptPhoneSystem}
+        <if test="versionNum != null and versionNum != ''">
+            AND t.version_num > #{versionNum}
+        </if>
+        ORDER BY version_num DESC
+        LIMIT 1
+    </select>
+
+    <select id="getLatestInfo"
+            resultType="com.futurecraftsmen.pms.system.service.po.AppVersionModel">
+        SELECT id,
+               download_path,
+               icon_url,
+               md5,
+               app_name,
+               android_package_name,
+               version_num,
+               adapt_phone_system,
+               online,
+               use_able,
+               version_description,
+               update_time
+        FROM system_base.t_app_version_msg t
+        WHERE t.online = true
+          AND t.use_able = true
+          AND t.adapt_phone_system = #{adaptPhoneSystem}
+        ORDER BY version_num DESC
+        LIMIT 1
+    </select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.SyncInventoryFailedRecordDao">
+    <resultMap id="recordModel" type="com.futurecraftsmen.pms.ow.service.model.SyncInventoryFailedRecordModel">
+        <result property="recordCode" column="record_code"/>
+        <result property="failedInfoList" column="failed_info_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <insert id="reportRecord">
+        insert into ow_base.t_basic_sync_inventory_failed_record (record_code, failed_info_list)
+        values (#{record.recordCode}, #{record.failedInfoList})
+    </insert>
+</mapper>

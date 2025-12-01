@@ -1,0 +1,40 @@
+# Mobile测试示例 - 登录流程
+# Maestro声明式测试
+
+appId: com.example.app
+---
+# 1. 启动应用
+- launchApp
+
+# 2. 验证欢迎页面
+- assertVisible: "欢迎使用"
+
+# 3. 点击登录按钮
+- tapOn: "登录"
+
+# 4. 等待登录页面加载
+- assertVisible: 
+    id: "login_container"
+
+# 5. 输入用户名
+- tapOn: 
+    id: "username_input"
+- inputText: "test_user"
+
+# 6. 输入密码
+- tapOn: 
+    id: "password_input"
+- inputText: "test_password"
+
+# 7. 点击提交
+- tapOn: "提交"
+
+# 8. 验证登录成功
+- assertVisible: "首页"
+
+# 9. 截图保存
+- takeScreenshot: reports/screenshots/mobile_login_success.png
+
+# 10. 验证用户信息
+- assertVisible: "test_user"
+

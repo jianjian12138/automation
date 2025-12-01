@@ -78,93 +78,27 @@ pipeline {
             steps {
                 echo "🔍 检出代码..."
                 
+                // 使用git步骤直接从GitHub检出代码
+                try {
+                    git branch: 'master', url: 'https://github.com/jianjian12138/automation.git'
+                } catch (Exception e) {
+                    echo "❌ 从GitHub检出代码失败，尝试使用本地路径..."
+                    // 如果GitHub检出失败，使用本地路径作为fallback
+                    sh '''
+                        if [ -d "/var/jenkins_home/workspace/JJ_TEST" ]; then
+                            echo "✅ 从Jenkins工作目录复制文件..."
+                            cp -r /var/jenkins_home/workspace/JJ_TEST/* .
+                        elif [ -d "f:/JJ_test/automation-test-platform" ]; then
+                            echo "✅ 从本地路径复制文件..."
+                            cp -r f:/JJ_test/automation-test-platform/* .
+                        else
+                            echo "❌ 无法找到项目文件，构建失败！"
+                            exit 1
+                        fi
+                    '''
+                }
+                
                 script {
-                    def checkoutSuccess = false
-                    
-                    // 1. 检查当前目录是否已有代码
-                    if (fileExists('main.py')) {
-                        checkoutSuccess = true
-                        echo "✅ 当前目录已有代码，跳过Git克隆"
-                    } else {
-                        // 2. 尝试使用git clone（使用重试机制）
-                        for (int i = 1; i <= 3; i++) {
-                            try {
-                                echo "📌 第 ${i}/3 次尝试从GitHub检出代码..."
-                                // 使用无凭证克隆，避免认证失败
-                                git branch: 'master', url: 'https://github.com/jianjian12138/automation.git', credentialsId: ''
-                                checkoutSuccess = true
-                                echo "✅ 从GitHub检出代码成功！"
-                                break
-                            } catch (Exception e) {
-                                echo "❌ 第 ${i}/3 次从GitHub检出代码失败: ${e.getMessage()}"
-                                if (i < 3) {
-                                    echo "⏳ 等待10秒后重试..."
-                                    sleep(time: 10, unit: 'SECONDS')
-                                }
-                            }
-                        }
-                    }
-                    
-                    // 2. 如果git clone失败，尝试使用本地备份（仅保留Linux兼容路径）
-                    if (!checkoutSuccess) {
-                        echo "⚠️  所有git尝试失败，尝试使用本地备份..."
-                        
-                        def backupPaths = [
-                            "/var/jenkins_home/backups/automation",  // Docker内的备份目录
-                            "/var/jenkins_home/workspace/automation",  // 可能的工作目录
-                            "../automation",  // 相对路径备份
-                            "/automation",  // Docker挂载目录
-                            "/app",  // 常见的Docker应用目录
-                            "/home/jenkins/automation"  // Jenkins用户目录
-                        ]
-                        
-                        def backupFound = false
-                        for (def backupPath : backupPaths) {
-                            if (fileExists(backupPath) && fileExists("${backupPath}/main.py")) {
-                                echo "✅ 找到本地备份: ${backupPath}"
-                                sh "cp -r ${backupPath}/* ."
-                                backupFound = true
-                                break
-                            }
-                        }
-                        
-                        // 3. 如果本地备份也失败，尝试从当前目录的.git目录恢复
-                        if (!backupFound && fileExists('.git')) {
-                            echo "⚠️  尝试从.git目录恢复代码..."
-                            sh '''
-                                git reset --hard HEAD
-                                git checkout master
-                                git pull origin master
-                            '''
-                            if (fileExists('main.py')) {
-                                backupFound = true
-                                echo "✅ 从.git目录恢复代码成功"
-                            }
-                        }
-                        
-                        // 4. 如果所有尝试都失败，初始化基本目录结构
-                        if (!backupFound) {
-                            echo "⚠️  所有恢复尝试失败，初始化基本目录结构..."
-                            
-                            // 创建必要的目录结构
-                            sh '''
-                                mkdir -p cases/api/decimal_place
-                                mkdir -p reports/api
-                                mkdir -p reports/web
-                                mkdir -p reports/mobile
-                                mkdir -p logs
-                                
-                                echo "✅ 基本目录结构创建完成"
-                            '''
-                            
-                            // 检查是否有必要的文件
-                            if (!fileExists('main.py')) {
-                                echo "❌ 缺少核心文件main.py，构建将跳过测试阶段"
-                            }
-                        }
-                    }
-                    
-                    // 4. 验证工作目录
                     sh '''
                         echo "========================================"
                         echo "工作目录: ${WORKSPACE}"
@@ -175,38 +109,80 @@ pipeline {
                         echo "当前目录: $(pwd)"
                         echo "========================================"
                         
-                        # 列出工作目录内容
+                        # 列出工作目录内容，确认代码已检出
                         echo "\n=== 工作目录内容 ==="
                         ls -la
                         
-                        # 检查核心文件
-                        echo "\n=== 检查核心文件 ==="
-                        if [ -f "main.py" ]; then
-                            echo "✅ main.py 存在"
-                        else
-                            echo "❌ main.py 不存在"
-                        fi
-                        
-                        # 检查cases目录
                         echo "\n=== 检查cases目录 ==="
                         if [ -d "cases" ]; then
                             echo "✅ cases目录存在"
                             ls -la cases/
                             
+                            echo "\n=== 检查API测试用例目录 ==="
                             if [ -d "cases/api" ]; then
-                                echo "\n✅ cases/api目录存在"
+                                echo "✅ cases/api目录存在"
                                 ls -la cases/api/
                                 
-                                # 统计测试用例数量
-                                api_test_count=$(find cases/api -name "*.yaml" -type f | wc -l 2>/dev/null || echo 0)
-                                echo "\n📊 找到 ${api_test_count} 个API测试用例"
+                                echo "\n=== 检查decimal_place目录 ==="
+                                if [ -d "cases/api/decimal_place" ]; then
+                                    echo "✅ cases/api/decimal_place目录存在"
+                                    ls -la cases/api/decimal_place/
+                                    
+                                    echo "\n=== 检查add.yaml文件 ==="
+                                    if [ -f "cases/api/decimal_place/add.yaml" ]; then
+                                        echo "✅ add.yaml文件存在"
+                                        echo "文件内容预览："
+                                        head -10 cases/api/decimal_place/add.yaml
+                                    else
+                                        echo "❌ add.yaml文件不存在"
+                                        echo "当前目录：$(pwd)"
+                                        echo "寻找所有yaml文件："
+                                        find . -name "*.yaml" -type f | grep -i decimal
+                                    fi
+                                else
+                                    echo "❌ cases/api/decimal_place目录不存在"
+                                    echo "cases/api目录内容："
+                                    ls -la cases/api/
+                                fi
                             else
-                                echo "\n❌ cases/api目录不存在，创建空目录..."
-                                mkdir -p cases/api
+                                echo "❌ cases/api目录不存在"
+                                echo "cases目录内容："
+                                ls -la cases/
                             fi
                         else
-                            echo "\n❌ cases目录不存在，创建空目录..."
-                            mkdir -p cases/api/decimal_place
+                            echo "❌ cases目录不存在，尝试从本地路径复制..."
+                            
+                            # 尝试从多个本地路径复制cases目录
+                            POSSIBLE_LOCAL_PATHS=( 
+                                "/var/jenkins_home/workspace/JJ_TEST/cases" 
+                                "/var/jenkins_home/workspace/cases" 
+                                "/var/jenkins_home/cases" 
+                                "f:/JJ_test/automation-test-platform/cases" 
+                                "/f/JJ_test/automation-test-platform/cases" 
+                                "../cases" 
+                                "../../cases" 
+                            )
+                            
+                            CASES_COPIED=false
+                            for SOURCE_PATH in "${POSSIBLE_LOCAL_PATHS[@]}"; do
+                                if [ -d "$SOURCE_PATH" ]; then
+                                    echo "✅ 从本地路径复制cases目录：$SOURCE_PATH"
+                                    cp -r "$SOURCE_PATH" .
+                                    CASES_COPIED=true
+                                    break
+                                fi
+                            done
+                            
+                            if [ "$CASES_COPIED" = false ]; then
+                                echo "❌ 无法从任何本地路径找到cases目录"
+                                echo "当前目录所有文件："
+                                find . -type f | head -20
+                                echo "\n=== 检查当前目录结构 ==="
+                                ls -la
+                            else
+                                echo "✅ cases目录复制成功"
+                                ls -la cases/
+                            fi
                         fi
                     '''
                 }
@@ -219,114 +195,154 @@ pipeline {
                 script {
                     echo "⚙️  准备测试环境..."
                     
-                    // 1. 安装系统依赖（适用于Docker Debian/Ubuntu环境）
+                    // 安装Java和Maven（用于构建Java项目）
                     sh '''
-                        echo "📦 安装系统依赖..."
-                        
-                        # 检查是否为root用户
-                        if [ "$(id -u)" -eq 0 ]; then
-                            # 仅在root权限下安装依赖
-                            if [ -f /etc/debian_version ]; then
-                                # Debian/Ubuntu系统
-                                apt-get update -y && apt-get install -y --no-install-recommends \
-                                    openjdk-21-jdk \
-                                    maven \
-                                    python3 \
-                                    python3-venv \
-                                    python3-pip \
-                                    python3-dev \
-                                    git \
-                                    curl \
-                                    wget \
-                                    && rm -rf /var/lib/apt/lists/*
-                            elif [ -f /etc/redhat-release ]; then
-                                # CentOS/RHEL系统
-                                yum update -y && yum install -y \
-                                    java-21-openjdk \
-                                    maven \
-                                    python3 \
-                                    python3-venv \
-                                    python3-pip \
-                                    python3-devel \
-                                    git \
-                                    curl \
-                                    wget
-                            fi
-                        else
-                            echo "⚠️  非root用户，跳过系统依赖安装"
+                        echo "安装Java和Maven..."
+                        if [ -f /etc/debian_version ]; then
+                            # Debian/Ubuntu系统
+                            apt-get update -y
+                            apt-get install -y openjdk-21-jdk maven
+                        elif [ -f /etc/redhat-release ]; then
+                            # CentOS/RHEL系统
+                            yum update -y
+                            yum install -y java-21-openjdk maven
                         fi
                         
-                        # 验证关键工具
-                        echo "\n=== 验证工具安装 ==="
-                        java -version 2>/dev/null || echo "⚠️  Java未安装"
-                        mvn -version 2>/dev/null || echo "⚠️  Maven未安装"
-                        python3 --version 2>/dev/null || echo "⚠️  Python3未安装"
-                        pip3 --version 2>/dev/null || echo "⚠️  pip3未安装"
+                        # 验证Java和Maven安装
+                        java -version
+                        mvn -version
                     '''
                     
-                    // 2. 配置Python环境
+                    // 创建虚拟环境和安装依赖
                     sh '''
-                        echo "🐍 配置Python环境..."
+                        # 创建依赖缓存目录
+                        mkdir -p ${PIP_CACHE_DIR}
                         
-                        # 设置Python命令
-                        PYTHON_CMD="python3"
-                        PIP_CMD="pip3"
+                        # 检查Python是否安装，如果没有则安装
+                        echo "检查Python是否安装..."
+                        
+                        # 重置PYTHON_CMD变量
+                        PYTHON_CMD=""
+                        
+                        # 检查python3是否存在
+                        if which python3 > /dev/null 2>&1; then
+                            PYTHON_CMD="python3"
+                            echo "找到python3"
+                        # 检查python是否存在
+                        elif which python > /dev/null 2>&1; then
+                            PYTHON_CMD="python"
+                            echo "找到python"
+                        # 检查python3.9是否存在
+                        elif which python3.9 > /dev/null 2>&1; then
+                            PYTHON_CMD="python3.9"
+                            echo "找到python3.9"
+                        fi
+                        
+                        # 如果没有找到Python，执行安装
+                        if [ -z "$PYTHON_CMD" ]; then
+                            echo "未找到Python，开始安装系统默认的Python版本..."
+                            
+                            # 检测Linux发行版并安装Python
+                            if [ -f /etc/debian_version ]; then
+                                # Debian/Ubuntu系统
+                                echo "检测到Debian/Ubuntu系统，使用apt-get安装Python3..."
+                                echo "正在执行: apt-get update -y"
+                                apt-get update -y
+                                echo "正在执行: apt-get install -y python3 python3-venv python3-pip python3-dev"
+                                apt-get install -y python3 python3-venv python3-pip python3-dev
+                                
+                                # 验证安装是否成功
+                                if which python3 > /dev/null 2>&1; then
+                                    PYTHON_CMD="python3"
+                                    echo "✅ Python3安装成功"
+                                else
+                                    echo "❌ Python3安装失败，尝试安装python"
+                                    apt-get install -y python python-venv python-pip python-dev
+                                    if which python > /dev/null 2>&1; then
+                                        PYTHON_CMD="python"
+                                        echo "✅ Python安装成功"
+                                    else
+                                        echo "❌ Python安装失败"
+                                        exit 1
+                                    fi
+                                fi
+                            elif [ -f /etc/redhat-release ]; then
+                                # CentOS/RHEL系统
+                                echo "检测到CentOS/RHEL系统，使用yum安装Python3..."
+                                echo "正在执行: yum update -y"
+                                yum update -y
+                                echo "正在执行: yum install -y python3 python3-venv python3-pip python3-devel"
+                                yum install -y python3 python3-venv python3-pip python3-devel
+                                
+                                # 验证安装是否成功
+                                if which python3 > /dev/null 2>&1; then
+                                    PYTHON_CMD="python3"
+                                    echo "✅ Python3安装成功"
+                                else
+                                    echo "❌ Python3安装失败，尝试安装python"
+                                    yum install -y python python-venv python-pip python-devel
+                                    if which python > /dev/null 2>&1; then
+                                        PYTHON_CMD="python"
+                                        echo "✅ Python安装成功"
+                                    else
+                                        echo "❌ Python安装失败"
+                                        exit 1
+                                    fi
+                                fi
+                            else
+                                echo "❌ 错误：无法识别的Linux发行版，无法自动安装Python"
+                                exit 1
+                            fi
+                        fi
                         
                         echo "使用Python命令：$PYTHON_CMD"
                         $PYTHON_CMD --version
                         
-                        # 创建项目专属虚拟环境（避免依赖冲突）
-                        VENV_DIR="./venv"
-                        echo "创建项目虚拟环境：${VENV_DIR}"
+                        # 使用预配置的虚拟环境，跳过创建步骤
+                        echo "使用预配置的虚拟环境：${VENV_DIR}"
                         
-                        if [ ! -d "${VENV_DIR}" ]; then
-                            echo "创建新的虚拟环境..."
-                            $PYTHON_CMD -m venv ${VENV_DIR}
+                        # 激活虚拟环境（使用预安装的依赖）
+                        echo "激活虚拟环境..."
+                        if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                            # Linux/Mac
+                            . ${VENV_DIR}/bin/activate
+                            echo "✅ 虚拟环境激活成功，使用预安装的依赖"
                         else
-                            echo "使用现有虚拟环境..."
+                            # Windows
+                            call ${VENV_DIR}/Scripts/activate.bat
+                            echo "✅ 虚拟环境激活成功，使用预安装的依赖"
                         fi
-                        
-                        # 激活虚拟环境并安装依赖
-                        echo "激活虚拟环境并安装依赖..."
-                        
-                        # 使用bash -c确保激活命令生效
-                        bash -c "
-                            source ${VENV_DIR}/bin/activate
-                            echo '虚拟环境激活成功'
-                            
-                            # 升级pip
-                            pip install --upgrade pip
-                            
-                            # 安装项目依赖（如果requirements.txt存在）
-                            if [ -f 'requirements.txt' ]; then
-                                echo '安装项目依赖...'
-                                pip install -r requirements.txt
-                            else
-                                echo '⚠️  requirements.txt不存在，跳过依赖安装'
-                            fi
-                            
-                            # 安装Playwright（如果需要）
-                            if [[ '${TEST_TYPE}' == 'all' || '${TEST_TYPE}' == 'web' ]]; then
-                                echo '安装Playwright...'
-                                pip install playwright
-                                playwright install --with-deps
-                            fi
-                        "
                     '''
                     
-                    // 3. 创建报告和日志目录
+                    // 安装Playwright浏览器（如果需要Web测试）
+                    script {
+                        if (params.TEST_TYPE == 'all' || params.TEST_TYPE == 'web') {
+                            echo "使用预安装的Playwright浏览器..."
+                            sh '''
+                                if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                                    # Linux/Mac
+                                    . ${VENV_DIR}/bin/activate
+                                    echo "✅ 使用预安装的Playwright浏览器"
+                                else
+                                    # Windows
+                                    call ${VENV_DIR}/Scripts/activate.bat
+                                    echo "✅ 使用预安装的Playwright浏览器"
+                                fi
+                            '''
+                        }
+                    }
+                    
+                    // 创建报告和日志目录
                     sh '''
-                        echo "📁 创建报告和日志目录..."
+                        echo "创建报告和日志目录..."
                         mkdir -p reports/api
                         mkdir -p reports/web
                         mkdir -p reports/mobile
                         mkdir -p reports/screenshots
                         mkdir -p reports/videos
                         mkdir -p reports/traces
-                        mkdir -p reports/jacoco
+                        mkdir -p reports/jacoco  # Jacoco覆盖率报告目录
                         mkdir -p logs
-                        
-                        echo "✅ 目录创建完成"
                     '''
                 }
             }
@@ -334,9 +350,6 @@ pipeline {
         
         // 阶段3: 构建Java项目并准备Jacoco代理
         stage('Build Java Project & Prepare Jacoco Agent') {
-            when {
-                expression { fileExists('servercode/170server/forest-master/forest-master/pom.xml') }
-            }
             steps {
                 script {
                     echo "🔧 构建Java项目并准备Jacoco代理..."
@@ -344,19 +357,22 @@ pipeline {
                     // 进入Java项目目录并构建
                     sh '''
                         echo "检查Java项目目录..."
-                        cd servercode/170server/forest-master/forest-master
-                        echo "当前目录: $(pwd)"
+                        ls -la servercode/170server/forest-master/forest-master || echo "目录不存在，跳过构建"
                         
-                        # 构建项目，不执行测试
-                        mvn clean compile
-                        
-                        # 准备Jacoco代理参数
-                        JACOCO_AGENT="-javaagent:${HOME}/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=${WORKSPACE}/servercode/170server/forest-master/forest-master/target/jacoco.exec,append=true,includes=**/org/aerie/forest/**/*.class,excludes=**/*Test*,**/test/**/*"
-                        echo "Jacoco代理参数: ${JACOCO_AGENT}"
-                        echo "${JACOCO_AGENT}" > ${WORKSPACE}/jacoco_agent.txt
-                        
-                        # 确保Jacoco执行数据文件目录存在
-                        mkdir -p ${WORKSPACE}/servercode/170server/forest-master/forest-master/target
+                        if [ -d "servercode/170server/forest-master/forest-master" ]; then
+                            cd servercode/170server/forest-master/forest-master
+                            echo "当前目录: $(pwd)"
+                            
+                            # 构建项目，不执行测试
+                            mvn clean compile
+                            
+                            # 准备Jacoco代理参数
+                            JACOCO_AGENT="-javaagent:${HOME}/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=${WORKSPACE}/servercode/170server/forest-master/forest-master/target/jacoco.exec,append=true,includes=**/org/aerie/forest/**/*.class,excludes=**/*Test*,**/test/**/*"
+                            echo "Jacoco代理参数: ${JACOCO_AGENT}"
+                            echo "${JACOCO_AGENT}" > ${WORKSPACE}/jacoco_agent.txt
+                        else
+                            echo "⚠️ Java项目目录不存在，跳过Jacoco配置"
+                        fi
                     '''
                 }
             }
@@ -365,12 +381,9 @@ pipeline {
         // 阶段4: 执行API测试
         stage('API Tests') {
             when {
-                allOf {
-                    anyOf {
-                        expression { params.TEST_TYPE == 'all' }
-                        expression { params.TEST_TYPE == 'api' }
-                    }
-                    expression { fileExists('main.py') }
+                anyOf {
+                    expression { params.TEST_TYPE == 'all' }
+                    expression { params.TEST_TYPE == 'api' }
                 }
             }
             steps {
@@ -379,18 +392,74 @@ pipeline {
                     
                     // 执行API测试
                     sh '''
-                        # 使用项目专属虚拟环境
-                        VENV_DIR="./venv"
+                        if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                            # Linux/Mac
+                            . ${VENV_DIR}/bin/activate
+                        else
+                            # Windows
+                            call ${VENV_DIR}/Scripts/activate.bat
+                        fi
                         
                         # 设置测试环境变量
                         export TEST_ENV=${TEST_ENV}
                         
-                        # 确保cases目录存在
+                        # 关键修复：确保cases目录存在
                         echo "========================================"
                         echo "确保测试用例目录存在..."
                         echo "========================================"
                         
-                        mkdir -p cases/api/decimal_place
+                        # 检查cases目录是否存在
+                        if [ ! -d "cases" ]; then
+                            echo "❌ cases目录不存在，尝试从本地路径复制..."
+                            
+                            # 尝试多个可能的路径
+                            POSSIBLE_PATHS=( 
+                                "/var/jenkins_home/workspace/JJ_TEST/cases" 
+                                "/var/jenkins_home/workspace/cases" 
+                                "/var/jenkins_home/cases" 
+                                "f:/JJ_test/automation-test-platform/cases" 
+                                "/f/JJ_test/automation-test-platform/cases" 
+                                "../cases" 
+                                "../../cases" 
+                            )
+                            
+                            # 跳过GitHub克隆，直接使用本地路径
+                            echo "⚠️  跳过GitHub克隆，直接使用本地路径..."
+                            # 直接检查本地路径，不尝试GitHub克隆
+                            
+                            for SOURCE_PATH in "${POSSIBLE_PATHS[@]}"; do
+                                if [ -d "$SOURCE_PATH" ]; then
+                                    echo "✅ 找到cases目录：$SOURCE_PATH"
+                                    echo "复制cases目录到当前工作目录..."
+                                    cp -r "$SOURCE_PATH" .
+                                    break
+                                fi
+                            done
+                            
+                            # 再次检查cases目录是否存在
+                            if [ ! -d "cases" ]; then
+                                echo "❌ 无法找到cases目录，尝试创建并复制单个测试文件..."
+                                mkdir -p cases/api/decimal_place
+                                
+                                # 尝试复制add.yaml文件
+                                POSSIBLE_FILE_PATHS=( 
+                                    "/var/jenkins_home/workspace/JJ_TEST/cases/api/decimal_place/add.yaml" 
+                                    "/var/jenkins_home/workspace/cases/api/decimal_place/add.yaml" 
+                                    "/var/jenkins_home/cases/api/decimal_place/add.yaml" 
+                                    "f:/JJ_test/automation-test-platform/cases/api/decimal_place/add.yaml" 
+                                    "/f/JJ_test/automation-test-platform/cases/api/decimal_place/add.yaml" 
+                                )
+                                
+                                for SOURCE_FILE in "${POSSIBLE_FILE_PATHS[@]}"; do
+                                    if [ -f "$SOURCE_FILE" ]; then
+                                        echo "✅ 找到add.yaml文件：$SOURCE_FILE"
+                                        echo "复制add.yaml文件到当前工作目录..."
+                                        cp "$SOURCE_FILE" cases/api/decimal_place/
+                                        break
+                                    fi
+                                done
+                            fi
+                        fi
                         
                         # 调试：查看工作目录结构
                         echo "========================================"
@@ -407,56 +476,51 @@ pipeline {
                         find . -name "*.yaml" -type f | head -20
                         echo "========================================"
                         
-                        # 使用bash -c确保虚拟环境激活生效
-                        bash -c "
-                            source ${VENV_DIR}/bin/activate
-                            echo '✅ 虚拟环境激活成功'
+                        # 执行API测试
+                        if [ -z "${TEST_CASES}" ]; then
+                            # 执行所有API测试用例
+                            echo "========================================"
+                            echo "执行所有API测试用例..."
+                            echo "========================================"
                             
-                            # 执行API测试
-                            if [ -z \"${TEST_CASES}\" ]; then
-                                # 执行所有API测试用例
-                                echo \"========================================\"
-                                echo \"执行所有API测试用例...\" 
-                                echo \"========================================\"
-                                
-                                # 查找所有API测试用例
-                                api_test_cases=$(find cases/api -name \"*.yaml\" -type f | sort)
-                                
-                                if [ -z \"$api_test_cases\" ]; then
-                                    echo \"⚠️  未找到API测试用例，跳过API测试\" 
-                                else
-                                    echo \"📊 找到 $(echo \"$api_test_cases\" | wc -l) 个API测试用例\" 
-                                    
-                                    # 执行每个测试用例
-                                    echo \"$api_test_cases\" | while read test_file; do
-                                        if [ -n \"$test_file\" ]; then
-                                            echo \"\n🚀 执行测试: $test_file\" 
-                                            python3 main.py --type api \"$test_file\" || echo \"⚠️  测试用例执行失败: $test_file\" 
-                                        fi
-                                    done
-                                fi
+                            # 查找所有API测试用例
+                            api_test_cases=$(find cases/api -name "*.yaml" -type f | sort)
+                            
+                            if [ -z "$api_test_cases" ]; then
+                                echo "未找到API测试用例"
                             else
-                                # 执行指定的测试用例
-                                echo \"========================================\"
-                                echo \"执行指定API测试用例...\" 
-                                echo \"========================================\"
-                                echo \"指定的测试用例：${TEST_CASES}\" 
+                                echo "找到 $(echo "$api_test_cases" | wc -l) 个API测试用例"
                                 
-                                # 分割测试用例列表
-                                IFS=',' read -ra TEST_CASE_ARRAY <<< \"${TEST_CASES}\"
-                                for test_file in \"${TEST_CASE_ARRAY[@]}\"; do
-                                    test_file=$(echo \"$test_file\" | xargs)  # 去除空格
-                                    if [ -n \"$test_file\" ]; then
-                                        if [ -f \"$test_file\" ]; then
-                                            echo \"\n🚀 执行测试: $test_file\" 
-                                            python3 main.py --type api \"$test_file\" || echo \"⚠️  测试用例执行失败: $test_file\" 
-                                        else
-                                            echo \"\n❌ 测试文件不存在: $test_file\" 
-                                        fi
+                                # 执行每个测试用例
+                                echo "$api_test_cases" | while read test_file; do
+                                    if [ -n "$test_file" ]; then
+                                        echo "\n执行测试: $test_file"
+                                        python main.py --type api "$test_file"
                                     fi
                                 done
                             fi
-                        "
+                        else
+                            # 执行指定的测试用例
+                            echo "========================================"
+                            echo "执行指定API测试用例..."
+                            echo "========================================"
+                            echo "指定的测试用例：${TEST_CASES}"
+                            
+                            # 分割测试用例列表
+                            echo "${TEST_CASES}" | tr ',' '\n' | while read test_file; do
+                                test_file=$(echo "$test_file" | xargs)  # 去除空格
+                                if [ -n "$test_file" ]; then
+                                    if [ -f "$test_file" ]; then
+                                        echo "\n执行测试: $test_file"
+                                        python main.py --type api "$test_file"
+                                    else
+                                        echo "\n❌ 测试文件不存在: $test_file"
+                                        echo "   检查文件是否存在：ls -la "$test_file" 2>&1"
+                                        ls -la "$test_file" 2>&1
+                                    fi
+                                fi
+                            done
+                        fi
                     '''
                 }
             }
@@ -479,24 +543,28 @@ pipeline {
         
         // 阶段5: 生成Jacoco覆盖率报告
         stage('Generate Jacoco Coverage Report') {
-            when {
-                expression { fileExists('servercode/170server/forest-master/forest-master/pom.xml') }
-            }
             steps {
                 script {
                     echo "📊 生成Jacoco覆盖率报告..."
                     
                     // 进入Java项目目录并生成覆盖率报告
                     sh '''
-                        cd servercode/170server/forest-master/forest-master
-                        echo "当前目录: $(pwd)"
+                        echo "检查Java项目目录..."
+                        ls -la servercode/170server/forest-master/forest-master || echo "目录不存在，跳过报告生成"
                         
-                        # 生成Jacoco覆盖率报告
-                        mvn jacoco:report
-                        
-                        # 复制Jacoco报告到统一报告目录
-                        mkdir -p ${WORKSPACE}/reports/jacoco
-                        cp -r */target/jacoco-report/* ${WORKSPACE}/reports/jacoco/ 2>/dev/null || echo "未找到Jacoco报告，跳过复制"
+                        if [ -d "servercode/170server/forest-master/forest-master" ]; then
+                            cd servercode/170server/forest-master/forest-master
+                            echo "当前目录: $(pwd)"
+                            
+                            # 生成Jacoco覆盖率报告
+                            mvn jacoco:report
+                            
+                            # 复制Jacoco报告到统一报告目录
+                            mkdir -p ${WORKSPACE}/reports/jacoco
+                            cp -r */target/jacoco-report/* ${WORKSPACE}/reports/jacoco/ 2>/dev/null || echo "未找到Jacoco报告，跳过复制"
+                        else
+                            echo "⚠️ Java项目目录不存在，跳过Jacoco报告生成"
+                        fi
                     '''
                 }
             }
@@ -521,47 +589,37 @@ pipeline {
             steps {
                 script {
                     echo "🔍 执行代码质量检查..."
-                    
-                    // 使用项目专属虚拟环境
                     sh '''
-                        VENV_DIR="./venv"
+                        if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                                # Linux/Mac
+                                . ${VENV_DIR}/bin/activate
+                            else
+                                # Windows
+                                call ${VENV_DIR}/Scripts/activate.bat
+                            fi
                         
-                        // 使用bash -c确保虚拟环境激活生效
-                        bash -c "
-                            source ${VENV_DIR}/bin/activate
-                            echo '✅ 虚拟环境激活成功'
-                            
-                            echo \"========================================\"
-                            echo \"执行Python语法检查...\" 
-                            
-                            # 只有当core目录存在且有py文件时才执行语法检查
-                            if [ -d \"core\" ] && [ \"$(ls -A core/*.py 2>/dev/null)\" ]; then
-                                python3 -m py_compile core/*.py || echo \"Python语法检查完成（忽略错误）\" 
-                            else
-                                echo \"⚠️  没有Python文件需要检查\" 
-                            fi
-                            
-                            echo \"========================================\"
-                            echo \"检查YAML文件格式...\" 
-                            
-                            if command -v yamllint &> /dev/null && [ -d \"cases\" ]; then
-                                yamllint cases/**/*.yaml || echo \"YAML检查完成（忽略错误）\" 
-                            else
-                                echo \"⚠️  yamllint未安装或cases目录不存在，跳过YAML检查\" 
-                            fi
-                            
-                            echo \"========================================\"
-                            echo \"检查requirements.txt格式...\" 
-                            
-                            if command -v pip-check &> /dev/null && [ -f \"requirements.txt\" ]; then
-                                pip-check || echo \"依赖检查完成（忽略错误）\" 
-                            else
-                                echo \"⚠️  pip-check未安装或requirements.txt不存在，跳过依赖检查\" 
-                            fi
-                            
-                            echo \"========================================\"
-                            echo \"代码质量检查完成\" 
-                        "
+                        echo "========================================"
+                        echo "执行Python语法检查..."
+                        python -m py_compile core/*.py || echo "Python语法检查完成（忽略错误）"
+                        
+                        echo "========================================"
+                        echo "检查YAML文件格式..."
+                        if command -v yamllint &> /dev/null; then
+                            yamllint cases/**/*.yaml || echo "YAML检查完成（忽略错误）"
+                        else
+                            echo "yamllint未安装，跳过YAML检查"
+                        fi
+                        
+                        echo "========================================"
+                        echo "检查requirements.txt格式..."
+                        if command -v pip-check &> /dev/null; then
+                            pip-check || echo "依赖检查完成（忽略错误）"
+                        else
+                            echo "pip-check未安装，跳过依赖检查"
+                        fi
+                        
+                        echo "========================================"
+                        echo "代码质量检查完成"
                     '''
                 }
             }
@@ -570,12 +628,9 @@ pipeline {
         // 阶段7: Web测试
         stage('Web Tests') {
             when {
-                allOf {
-                    anyOf {
-                        expression { params.TEST_TYPE == 'all' }
-                        expression { params.TEST_TYPE == 'web' }
-                    }
-                    expression { fileExists('main.py') }
+                anyOf {
+                    expression { params.TEST_TYPE == 'all' }
+                    expression { params.TEST_TYPE == 'web' }
                 }
             }
             steps {
@@ -584,39 +639,34 @@ pipeline {
                     
                     // 执行Web测试
                     sh '''
-                        # 使用项目专属虚拟环境
-                        VENV_DIR="./venv"
+                        if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                            # Linux/Mac
+                            . ${VENV_DIR}/bin/activate
+                        else
+                            # Windows
+                            call ${VENV_DIR}/Scripts/activate.bat
+                        fi
                         
                         # 设置测试环境变量
                         export TEST_ENV=${TEST_ENV}
                         
-                        # 确保测试目录存在
-                        mkdir -p cases/web
-                        mkdir -p reports/web
-                        
-                        # 使用bash -c确保虚拟环境激活生效
-                        bash -c "
-                            source ${VENV_DIR}/bin/activate
-                            echo '✅ 虚拟环境激活成功'
+                        # 执行Web测试
+                        if [ -d "cases/web" ]; then
+                            echo "========================================"
+                            echo "执行Web测试..."
+                            echo "========================================"
                             
-                            # 执行Web测试
-                            if [ -d \"cases/web\" ] && [ \"$(ls -A cases/web 2>/dev/null)\" ]; then
-                                echo \"========================================\"
-                                echo \"执行Web测试...\" 
-                                echo \"========================================\"
-                                
-                                if [ -z \"${TEST_CASES}\" ]; then
-                                    # 执行所有Web测试用例
-                                    python3 -m pytest cases/web -v --html=reports/web/web_report.html --self-contained-html
-                                else
-                                    # 执行指定的Web测试用例
-                                    echo \"执行指定Web测试用例: ${TEST_CASES}\" 
-                                    python3 -m pytest ${TEST_CASES} -v --html=reports/web/web_report.html --self-contained-html
-                                fi
+                            if [ -z "${TEST_CASES}" ]; then
+                                # 执行所有Web测试用例
+                                pytest cases/web -v --html=reports/web/web_report.html --self-contained-html
                             else
-                                echo \"⚠️  Web测试目录不存在或为空，跳过Web测试\" 
+                                # 执行指定的Web测试用例
+                                echo "执行指定Web测试用例: ${TEST_CASES}"
+                                pytest ${TEST_CASES} -v --html=reports/web/web_report.html --self-contained-html
                             fi
-                        "
+                        else
+                            echo "⚙️  Web测试目录不存在，跳过Web测试"
+                        fi
                     '''
                 }
             }
@@ -648,39 +698,36 @@ pipeline {
                     
                     // 生成测试汇总报告
                     sh '''
-                        # 使用项目专属虚拟环境
-                        VENV_DIR="./venv"
+                        if [ "$(uname)" = "Linux" ] || [ "$(uname)" = "Darwin" ]; then
+                            # Linux/Mac
+                            . ${VENV_DIR}/bin/activate
+                        else
+                            # Windows
+                            call ${VENV_DIR}/Scripts/activate.bat
+                        fi
                         
-                        # 确保报告目录存在
-                        mkdir -p reports
+                        echo "========================================"
+                        echo "生成测试汇总报告..."
+                        echo "========================================"
                         
-                        # 使用bash -c执行报告生成
-                        bash -c "
-                            source ${VENV_DIR}/bin/activate
-                            echo '✅ 虚拟环境激活成功'
-                            
-                            echo \"========================================\"
-                            echo \"生成测试汇总报告...\" 
-                            echo \"========================================\"
-                            
-                            # 统计测试报告数量
-                            html_reports=$(find reports -name \"*.html\" -type f | grep -v summary_report.html | sort)
-                            total_reports=$(echo \"$html_reports\" | wc -l)
-                            
-                            echo \"\n找到 $total_reports 个测试报告\" 
-                            echo \"$html_reports\" | while read report; do
-                                if [ -n \"$report\" ]; then
-                                    echo \"  - $report\" 
-                                fi
-                            done
-                            
-                            # 生成汇总报告文件
-                            cat > reports/summary_report.md << EOF
+                        # 统计测试报告数量
+                        html_reports=$(find reports -name "*.html" -type f | sort)
+                        total_reports=$(echo "$html_reports" | wc -l)
+                        
+                        echo "\n找到 $total_reports 个测试报告"
+                        echo "$html_reports" | while read report; do
+                            if [ -n "$report" ]; then
+                                echo "  - $report"
+                            fi
+                        done
+                        
+                        # 生成汇总报告文件
+                        cat > reports/summary_report.md << EOF
 # AI_TEST 测试汇总报告
 
 ## 构建信息
 - **构建号**: ${env.BUILD_NUMBER}
-- **分支**: ${env.BRANCH_NAME:-master}
+- **分支**: ${env.BRANCH_NAME}
 - **构建URL**: ${env.BUILD_URL}
 - **测试环境**: ${params.TEST_ENV}
 - **测试类型**: ${params.TEST_TYPE}
@@ -691,93 +738,24 @@ pipeline {
 
 ## 测试报告列表
 EOF
-                            
-                            # 添加报告列表到汇总报告
-                            echo \"$html_reports\" | while read report; do
-                                if [ -n \"$report\" ]; then
-                                    report_name=$(basename \"$report\")
-                                    echo \"- [$report_name]($report)\" >> reports/summary_report.md
-                                fi
-                            done
-                            
-                            echo \"\n✅ 汇总报告生成完成: reports/summary_report.md\" 
-                        "
+                        
+                        # 添加报告列表到汇总报告
+                        echo "$html_reports" | while read report; do
+                            if [ -n "$report" ]; then
+                                report_name=$(basename "$report")
+                                echo "- [$report_name]($report)" >> reports/summary_report.md
+                            fi
+                        done
+                        
+                        echo "\n✅ 汇总报告生成完成: reports/summary_report.md"
                     '''
                     
-                    // 生成HTML汇总报告
+                    // 生成HTML汇总报告（如果有需要）
                     echo "📊 生成HTML汇总报告..."
                     sh '''
-                        # 确保报告目录存在
-                        mkdir -p reports
-                        
-                        # 生成HTML汇总报告文件
-                        cat > reports/summary_report.html << EOF
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI_TEST 测试汇总报告</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; }
-        h2 { color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
-        .info ul { list-style-type: none; padding: 0; }
-        .info li { margin: 8px 0; }
-        .report-list { list-style-type: none; padding: 0; }
-        .report-list li { margin: 10px 0; padding: 10px; background: #f0f8ff; border-radius: 5px; }
-        .report-list a { color: #3498db; text-decoration: none; font-weight: bold; }
-        .report-list a:hover { text-decoration: underline; }
-        .footer { text-align: center; margin-top: 20px; color: #7f8c8d; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>AI_TEST 测试汇总报告</h1>
-        
-        <div class="info">
-            <h2>构建信息</h2>
-            <ul>
-                <li><strong>构建号</strong>: ${env.BUILD_NUMBER}</li>
-                <li><strong>分支</strong>: ${env.BRANCH_NAME:-master}</li>
-                <li><strong>构建URL</strong>: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></li>
-                <li><strong>测试环境</strong>: ${params.TEST_ENV}</li>
-                <li><strong>测试类型</strong>: ${params.TEST_TYPE}</li>
-                <li><strong>构建时间</strong>: $(date)</li>
-            </ul>
-        </div>
-        
-        <div class="info">
-            <h2>测试报告列表</h2>
-            <ul class="report-list">
-EOF
-        
-        # 添加报告链接到HTML
-        html_reports=$(find reports -name "*.html" -type f | grep -v summary_report.html | sort)
-        for report in $html_reports; do
-            if [ -n "$report" ]; then
-                report_name=$(basename "$report")
-                echo "                <li><a href=\"$report\">$report_name</a></li>" >> reports/summary_report.html
-            fi
-        done
-        
-        # 完成HTML文件
-        cat >> reports/summary_report.html << EOF
-            </ul>
-        </div>
-        
-        <div class="footer">
-            <p>报告生成时间: $(date)</p>
-        </div>
-    </div>
-</body>
-</html>
-EOF
-            
-        echo "✅ HTML汇总报告生成完成: reports/summary_report.html"
-        '''
+                        # 可以在这里添加生成HTML汇总报告的逻辑
+                        echo "HTML汇总报告生成逻辑待实现"
+                    '''
                 }
             }
             post {

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurecraftsmen.pms.dm.service.dao.UserJobLogDao">
+
+    <!-- Result Map for UserJobLogModel -->
+    <resultMap id="userJobLogModelResultMap" type="com.futurecraftsmen.pms.dm.service.po.base.UserJobLogModel">
+        <result column="primary_key" property="primaryKeyValue"/>
+        <result column="task_job_p" property="taskJobP"/>
+        <result column="run_log" property="runLog"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="staff_code" property="staffCode"/>
+        <result column="data_primary_key" property="dataPrimaryKey"/>
+        <result column="table_code" property="tableCode"/>
+        <result column="field_code" property="fieldCode"/>
+        <result column="message_read" property="messageRead"/>
+    </resultMap>
+
+    <!-- Insert a new user job log -->
+    <insert id="insertUserJobLog">
+        INSERT INTO ${tableName} (task_job_p,
+                                  run_log,
+                                  enterprise_code, primary_key, staff_code, data_primary_key, table_code, field_code,
+                                  message_read)
+        VALUES (#{data.taskJobP},
+                #{data.runLog},
+                #{data.enterpriseCode}, #{data.primaryKeyValue}, #{data.staffCode}, #{data.dataPrimaryKey},
+                #{data.tableCode}, #{data.fieldCode}, 0)
+    </insert>
+
+
+    <update id="messageRead">
+        UPDATE ${tableName}
+        SET message_read = 1
+        WHERE primary_key = #{id}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+
+    <update id="batchMessageRead">
+        UPDATE ${tableName}
+        SET message_read = 1
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key in
+        <foreach collection="ids" index="index" item="o" open="(" close=")" separator=",">
+            ${o}
+        </foreach>
+
+    </update>
+
+
+    <select id="getMessagePage" resultMap="userJobLogModelResultMap">
+        SELECT *
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+
+        <if test="data.messageRead == 0 ">
+            AND (message_read = #{data.messageRead} or message_read is null )
+        </if>
+
+        <if test="data.messageRead == 1 ">
+            AND message_read = #{data.messageRead}
+        </if>
+
+        and staff_code=#{data.userCode}
+
+    </select>
+
+
+    <select id="getUserUnReadCount">
+        SELECT count(*)
+        FROM ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and staff_code = #{userCode}
+          AND (message_read = 0 or message_read is null )
+    </select>
+
+
+</mapper>

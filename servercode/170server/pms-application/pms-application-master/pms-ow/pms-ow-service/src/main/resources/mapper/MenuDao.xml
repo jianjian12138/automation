@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.MenuDao">
+    <resultMap id="menuModel" type="com.futurecraftsmen.pms.ow.service.model.MenuModel">
+        <result property="menuCode" column="menu_code"/>
+        <result property="templateCode" column="template_code"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="pageNameList" column="page_name_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+    <insert id="setMenu">
+        insert into ${tableName} (menu_code, template_code, enterprise_code, page_name_list)
+        values (#{menuModel.menuCode}, #{menuModel.templateCode}, #{menuModel.enterpriseCode},
+                #{menuModel.pageNameList})
+        ON CONFLICT (menu_code) DO UPDATE SET page_name_list = EXCLUDED.page_name_list
+    </insert>
+
+    <select id="getMenusByCodes" resultMap="menuModel">
+        SELECT menu_code,
+        template_code,
+        enterprise_code,
+        page_name_list,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND menu_code IN
+        <foreach collection="menuCodes" index="index" item="menuCode" open="("
+                 separator="," close=")">
+            #{menuCode}
+        </foreach>
+    </select>
+
+    <select id="getAllMenuModel" resultMap="menuModel">
+        SELECT menu_code,
+               template_code,
+               enterprise_code,
+               page_name_list,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+</mapper>

@@ -1,0 +1,13 @@
+case_code: ContractBussController
+case_name: ContractBussController接口测试
+priority: 2
+steps:
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /page/optional
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: '* 合同 相关业务'

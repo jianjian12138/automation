@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.awaiting.IPmsAwaitingDetailsMapper">
+
+
+    <update id="updateQuantityByContractProductKeys">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="product_quantity =case" suffix="end">
+            <foreach collection="updatedProducts" item="updatedProduct" index="index">
+                when contract_product=#{updatedProduct.contractProduct} then #{updatedProduct.productQuantity}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="pending_count =case" suffix="end">
+            <foreach collection="updatedProducts" item="updatedProduct" index="index">
+                when contract_product= #{updatedProduct.contractProduct} then
+                CASE WHEN (#{updatedProduct.productQuantity} - shipped_count) &lt; 0 THEN 0
+                ELSE (#{updatedProduct.productQuantity} - shipped_count)
+                END
+            </foreach>
+        </trim>
+        where contract_product in
+        <foreach collection="updatedProducts" index="index" item="updatedProduct" separator="," open="(" close=")">
+            #{updatedProduct.contractProduct}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+        AND contract_code = #{contractCode}
+    </update>
+
+</mapper>

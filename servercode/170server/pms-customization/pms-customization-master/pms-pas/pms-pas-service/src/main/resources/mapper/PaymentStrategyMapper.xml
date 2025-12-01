@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.PaymentStrategyDao">
+    <resultMap id="PaymentStrategyModel" type="com.futurecraftsmen.pms.pas.service.po.PaymentStrategyModel">
+        <result column="primary_key" property="paymentStrategyCode"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="payment_strategy_sign" property="paymentStrategySign"/>
+        <result column="exchange_rate_rmb" property="exchangeRateRmb"/>
+        <result column="tax_rate_percent" property="taxRatePercent"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="addition_chs" property="additionChs"/>
+        <result column="addition_en" property="additionEn"/>
+        <result column="currency_chs" property="currencyChs"/>
+        <result column="currency_en" property="currencyEn"/>
+        <result column="remark" property="remark"/>
+        <result column="enable_flag" property="enableFlag"/>
+    </resultMap>
+
+    <select id="enabledPaymentStrategiesByEnterpriseCode" resultMap="PaymentStrategyModel">
+        SELECT primary_key,
+               enterprise_code,
+               payment_strategy_sign,
+               exchange_rate_rmb,
+               tax_rate_percent,
+               sort_order,
+               addition_chs,
+               addition_en,
+               currency_chs,
+               currency_en,
+               remark,
+               enable_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND enable_flag = 't'
+        ORDER BY sort_order
+    </select>
+
+    <select id="getPaymentStrategyByCode" resultMap="PaymentStrategyModel">
+        SELECT primary_key,
+               enterprise_code,
+               payment_strategy_sign,
+               exchange_rate_rmb,
+               tax_rate_percent,
+               sort_order,
+               addition_chs,
+               addition_en,
+               currency_chs,
+               currency_en,
+               remark,
+               enable_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{paymentStrategyCode}
+          AND delete_flag = 'f'
+          AND enable_flag = 't'
+    </select>
+
+
+    <select id="queryEnableDataByNames" resultMap="PaymentStrategyModel">
+        SELECT primary_key,
+               enterprise_code,
+               payment_strategy_sign,
+               exchange_rate_rmb,
+               tax_rate_percent,
+               sort_order,
+               addition_chs,
+               addition_en,
+               currency_chs,
+               currency_en,
+               remark,
+               enable_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND payment_strategy_sign IN
+              <foreach collection="paymentStrategyNameList" index="index" item="paymentStrategyName" open="(" separator="," close=")">
+                 #{paymentStrategyName}
+             </foreach>
+          AND delete_flag = 'f'
+          AND enable_flag = 't'
+    </select>
+
+
+    <select id="getPaymentStrategyByCodes" resultMap="PaymentStrategyModel">
+        SELECT primary_key,
+               enterprise_code,
+               payment_strategy_sign,
+               exchange_rate_rmb,
+               tax_rate_percent,
+               sort_order,
+               addition_chs,
+               addition_en,
+               currency_chs,
+               currency_en,
+               remark,
+               enable_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key IN
+              <foreach collection="paymentStrategyCodes" index="index" item="paymentStrategyCode" open="(" separator="," close=")">
+                 #{paymentStrategyCode}
+             </foreach>
+          AND delete_flag = 'f'
+          AND enable_flag = 't'
+    </select>
+
+
+    <insert id="addPaymentStrategy">
+        INSERT INTO ${tableName} (primary_key,
+                                  enterprise_code,
+                                  payment_strategy_sign,
+                                  exchange_rate_rmb,
+                                  tax_rate_percent,
+                                  sort_order,
+                                  addition_chs,
+                                  addition_en,
+                                  currency_chs,
+                                  currency_en,
+                                  remark,
+                                  enable_flag)
+        VALUES (#{model.paymentStrategyCode}, #{model.enterpriseCode}, #{model.paymentStrategySign}, #{model.exchangeRateRmb},
+                #{model.taxRatePercent}, #{model.sortOrder},
+                #{model.additionChs}, #{model.additionEn}, #{model.currencyChs}, #{model.currencyEn},
+                #{model.remark}, #{model.enableFlag})
+    </insert>
+
+
+    <select id="paging" resultMap="PaymentStrategyModel">
+        SELECT primary_key,
+               enterprise_code,
+               payment_strategy_sign,
+               exchange_rate_rmb,
+               tax_rate_percent,
+               sort_order,
+               addition_chs,
+               addition_en,
+               currency_chs,
+               currency_en,
+               remark,
+               enable_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+        ORDER BY sort_order
+    </select>
+
+</mapper>

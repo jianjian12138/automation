@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IDispatchRecordItemMapper">
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.dispatchrecord.DispatchRecordItemModel">
+        <id property="dispatchRecordItemCode" column="primary_key" />
+        <id property="dispatchRecord" column="dispatch_record" />
+        <id property="dispatchSheetItemCode" column="dis_sheet_item" />
+        <id property="dispatchType" column="dispatch_type" />
+        <result property="dispatchQuantity" column="dispatch_quantity" />
+        <result property="batchNumber" column="batch_number" />
+        <result property="productCode" column="product_code" />
+        <result property="productQuantity" column="product_quantity" />
+        <result property="bodyQuantity" column="body_quantity" />
+        <result property="remainQuantity" column="remain_quantity" />
+        <result property="enterpriseCode" column="enterprise_code" />
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, dispatch_record,dis_sheet_item,dispatch_type, dispatch_quantity, batch_number, product_code, product_quantity,body_quantity,remain_quantity,enterprise_code
+    </sql>
+
+    <insert id="addDispatchRecordItems">
+        INSERT INTO ${tableName} (primary_key, dispatch_record,dis_sheet_item,dispatch_type, dispatch_quantity, batch_number, product_code,
+        product_quantity, body_quantity,remain_quantity,enterprise_code)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            ( #{model.dispatchRecordItemCode}, #{model.dispatchRecord}, #{model.dispatchSheetItemCode}, #{model.dispatchType},
+            #{model.dispatchQuantity}, #{model.batchNumber},#{model.productCode}, #{model.productQuantity}, #{model.bodyQuantity},
+            #{model.remainQuantity}, #{model.enterpriseCode})
+        </foreach>
+    </insert>
+
+
+    <select id="dispatchRecordItemPage" resultMap="resultMap">
+        SELECT <include refid="columns"/>
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND dispatch_record = #{dispatchRecord}
+        AND dispatch_type = #{dispatchType}
+        ORDER BY batch_number, dispatch_quantity DESC
+    </select>
+
+
+</mapper>

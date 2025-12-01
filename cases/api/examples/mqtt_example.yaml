@@ -1,0 +1,51 @@
+# MQTT 测试示例
+case_name: MQTT测试示例
+case_code: MQTTExample
+priority: 1
+steps:
+  - step_name: 发布MQTT消息
+    protocol: mqtt
+    action: publish
+    broker: test.mosquitto.org
+    port: 1883
+    topic: test/topic
+    message:
+      sensor: temperature
+      value: 25.5
+      timestamp: "2025-10-31T10:00:00Z"
+    qos: 1
+    client_id: test_publisher
+    response_assert:
+      status_code_assert: 200
+      response_assert_data: 消息已发布
+
+  - step_name: 订阅MQTT主题
+    protocol: mqtt
+    action: subscribe
+    broker: test.mosquitto.org
+    port: 1883
+    topic: test/topic
+    qos: 1
+    client_id: test_subscriber
+    wait_messages: 1
+    wait_timeout: 10
+    response_assert:
+      status_code_assert: 200
+      message_assert: temperature
+      jsonpath_assert:
+        - $.sensor == "temperature"
+        - $.value >= 20
+
+  - step_name: 带认证的MQTT发布
+    protocol: mqtt
+    action: publish
+    broker: mqtt.example.com
+    port: 8883
+    topic: private/data
+    message: "Sensitive data"
+    qos: 2
+    username: test_user
+    password: test_password
+    client_id: auth_client
+    response_assert:
+      status_code_assert: 200

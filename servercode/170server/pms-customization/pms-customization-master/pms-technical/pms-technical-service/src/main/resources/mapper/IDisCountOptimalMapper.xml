@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IDisCountOptimalMapper">
+
+
+    <select id="partPageList" resultType="com.futurecraftsmen.pms.technical.api.domain.dispatch.DisCountOptimal">
+
+
+        select buss_number ,contract_code
+        , dis_code
+        , "type"
+        , sum(need_num) need_num
+        , sum(sum(task_num)) over ( partition by buss_number ,contract_code ,dis_code, "type" ) task_num
+        , max(max(create_time)) over ( partition by buss_number ,contract_code , dis_code ) create_time
+        , max(id) id
+        , max(primary_key) primary_key
+        , max(business_Id) business_Id
+        ,STRING_AGG(array_to_string(ARRAY_AGG(primary_key), ','),',' ) over ( partition by buss_number ,contract_code ,dis_code ) primary_keys
+        ,sum(sum(need_num)) over ( partition by buss_number ,contract_code,dis_code ) sum_Need_Num
+        from ${dynamicTableNameProxy.disCountOptimal} a
+        where
+
+        <if test="data.productFlag==null or  data.productFlag==false ">
+            parent_id is not null
+        </if>
+
+        <if test="data.productFlag!=null and  data.productFlag==true ">
+            parent_id is null
+        </if>
+
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+
+        and delete_flag=false
+
+        and data_source = 'part'
+        and need_num > 0
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.dis_code","xihang",data.partUnityNo)}
+        </if>
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.dis_code",data.searchName)}
+
+
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            and buss_number ilike '%'||#{data.bussNumber}||'%'
+        </if>
+
+        <if test="data.type != null  ">
+            <if test="data.type == 1  ">
+                and type='stock'
+            </if>
+
+            <if test="data.type == 2  ">
+                and type='purchase'
+            </if>
+
+            <if test="data.type == 3  ">
+                and type='process'
+            </if>
+
+            <if test="data.type == 4  ">
+                and type='produce'
+            </if>
+        </if>
+
+
+        <if test="data.status != null and  data.status.size()>0">
+            and (
+            1!=1
+            or exists(
+            select
+            1
+            from (
+            select aa.*, ROW_NUMBER() OVER (partition by buss_number ,product_or_part order by last_time desc NULLS last ) id,
+            case when status=50 then 1
+            when finish_num>0 then 2
+            when allocation_num>0 then 3
+            else 4
+            end status_code,
+
+            case when status=50 then procedure_name||'已完成'
+            when finish_num>0 then procedure_name||'生产中'
+            when allocation_num>0 then procedure_name||'待生产'
+            else procedure_name||'待安排'
+            end status_name
+
+            from (
+            select m.buss_number,m.product_or_part , max( m.status) status, d."operator" , max(r.creator) creator,
+            max(d.produce_time ) produce_time,max(r.report_date) report_date,max(d.create_time ) create_time,max(m.create_time ) m_create_time,
+            sum(d.allocation_num) allocation_num ,max( m.procedure_name) procedure_name,sum(r.finish_num) finish_num,sum(scrap_num) scrap_num,
+            GREATEST(max(d.produce_time ) , max(r.report_date) ,max(d.create_time ) , max(m.create_time )) last_time
+
+            from ${dynamicTableNameProxy.produceMain} m
+            left join ${dynamicTableNameProxy.produceSubDispatcher} d on m.primary_key =d.main_id
+            left join ${dynamicTableNameProxy.produceSubReport} r on r.main_id = m.primary_key and d."operator" =r.creator
+
+            where m.procedure_flag = 1 and m.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            group by m.buss_number,m.product_or_part ,m.status,d."operator" order by produce_time desc NULLS last
+            ) as aa
+
+            ) as aa where aa.id =1
+            and type='produce'
+            and aa.buss_number =a.buss_number and aa.product_or_part=a.dis_code
+            and aa.status_code in
+
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+            )
+
+
+            or exists(
+
+            <!--
+
+            with aa as (select ARRAY_AGG( distinct d.primary_key order by d.primary_key) primary_key, max(d.create_time) create_time ,
+            sum(d.apply_num) apply_num
+            from ${dynamicTableNameProxy.outboundOrder} o
+            join ${dynamicTableNameProxy.outboundOrderDetail} b
+            on o.primary_key = b.outbound_order
+            join ${dynamicTableNameProxy.outboundApplyDetail} d on d.primary_key = any (b.apply_details)
+            where d.remark like '%库存%'
+            and o.contract_number = a.buss_number
+            and b.product_or_part = a.dis_code
+            group by b.product_or_part
+            )
+            , b as (select ARRAY_AGG(distinct oo.apply_detail_code order by oo.apply_detail_code) apply_detail_code, coalesce(sum(oo.operation_num),
+            0) operation_num, max(oo.operation_time) operation_time
+            from ${dynamicTableNameProxy.positionOperation} oo,
+            aa
+            where oo.apply_detail_code = any(aa.primary_key)
+            )
+            , c as (select *
+            from (select b.*, oo.operator person_Code, ROW_NUMBER() OVER ( order by b.operation_time desc NULLS last ) id
+            from ${dynamicTableNameProxy.positionOperation} oo,
+            b
+            where oo.apply_detail_code = any(b.apply_detail_code)
+            and oo.operation_time = b.operation_time)
+            where id = 1)
+            , d as (select *,
+            case
+            when GREATEST(aa.create_time ,c.operation_time)=aa.create_time then 357345743574663168
+            when apply_num > operation_num then 357345966313177088
+            else 357346032495099904 end status_code,
+            GREATEST(aa.create_time, c.operation_time) last_time
+            from aa
+            left join c on array_to_string(c.apply_detail_code,',')= array_to_string(aa.primary_key,',')
+            order by last_time
+            limit 1 )
+            select *
+            from d
+
+            -->
+
+
+            select 1 from (
+            select d.primary_key ,max(d.create_time) create_time , max(p.operation_time) operation_time , sum(d.apply_num) apply_num
+            ,sum(p.operation_num) operation_num,
+            GREATEST( max(d.create_time),max(p.operation_time) ) last_time ,ROW_NUMBER() OVER ( order by GREATEST(
+            max(d.create_time),max(p.operation_time) ) desc NULLS last ) id
+
+            ,
+
+            case when GREATEST( max(d.create_time),max(p.operation_time) ) =max(d.create_time) then 357345743574663168
+            when sum(d.apply_num) > sum(p.operation_num) then 357345966313177088
+            else 357346032495099904 end status_code
+
+            from ${dynamicTableNameProxy.outboundOrder} o
+            join ${dynamicTableNameProxy.outboundOrderDetail} b
+            on o.primary_key = b.outbound_order
+            join ${dynamicTableNameProxy.outboundApplyDetail} d on d.primary_key = any (b.apply_details)
+            left join (
+
+            select p.apply_detail_code,sum(operation_num) operation_num,max(operation_time) operation_time from
+            ${dynamicTableNameProxy.positionOperation} p
+            group by p.apply_detail_code
+            ) p on d.primary_key=p.apply_detail_code
+            where d.remark like '%库存%'
+
+            and o.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            and o.contract_number=a.buss_number and b.product_or_part=a.dis_code
+            group by d.primary_key
+
+            ) d where id =1
+
+
+            and d.status_code in
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+
+            and type='stock'
+            )
+
+
+            or exists(
+            select 1 from (
+
+
+            select * from (
+            select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id from (
+            select contract_Code , material_Code , state_After_Op ,latest_Op_Time
+            from ${dynamicTableNameProxy.latestLackPurchaseState} c
+            where c.contract_Code=a.contract_code and c.material_Code=a.dis_code and a.type='purchase'
+            and c.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            union all
+            select a.contract_code , a.dis_code ,20 ,a.create_time
+            ) aa
+            ) where id=1
+            ) o
+            where o.contract_Code=a.contract_code and o.material_Code=a.dis_code
+            and a.type='purchase'
+            and o.state_After_Op in
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+            )
+
+
+            or exists(
+            select 1 from
+            (
+            select * from (
+            select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id from (
+            select c.contract_Code , c.produce_Code , c.state_After_Op ,c.latest_Op_Time
+            from ${dynamicTableNameProxy.latestLackPurchaseState} c,
+            ${dynamicTableNameProxy.disCountOptimal} b
+            where c.produce_Code=b.dis_code and b.parent_id = a.primary_key
+            and c.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            union all
+            select b.contract_code , b.dis_code ,40 ,b.create_time
+            from ${dynamicTableNameProxy.disCountOptimal} b where b.parent_id=a.primary_key
+            ) aa
+            ) where id=1
+            ) o
+            where o.contract_Code=a.contract_code
+            and a.type='process'
+            and o.state_After_Op in
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+            )
+
+            )
+        </if>
+
+
+        group by buss_number ,contract_code, dis_code, "type"
+        order by create_time desc, dis_code desc
+    </select>
+
+
+    <select id="selectPartListByDesc" resultType="com.futurecraftsmen.pms.technical.api.domain.dispatch.DisCountOptimal">
+
+
+        select batch_global_code
+        , dis_code
+        , "type"
+        , sum(need_num) need_num
+        , sum(sum(task_num)) over ( partition by batch_global_code ,dis_code ) task_num
+        , max(max(create_time)) over ( partition by batch_global_code ,dis_code ) create_time
+        , max(id) id
+        , max(person_code) person_code
+        , max(primary_key) primary_key
+        , sum(sum(need_num)) over ( partition by batch_global_code ,dis_code ) sum_Need_Num
+        from ${dynamicTableNameProxy.disCountOptimal} a
+        where
+
+        <if test="request.productFlag==null or  request.productFlag==false ">
+            parent_id is not null
+        </if>
+
+        <if test="request.productFlag!=null and  request.productFlag==true ">
+            parent_id is null
+        </if>
+
+
+        and data_source = 'part'
+        and need_num > 0
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+
+        and primary_key in
+        <foreach collection="data" item="i" separator="," close=")" open="(">
+            #{i}
+        </foreach>
+        group by batch_global_code, dis_code, "type"
+        order by create_time desc, batch_global_code, id desc
+    </select>
+
+
+    <select id="processPageList" resultType="com.futurecraftsmen.pms.technical.api.domain.dispatch.DisCountOptimal">
+
+
+        select buss_number,contract_Code
+        , dis_code
+        , "type"
+        , sum(need_num) need_num
+        , sum(sum(task_num)) over ( partition by buss_number ,contract_Code,dis_code ) task_num
+        , max(create_time) create_time
+        , max(id) id
+        , max(primary_key) primary_key
+        ,STRING_AGG(array_to_string(ARRAY_AGG(primary_key), ','),',' ) over ( partition by buss_number,contract_Code ,dis_code ) primary_keys
+        ,sum(sum(need_num)) over ( partition by buss_number,contract_Code ,dis_code ) sum_Need_Num
+        from ${dynamicTableNameProxy.disCountOptimal} a
+        where data_source = 'process'
+        and need_num > 0
+
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        and delete_flag=false
+
+        <if test="data.searchName != null and data.searchName != '' ">
+            and exists (
+            select 1 from ${dynamicTableNameProxy.productPartProcedure} b where a.dis_code=b.primary_key
+            and b.product_part_procedure_sign like '%'||#{data.searchName}||'%'
+            )
+        </if>
+
+        <if test="data.bussNumber != null and data.bussNumber != '' ">
+            and buss_number like '%'||#{data.bussNumber}||'%'
+        </if>
+
+        <if test="data.type != null  ">
+            <if test="data.type == 1  ">
+                and type='stock'
+            </if>
+
+            <if test="data.type == 2  ">
+                and type='purchase'
+            </if>
+
+            <if test="data.type == 3  ">
+                and type='process'
+            </if>
+
+            <if test="data.type == 4  ">
+                and type='produce'
+            </if>
+        </if>
+
+
+        <if test="data.status != null and  data.status.size()>0">
+            and (
+            1!=1
+            or exists(
+            select
+            1
+            from (
+            select aa.*, ROW_NUMBER() OVER (partition by buss_number ,procedure_code order by last_time desc NULLS last ) id,
+            case when status=50 then 1
+            when finish_num>0 then 2
+            when allocation_num>0 then 3
+            else 4
+            end status_code,
+
+            case when status=50 then procedure_name||'已完成'
+            when finish_num>0 then procedure_name||'生产中'
+            when allocation_num>0 then procedure_name||'待生产'
+            else procedure_name||'待安排'
+            end status_name
+
+            from (
+            select m.buss_number,m.procedure_code , max( m.status) status, d."operator" , max(r.creator) creator,
+            max(d.produce_time ) produce_time,max(r.report_date) report_date,max(d.create_time ) create_time,
+            sum(d.allocation_num) allocation_num ,max( m.procedure_name) procedure_name,sum(r.finish_num) finish_num,sum(scrap_num) scrap_num,
+            GREATEST(max(d.produce_time ) , max(r.report_date) ,max(d.create_time ) ,max(m.create_time )) last_time
+
+            from ${dynamicTableNameProxy.produceMain} m
+            left join ${dynamicTableNameProxy.produceSubDispatcher} d on m.primary_key =d.main_id
+            left join ${dynamicTableNameProxy.produceSubReport} r on r.main_id = m.primary_key and d."operator" =r.creator
+            where m.procedure_flag = 1
+            and m.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            group by m.buss_number,m.procedure_code,m.status ,d."operator" order by produce_time desc NULLS last
+            ) as aa
+
+            ) as aa where aa.id =1 and a.type='produce'
+            and aa.buss_number =a.buss_number and aa.procedure_code=a.dis_code
+            and aa.status_code in
+
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+            )
+
+
+
+            or exists(
+
+            select state_After_Op status_Code, latest_op_staff person_Code, latest_Op_Time last_Time
+            from (select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id
+            from (select ab.contract_Code, ab.produce_code, ab.state_After_Op, ab.latest_Op_Time, ab.latest_op_staff
+            from ${dynamicTableNameProxy.latestLackPurchaseState} ab
+            where ab.contract_Code = a.contract_Code
+            and ab.produce_code = a.dis_code
+            and ab.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+            union all
+            select a.contract_Code, a.dis_code, 40, a.create_time, a.person_code ) aa) aa
+            where aa.id = 1
+            and a.type='process'
+            and aa.state_After_Op in
+            <foreach collection="data.status" separator="," close=")" open="(" item="id">
+                #{id}
+            </foreach>
+            )
+
+            )
+        </if>
+
+        group by buss_number, contract_Code, dis_code, "type"
+        order by create_time desc, id desc
+    </select>
+
+
+    <select id="selectProcessListByDesc" resultType="com.futurecraftsmen.pms.technical.api.domain.dispatch.DisCountOptimal">
+
+
+        select batch_global_code
+        , dis_code
+        , "type"
+        , sum(need_num) need_num
+        , sum(sum(task_num)) over ( partition by batch_global_code ,dis_code ) task_num
+        , max(max(create_time)) over ( partition by batch_global_code ,dis_code ) create_time
+        , max(id) id
+        , max(person_code) person_code
+        , max(primary_key) primary_key
+        , sum(sum(need_num)) over ( partition by batch_global_code ,dis_code ) sum_Need_Num
+        from ${dynamicTableNameProxy.disCountOptimal} a
+        where parent_id is not null
+        and data_source = 'process'
+        and need_num > 0
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        and primary_key in
+        <foreach collection="data" item="i" separator="," close=")" open="(">
+            #{i}
+        </foreach>
+        group by batch_global_code, dis_code, "type"
+        order by create_time desc, batch_global_code, id desc
+    </select>
+
+
+    <select id="stockCount" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+        <!--
+                with aa as (select ARRAY_AGG(distinct d.primary_key order by d.primary_key) primary_key,
+                                   max(d.create_time)                                       create_time,
+                                   sum(d.apply_num)                                         apply_num
+                            from ${dynamicTableNameProxy.outboundOrder} o
+                                     join ${dynamicTableNameProxy.outboundOrderDetail} b
+                                          on o.primary_key = b.outbound_order
+                                     join ${dynamicTableNameProxy.outboundApplyDetail} d on d.primary_key = any (b.apply_details)
+                            where d.remark like '%库存%'
+                              and o.contract_number = #{bus}
+                              and b.product_or_part = #{partCode}
+                            group by b.product_or_part)
+                   , b as (select ARRAY_AGG(distinct oo.apply_detail_code order by oo.apply_detail_code) apply_detail_code,
+                                  coalesce(sum(oo.operation_num), 0)                                     operation_num,
+                                  max(oo.operation_time)                                                 operation_time
+                           from ${dynamicTableNameProxy.positionOperation} oo,
+                                aa
+                           where oo.apply_detail_code = any (aa.primary_key))
+                   , c as (select *
+                           from (select b.*, oo.operator person_Code, ROW_NUMBER() OVER ( order by b.operation_time desc NULLS last ) id
+                                 from ${dynamicTableNameProxy.positionOperation} oo,
+                                      b
+                                 where oo.apply_detail_code = any (b.apply_detail_code)
+                                   and oo.operation_time = b.operation_time)
+                           where id = 1)
+                   , d as (select *,
+                                  case
+                                      when GREATEST(aa.create_time, c.operation_time) = aa.create_time then 357345743574663168
+                                      when apply_num > operation_num then 357345966313177088
+                                      else 357346032495099904 end            status_code,
+                                  GREATEST(aa.create_time, c.operation_time) last_time
+                           from aa
+                                    left join c on array_to_string(c.apply_detail_code, ',') = array_to_string(aa.primary_key, ',')
+                           order by last_time
+                    limit 1 )
+                select *
+                from d
+
+        -->
+
+        select *
+        from (select d.primary_key key,
+        max(d.create_time) create_time,
+        max(p.operation_time) operation_time,
+        sum(d.apply_num) apply_num
+        ,
+        sum(p.operation_num) operation_num,
+        GREATEST(max(d.create_time), max(p.operation_time)) last_time,
+        ROW_NUMBER() OVER ( order by GREATEST(
+        max(d.create_time),max(p.operation_time) ) desc NULLS last ) id
+
+        , case
+        when GREATEST(max(d.create_time), max(p.operation_time)) = max(d.create_time)
+        then 357345743574663168
+        when sum(d.apply_num) > sum(p.operation_num)
+        then 357345966313177088
+        else 357346032495099904 end status_code
+
+        from ${dynamicTableNameProxy.outboundOrder} o
+        join ${dynamicTableNameProxy.outboundOrderDetail} b
+        on o.primary_key = b.outbound_order
+        join ${dynamicTableNameProxy.outboundApplyDetail} d on d.primary_key = any (b.apply_details)
+        left join (select p.apply_detail_code, sum(operation_num) operation_num, max(operation_time) operation_time
+        from ${dynamicTableNameProxy.positionOperation} p
+        group by p.apply_detail_code) p on d.primary_key = p.apply_detail_code
+        where d.remark like '%库存%'
+        and o.contract_number = #{bus}
+        and b.product_or_part = #{partCode}
+        and o.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        group by d.primary_key) d
+        where id = 1
+
+
+    </select>
+
+
+    <select id="stockList" resultType="com.futurecraftsmen.pms.technical.api.domain.record.StockRecordDto">
+        select b.outbound_status   status_code
+             , p.operation_time
+             , p.operation_num
+             , p.operator          operator
+             , c.product_part_sign productName
+             , c.model    model
+             , c.unity_no unity_no
+        from ${dynamicTableNameProxy.outboundOrder} o
+                 join ${dynamicTableNameProxy.outboundOrderDetail} b
+                      on o.primary_key = b.outbound_order
+                 join ${dynamicTableNameProxy.productPart} c on c.primary_key = b.product_or_part
+                 join ${dynamicTableNameProxy.outboundApplyDetail} d on d.primary_key = any (b.apply_details)
+                 join ${dynamicTableNameProxy.positionOperation} p on p.apply_detail_code = d.primary_key
+        where o.contract_number = #{bus}
+          and d.remark like '%库存%'
+          and o.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and b.product_or_part = #{partCode}
+        order by p.operation_time
+
+    </select>
+
+
+    <select id="purchaseCount" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+        select state_After_Op status_Code, latest_op_staff person_Code, latest_Op_Time last_Time
+        from (select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id
+              from (select contract_Code, material_Code, state_After_Op, latest_Op_Time, latest_op_staff
+                    from ${dynamicTableNameProxy.latestLackPurchaseState}
+                    where contract_Code = #{contractCode}
+                      and material_Code = #{partCode}
+                      and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                    union all
+                    select contract_Code, dis_code, 20, create_time, null person_code
+                    from ${dynamicTableNameProxy.disCountOptimal}
+                    where contract_Code = #{contractCode}
+                      and type = 'purchase'
+                      and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                      and dis_code = #{partCode}) aa) aa
+        where id = 1
+    </select>
+
+
+    <select id="processCount" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+        select state_After_Op status_Code, latest_op_staff person_Code, latest_Op_Time last_Time ,produce_code
+        from (select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id
+        from (select a.contract_Code, a.produce_code, a.state_After_Op, a.latest_Op_Time, a.latest_op_staff
+        from ${dynamicTableNameProxy.latestLackPurchaseState} a,
+        ${dynamicTableNameProxy.disCountOptimal} b
+        where a.contract_Code = #{contractCode}
+        and a.produce_code = b.dis_code
+        and a.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        and b.parent_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+        union all
+
+        select contract_Code, dis_code, 40, create_time, null person_code
+        from ${dynamicTableNameProxy.disCountOptimal}
+        where contract_Code = #{contractCode}
+        and type='process'
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        and parent_id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+
+        ) aa) aa
+        where id = 1
+    </select>
+
+
+    <select id="processCountProce" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+        select state_After_Op status_Code, latest_op_staff person_Code, latest_Op_Time last_Time
+        from (select aa.*, ROW_NUMBER() over(order by latest_Op_Time desc nulls last) id
+              from (select a.contract_Code, a.produce_code, a.state_After_Op, a.latest_Op_Time, a.latest_op_staff
+                    from ${dynamicTableNameProxy.latestLackPurchaseState} a
+                    where a.contract_Code = #{contractCode}
+                      and a.produce_code = #{partCode}
+                      and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                    union all
+                    select #{contractCode}, #{partCode}, 40, create_time, null person_code
+                    from ${dynamicTableNameProxy.disCountOptimal}
+                    where contract_Code = #{contractCode}
+                      and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                      and dis_code = #{partCode}) aa) aa
+        where id = 1
+    </select>
+
+
+    <select id="produceCount" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+
+        select *
+        from (select aa.*,
+                     ROW_NUMBER() OVER (partition by buss_number ,product_or_part order by last_time desc NULLS last ) id, case
+                                                                                                                               when status = 50 then 1
+                                                                                                                               when finish_num > 0
+                                                                                                                                   then 2
+                                                                                                                               when allocation_num > 0
+                                                                                                                                   then 3
+                                                                                                                               else 4
+                end status_code,
+
+                     case
+                         when status = 50 then case when ${dynamicTableNameProxy.isRoute()} then procedure_name else '' end || '生产已完成'
+                         when finish_num > 0 then case when ${dynamicTableNameProxy.isRoute()} then procedure_name else '' end || '生产中'
+                         when allocation_num > 0 then case when ${dynamicTableNameProxy.isRoute()} then procedure_name else '' end || '待生产'
+                         else case when ${dynamicTableNameProxy.isRoute()} then procedure_name else '' end || '待安排'
+                         end      status_name
+
+              from (select m.buss_number,
+                           m.product_or_part,
+                           max(m.status)                                                         status,
+                           d."operator" person_Code,
+                           max(r.creator)                                                        creator,
+                           max(d.produce_time)                                                   produce_time,
+                           max(r.report_date)                                                    report_date,
+                           max(d.create_time)                                                    create_time,
+                           sum(d.allocation_num)                                                 allocation_num,
+                           max(m.procedure_name)                                                 procedure_name,
+                           sum(r.finish_num)                                                     finish_num,
+                           sum(scrap_num)                                                        scrap_num,
+                           GREATEST(max(d.produce_time), max(r.report_date), max(d.create_time), max(m.create_time)) last_time
+
+                    from ${dynamicTableNameProxy.produceMain} m
+                             left join ${dynamicTableNameProxy.produceSubDispatcher} d on m.primary_key = d.main_id
+                             left join ${dynamicTableNameProxy.produceSubReport} r on r.main_id = m.primary_key and d."operator" = r.creator
+
+                    where m.procedure_flag = 1
+                      and m.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                    group by m.buss_number, m.product_or_part, m.status, d."operator"
+                    order by produce_time desc NULLS last) as aa) as aa
+        where aa.id = 1
+          and aa.buss_number = #{id}
+          and aa.product_or_part = #{partCode}
+    </select>
+
+
+    <select id="produceCountProce" resultType="com.futurecraftsmen.pms.technical.service.domain.technical.record.RecordStatusAndNum">
+
+        select *
+        from (select aa.*,
+                     ROW_NUMBER() OVER (partition by buss_number ,procedure_code order by last_time desc NULLS last ) id, case
+                                                                                                                              when status = 50 then 1
+                                                                                                                              when finish_num > 0
+                                                                                                                                  then 2
+                                                                                                                              when allocation_num > 0
+                                                                                                                                  then 3
+                                                                                                                              else 4
+                end status_code,
+
+                     case
+                         when status = 50 then procedure_name || '已完成'
+                         when finish_num > 0 then procedure_name || '生产中'
+                         when allocation_num > 0 then procedure_name || '待生产'
+                         else procedure_name || '待安排'
+                         end      status_name
+
+              from (select m.buss_number,
+                           m.procedure_code,
+                           max(m.status)                                                         status,
+                           d."operator"                                                          person_Code,
+                           max(r.creator)                                                        creator,
+                           max(d.produce_time)                                                   produce_time,
+                           max(r.report_date)                                                    report_date,
+                           max(d.create_time)                                                    create_time,
+                           sum(d.allocation_num)                                                 allocation_num,
+                           max(m.procedure_name)                                                 procedure_name,
+                           sum(r.finish_num)                                                     finish_num,
+                           sum(scrap_num)                                                        scrap_num,
+                           GREATEST(max(d.produce_time), max(r.report_date), max(d.create_time), max(m.create_time)) last_time
+
+                    from ${dynamicTableNameProxy.produceMain} m
+                             left join ${dynamicTableNameProxy.produceSubDispatcher} d on m.primary_key = d.main_id
+                             left join ${dynamicTableNameProxy.produceSubReport} r on r.main_id = m.primary_key and d."operator" = r.creator
+
+                    where m.procedure_flag = 1
+                      and m.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                    group by m.buss_number, m.procedure_code, m.status, d."operator"
+                    order by produce_time desc NULLS last) as aa) as aa
+        where aa.id = 1
+          and aa.buss_number = #{bus}
+          and aa.procedure_code = #{partCode}
+    </select>
+
+
+    <select id="queryProduceListDesc" resultType="com.futurecraftsmen.pms.technical.api.domain.record.ProduceRecordDto">
+        select m.primary_key,
+        max(m.status) status,
+        d."operator",
+        max(r.creator) creator,
+        max(d.produce_time) produce_time,
+        max(r.report_date) report_date,
+        max(d.create_time) create_time,
+        sum(d.allocation_num) allocation_num,
+        max(m.procedure_name) procedure_name,
+        sum(r.finish_num) finish_num,
+        sum(scrap_num) scrap_num
+        from ${dynamicTableNameProxy.produceMain} m
+        join
+        (
+        select d.main_id ,d."operator" , max(d.produce_time) produce_time,
+        max(d.create_time) create_time,
+        sum(d.allocation_num) allocation_num
+        from ${dynamicTableNameProxy.produceSubDispatcher} d
+        group by d.main_id ,d."operator"
+        )
+
+        d on m.primary_key = d.main_id
+        left join
+        (
+
+        select r.main_id , r.creator ,max(r.report_date) report_date,
+        sum(r.finish_num) finish_num,
+        sum(scrap_num) scrap_num
+        from ${dynamicTableNameProxy.produceSubReport} r
+        group by r.main_id , r.creator
+        )
+
+        r on r.main_id = m.primary_key and d."operator" = r.creator
+        where m.primary_key in
+
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+        and m.procedure_flag=1
+        and m.enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        group by m.primary_key, d."operator"
+        order by produce_time desc NULLS last
+    </select>
+
+
+</mapper>

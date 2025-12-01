@@ -1,0 +1,59 @@
+version: '1.0'
+name: pipeline-20240718
+displayName: forest_default
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - v4
+    commitMessages:
+      include:
+        - ^(?!deploy:).*
+stages:
+  - name: stage-271eac3a
+    displayName: maven构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@maven
+        name: build_maven
+        displayName: Maven 构建
+        jdkVersion: '21'
+        mavenVersion: 3.9.6
+        commands:
+          - mvn clean package -Dmaven.test.skip=true -s /root/workspace/futurecraftsmen/forest/customSettings.xml
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./forest-boot/target
+              - ./forest-cache/target
+              - ./forest-core/target
+              - ./forest-dynamic/forest-dynamic-common/target
+              - ./forest-dynamic/forest-dynamic-database/forest-dynamic-database-model/target
+              - ./forest-dynamic/forest-dynamic-database/forest-dynamic-database-pg/target
+              - ./forest-dynamic/forest-dynamic-form/target
+              - ./forest-dynamic/forest-dynamic-process/target
+              - ./forest-extensions/forest-extensions-base/target
+              - ./forest-extensions/forest-extensions-datatransmit/target
+              - ./forest-signature/target
+        settings: []
+        caches: []
+        notify:
+          - certificate: a1acb250-f193-013c-1bfe-422e76947380
+            events:
+              - fail
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: dingtalk
+        strategy:
+          retry: '0'
+strategy:
+  blocking: true

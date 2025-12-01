@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IDispatchRecordTaskDetailMapper">
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.dispatchrecord.DispatchTaskDetailModel">
+        <id property="dispatchTaskDetailCode" column="primary_key" />
+        <result property="dispatchRecord" column="dispatch_record" />
+        <result property="disType" column="dis_type" />
+        <result property="disTotal" column="dis_total" />
+        <result property="taskOrderCode" column="task_order_code" />
+        <result property="enterpriseCode" column="enterprise_code" />
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, dispatch_record,dis_type, dis_total, task_order_code,enterprise_code
+    </sql>
+
+    <insert id="addDispatchTaskDetailModels">
+        INSERT INTO ${tableName} (primary_key, dispatch_record,dis_type, dis_total, task_order_code,enterprise_code)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            ( #{model.dispatchTaskDetailCode}, #{model.dispatchRecord}, #{model.disType}, #{model.disTotal},#{model.taskOrderCode},
+            #{model.enterpriseCode})
+        </foreach>
+    </insert>
+
+
+    <select id="queryByDispatchRecordCodesAndDisTypes" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+
+        <if test="conditionDispatchRecordCodes != null">
+            AND dispatch_record IN
+            <foreach collection="conditionDispatchRecordCodes" index="index" item="conditionDispatchRecordCode" open="(" separator="," close=")">
+                #{conditionDispatchRecordCode}
+            </foreach>
+        </if>
+
+        <if test="dispatchTypesNeedShow != null">
+            AND dis_type IN
+            <foreach collection="dispatchTypesNeedShow" index="index" item="dispatchType" open="(" separator="," close=")">
+                #{dispatchType}
+            </foreach>
+        </if>
+
+    </select>
+
+
+
+</mapper>

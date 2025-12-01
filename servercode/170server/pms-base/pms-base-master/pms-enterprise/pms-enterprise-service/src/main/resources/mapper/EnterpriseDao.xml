@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.enterprise.service.dao.EnterpriseDao">
+    <resultMap id="enterpriseModel" type="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseModel">
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="enterprise_name" property="enterpriseName"/>
+        <result column="enterprise_shorter_name" property="enterpriseShorterName"/>
+        <result column="social_credit_number" property="socialCreditNumber"/>
+        <result column="enterprise_domain" property="enterpriseDomain"/>
+        <result column="enterprise_region" property="enterpriseRegion"/>
+        <result column="enterprise_address" property="enterpriseAddress"/>
+        <result column="enterprise_principal_name" property="enterprisePrincipalName"/>
+        <result column="enterprise_principal_phone" property="enterprisePrincipalPhone"/>
+        <result column="email" property="email"/>
+        <result column="fax" property="fax"/>
+        <result column="enterprise_tel" property="enterpriseTel"/>
+        <result column="auth_flow_id" property="authFlowId"/>
+        <result column="sign_org_id" property="signOrgId"/>
+        <result column="sharding_num" property="shardingNum"/>
+        <result column="login_page_icon" property="loginPageIcon"/>
+        <result column="tab_icon" property="tabIcon"/>
+        <result column="home_icon" property="homeIcon"/>
+        <result column="login_page_background" property="loginPageBackground"/>
+        <result column="enterprise_name_en" property="enterpriseNameEn"/>
+        <result column="enterprise_address_en" property="enterpriseAddressEn"/>
+        <result column="payment_information_list" property="bankAccountMessageList" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="pms_page_record_id" property="pmsPageRecordId"/>
+        <result column="ow_page_record_id" property="owPageRecordId"/>
+        <result column="domain_change_num" property="domainChangeNum"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="limit_flag" property="limitFlag"/>
+        <result column="parent_enterprise_code" property="parentEnterpriseCode"/>
+    </resultMap>
+
+    <update id="operationUpdateEnterpriseModel">
+        UPDATE enterprise_base.t_enterprise_base_enterprise
+        SET
+        enterprise_name_en = #{enterpriseModel.enterpriseNameEn},
+        enterprise_shorter_name = #{enterpriseModel.enterpriseShorterName},
+        enterprise_principal_name = #{enterpriseModel.enterprisePrincipalName},
+        enterprise_principal_phone = #{enterpriseModel.enterprisePrincipalPhone},
+        enterprise_region = #{enterpriseModel.enterpriseRegion},
+        enterprise_address = #{enterpriseModel.enterpriseAddress},
+        enterprise_address_en = #{enterpriseModel.enterpriseAddressEn},
+        email = #{enterpriseModel.email},
+        fax = #{enterpriseModel.fax},
+        enterprise_tel = #{enterpriseModel.enterpriseTel},
+        <if test="enterpriseModel.enterpriseDomain != null and enterpriseModel.enterpriseDomain != ''">
+            enterprise_domain = #{enterpriseModel.enterpriseDomain},
+            domain_change_num = #{enterpriseModel.domainChangeNum},
+        </if>
+        delete_flag = false
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseModel.enterpriseCode}
+    </update>
+
+
+    <select id="getEnterprisePaging" resultMap="enterpriseModel">
+        SELECT
+        id,
+        enterprise_code,
+        enterprise_name,
+        enterprise_shorter_name,
+        social_credit_number,
+        enterprise_domain,
+        enterprise_region,
+        enterprise_address,
+        enterprise_principal_name,
+        enterprise_principal_phone,
+        email,
+        fax,
+        enterprise_tel,
+        auth_flow_id,
+        sign_org_id,
+        sharding_num,
+        login_page_icon,
+        tab_icon,
+        home_icon,
+        login_page_background,
+        enterprise_name_en,
+        enterprise_address_en,
+        payment_information_list::VARCHAR[],
+        pms_page_record_id,
+        ow_page_record_id,
+        domain_change_num,
+        create_time,
+        update_time,
+        delete_flag,
+        limit_flag,
+        parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+        <if test="enterpriseFilterConditionDTO.enterpriseName != null and enterpriseFilterConditionDTO.enterpriseName != ''">
+            AND enterprise_name LIKE '%'||#{enterpriseFilterConditionDTO.enterpriseName}||'%'
+        </if>
+        <if test="enterpriseFilterConditionDTO.authPass == true">
+            AND sharding_num > 0
+        </if>
+        <if test="enterpriseFilterConditionDTO.authPass == false">
+            AND sharding_num = 0
+        </if>
+        and parent_enterprise_code is null
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getEnterpriseByCode" resultMap="enterpriseModel">
+        SELECT id,
+               enterprise_code,
+               enterprise_name,
+               enterprise_shorter_name,
+               social_credit_number,
+               enterprise_domain,
+               enterprise_region,
+               enterprise_address,
+               enterprise_principal_name,
+               enterprise_principal_phone,
+               email,
+               fax,
+               enterprise_tel,
+               auth_flow_id,
+               sign_org_id,
+               sharding_num,
+               login_page_icon,
+               tab_icon,
+               home_icon,
+               login_page_background,
+               enterprise_name_en,
+               enterprise_address_en,
+               payment_information_list::VARCHAR[],
+               pms_page_record_id,
+               ow_page_record_id,
+               domain_change_num,
+               create_time,
+               update_time,
+               delete_flag,
+               limit_flag,
+               parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="getAllEnterprise" resultMap="enterpriseModel">
+        SELECT id,
+               enterprise_code,
+               enterprise_name,
+               enterprise_shorter_name,
+               social_credit_number,
+               enterprise_domain,
+               enterprise_region,
+               enterprise_address,
+               enterprise_principal_name,
+               enterprise_principal_phone,
+               email,
+               fax,
+               enterprise_tel,
+               auth_flow_id,
+               sign_org_id,
+               sharding_num,
+               login_page_icon,
+               tab_icon,
+               home_icon,
+               login_page_background,
+               enterprise_name_en,
+               enterprise_address_en,
+               payment_information_list::VARCHAR[],
+               pms_page_record_id,
+               ow_page_record_id,
+               domain_change_num,
+               create_time,
+               update_time,
+               delete_flag,
+               limit_flag,
+               parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+    </select>
+
+    <select id="getEnterprisesByCodes" resultMap="enterpriseModel">
+        SELECT id,
+        enterprise_code,
+        enterprise_name,
+        enterprise_shorter_name,
+        social_credit_number,
+        enterprise_domain,
+        enterprise_region,
+        enterprise_address,
+        enterprise_principal_name,
+        enterprise_principal_phone,
+        email,
+        fax,
+        enterprise_tel,
+        auth_flow_id,
+        sign_org_id,
+        sharding_num,
+        login_page_icon,
+        tab_icon,
+        home_icon,
+        login_page_background,
+        enterprise_name_en,
+        enterprise_address_en,
+        payment_information_list::VARCHAR[],
+        pms_page_record_id,
+        ow_page_record_id,
+        domain_change_num,
+        create_time,
+        update_time,
+        delete_flag,
+        limit_flag,
+        parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+        AND enterprise_code IN
+        <foreach collection="enterpriseCodes" index="index" item="enterpriseCode" open="(" separator="," close=")">
+            #{enterpriseCode}
+        </foreach>
+    </select>
+
+    <select id="getByNameSet" resultMap="enterpriseModel">
+        SELECT
+        id,
+        enterprise_code,
+        enterprise_name,
+        enterprise_shorter_name,
+        social_credit_number,
+        enterprise_domain,
+        enterprise_region,
+        enterprise_address,
+        enterprise_principal_name,
+        enterprise_principal_phone,
+        email,
+        fax,
+        enterprise_tel,
+        auth_flow_id,
+        sign_org_id,
+        sharding_num,
+        login_page_icon,
+        tab_icon,
+        home_icon,
+        login_page_background,
+        enterprise_name_en,
+        enterprise_address_en,
+        payment_information_list::VARCHAR[],
+        create_time,
+        update_time,
+        delete_flag,
+        limit_flag,
+        parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+        AND enterprise_name IN
+        <foreach collection="enterpriseNames" index="index" item="enterpriseName" open="(" separator="," close=")">
+            #{enterpriseName}
+        </foreach>
+        <if test="excludeEnterprise !=null">
+            AND enterprise_code != #{excludeEnterprise}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <update id="setBasicInformation">
+        UPDATE enterprise_base.t_enterprise_base_enterprise
+        SET enterprise_name_en       = #{enterpriseModel.enterpriseNameEn},
+            enterprise_address       = #{enterpriseModel.enterpriseAddress},
+            enterprise_address_en    = #{enterpriseModel.enterpriseAddressEn},
+            enterprise_tel           = #{enterpriseModel.enterpriseTel},
+            login_page_icon          = #{enterpriseModel.loginPageIcon},
+            tab_icon                 = #{enterpriseModel.tabIcon},
+            home_icon                = #{enterpriseModel.homeIcon},
+            login_page_background    = #{enterpriseModel.loginPageBackground},
+            payment_information_list = #{enterpriseModel.bankAccountMessageList},
+            enterprise_domain        = #{enterpriseModel.enterpriseDomain},
+            pms_page_record_id       = #{enterpriseModel.pmsPageRecordId},
+            ow_page_record_id        = #{enterpriseModel.owPageRecordId},
+            domain_change_num        = #{enterpriseModel.domainChangeNum},
+            enterprise_region        = #{enterpriseModel.enterpriseRegion},
+            limit_flag               = #{enterpriseModel.limitFlag},
+            enterprise_name          = #{enterpriseModel.enterpriseName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseModel.enterpriseCode}
+    </update>
+
+    <insert id="add" parameterType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseModel">
+        INSERT INTO enterprise_base.t_enterprise_base_enterprise
+        (enterprise_code, enterprise_name, social_credit_number, enterprise_domain, auth_flow_id, sign_org_id,
+         pms_page_record_id,
+         ow_page_record_id, domain_change_num,limit_flag)
+        VALUES (#{enterpriseModel.enterpriseCode}, #{enterpriseModel.enterpriseName},
+                #{enterpriseModel.socialCreditNumber}, #{enterpriseModel.enterpriseDomain},
+                #{enterpriseModel.authFlowId}, #{enterpriseModel.signOrgId}, #{enterpriseModel.pmsPageRecordId},
+                #{enterpriseModel.owPageRecordId}, 0, #{enterpriseModel.limitFlag})
+    </insert>
+
+    <insert id="addSonEnterprise" parameterType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseModel">
+        INSERT INTO enterprise_base.t_enterprise_base_enterprise
+        (enterprise_code, enterprise_name, social_credit_number, enterprise_domain, auth_flow_id, sign_org_id,
+         pms_page_record_id,enterprise_tel,
+         ow_page_record_id, domain_change_num,limit_flag,parent_enterprise_code,
+         enterprise_name_en,enterprise_address, enterprise_address_en,payment_information_list,enterprise_region)
+        VALUES (#{enterpriseModel.enterpriseCode}, #{enterpriseModel.enterpriseName},
+                #{enterpriseModel.socialCreditNumber}, #{enterpriseModel.enterpriseDomain},
+                #{enterpriseModel.authFlowId}, #{enterpriseModel.signOrgId}, #{enterpriseModel.pmsPageRecordId},#{enterpriseModel.enterpriseTel},
+                #{enterpriseModel.owPageRecordId}, 0, #{enterpriseModel.limitFlag},#{enterpriseModel.parentEnterpriseCode},
+                #{enterpriseModel.enterpriseNameEn},#{enterpriseModel.enterpriseAddress},#{enterpriseModel.enterpriseAddressEn},
+                #{enterpriseModel.bankAccountMessageList},#{enterpriseModel.enterpriseRegion})
+    </insert>
+
+    <select id="getSonEnterpriseByParentCode" resultMap="enterpriseModel">
+        SELECT
+        id,
+        enterprise_code,
+        enterprise_name,
+        parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+        AND (parent_enterprise_code = #{enterpriseCode} or enterprise_code = #{enterpriseCode})
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getCurrentAndSonEnterpriseByParentCode" resultMap="enterpriseModel">
+        SELECT
+            id,
+            enterprise_code,
+            enterprise_name,
+            enterprise_shorter_name,
+            social_credit_number,
+            enterprise_domain,
+            enterprise_region,
+            enterprise_address,
+            enterprise_principal_name,
+            enterprise_principal_phone,
+            email,
+            fax,
+            enterprise_tel,
+            auth_flow_id,
+            sign_org_id,
+            sharding_num,
+            login_page_icon,
+            tab_icon,
+            home_icon,
+            login_page_background,
+            enterprise_name_en,
+            enterprise_address_en,
+            payment_information_list::VARCHAR[],
+                pms_page_record_id,
+            ow_page_record_id,
+            domain_change_num,
+            create_time,
+            update_time,
+            delete_flag,
+            limit_flag,
+            parent_enterprise_code
+        FROM enterprise_base.t_enterprise_base_enterprise
+        WHERE delete_flag = false
+        and (parent_enterprise_code = #{enterpriseCode} or enterprise_code = #{enterpriseCode})
+        ORDER BY create_time DESC
+    </select>
+</mapper>

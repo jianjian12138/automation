@@ -1,0 +1,23 @@
+case_code: AwaitingDetailsController
+case_name: AwaitingDetailsController接口测试
+priority: 2
+steps:
+- data:
+    AwaitingDetailsRequest: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: awaitingRequestContractPageList
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 收货、发货 控制器
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: goods/getOverview
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 收货、发货 控制器

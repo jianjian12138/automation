@@ -1,0 +1,79 @@
+case_name: 数据库智能查询示例
+case_code: DBQueryDemo
+priority: 1
+steps:
+  - step_name: 基础查询 - 自动查找表
+    host: $get_host(ERP_TEST,pms_host)
+    path: /purchase/contract/invoiceRecord/add
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      # 框架会自动在所有表中查找 contract_code 字段并返回值
+      contractCode: $get_db_field(contract_code)
+      invoiceAmount: 1000.00
+      recordBatch: 1
+      remark: 使用数据库真实合同编码
+    response_assert:
+      status_code_assert: 200
+      response_assert_data: 添加发票成功
+
+  - step_name: 条件查询 - 单条件
+    host: $get_host(ERP_TEST,pms_host)
+    path: /contract/update
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      # 查找状态为"已审核"的合同
+      contractCode: $get_db_field(contract_code, status='已审核')
+      newStatus: 已完成
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 条件查询 - 多条件
+    host: $get_host(ERP_TEST,pms_host)
+    path: /user/assign-role
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      # 查找状态为"正常"且类型为"企业用户"的用户
+      userName: $get_db_field(user_name, status='正常', type='企业用户')
+      roleId: R001
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 混合使用 - DB + Mock
+    host: $get_host(ERP_TEST,pms_host)
+    path: /order/create
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      # 从数据库获取真实数据
+      contractCode: $get_db_field(contract_code, status='已审核')
+      customerCode: $get_db_field(customer_code, status='正常')
+      
+      # Mock 生成其他数据
+      orderAmount: $mock_data(amount, float, min=1000, max=100000, decimals=2)
+      quantity: $mock_data(quantity, int, min=1, max=100)
+      remark: $mock_data(remark)
+    response_assert:
+      status_code_assert: 200
+      response_assert_data: 订单创建成功
+
+  - step_name: 多步骤关联测试
+    host: $get_host(ERP_TEST,pms_host)
+    path: /contract/invoice/batch-add
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      # 第一张发票 - 真实合同1
+      invoice1:
+        contractCode: $get_db_field(contract_code)
+        amount: $mock_data(amount, float, min=100, max=1000, decimals=2)
+      
+      # 第二张发票 - 真实合同2
+      invoice2:
+        contractCode: $get_db_field(contract_code, status='已审核')
+        amount: $mock_data(amount, float, min=100, max=1000, decimals=2)
+    response_assert:
+      status_code_assert: 200
+

@@ -1,0 +1,14 @@
+case_code: FileDirectUploadController
+case_name: FileDirectUploadController接口测试
+priority: 2
+steps:
+- data:
+    DirectUploadTokenBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /upload/token
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 主系统侧客户端直传文件bff

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IProductPartQualityItemsMapper">
+
+    <resultMap id="resultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.items.ProductPartQualityItemsModel">
+        <id property="productPartQualityCode" column="primary_key"/>
+        <result property="checkName" column="check_name"/>
+        <result property="testMethod" column="test_method"/>
+        <result property="deviceTypes" column="device_types" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="checkRequire" column="check_require"/>
+        <result property="product_part_quality_items_sign" column="productPartQualityItemsSign"/>
+        <result property="enable" column="enable"/>
+        <result property="creationTime" column="creation_time"/>
+    </resultMap>
+
+    <select id="getListByPrimaryKey" resultMap="resultMap">
+        select primary_key,
+               check_name,
+               test_method,
+               device_types,
+               check_require,
+               enable
+        from ${productPartQualityItemsTable}
+        where delete_flag = false
+          and primary_key in
+              (select UNNEST(quality_code_list)
+               from ${productPartProcedureTable}
+               where primary_key = #{primaryKey}
+                 and enterprise_code = #{enterpriseCode});
+    </select>
+
+
+    <select id="queryByName" resultMap="resultMap">
+        select primary_key,
+               product_part_quality_items_sign,
+               check_name
+        from ${tableName}
+        where delete_flag = false
+          and product_part_quality_items_sign in
+        <foreach collection="checkNameList" index="index" item="checkName" open="(" separator="," close=")">
+            #{checkName}
+        </foreach>
+    </select>
+
+
+    <insert id="batchAdd">
+        INSERT INTO ${tableName} (primary_key, check_name,remark,enterprise_code,
+        test_method,check_require,creator,enable,device_types,related_file,contact,product_part_quality_items_sign,creation_time)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            ( #{model.productPartQualityCode}, #{model.checkName}, #{model.remark},
+            #{model.enterpriseCode},#{model.testMethod},#{model.checkRequire},#{model.creator},
+            #{model.enable},
+             #{model.deviceTypes,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+             #{model.relatedFile,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.contact},#{model.productPartQualityItemsSign},#{model.creationTime} )
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,114 @@
+case_code: Detailsdelivergoods
+case_name: detailsdeliverGoods
+priority: 2
+steps:
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: &id001
+    - awaitingDetailsCode: 468675650289008640
+      awaitingTaskCode: 468675650289008640
+      customer: customer_value
+      deliverUserCode: 468675650289008640
+      deliveryAddress: 北京市朝阳区示例路123号
+      logisticsNumber: logisticsnumber_value
+      logisticsStatus: 1
+      remark: ''
+      requestedDate: '2025-01-01 12:00:00'
+      thisCount: 0.0
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    customer: customer_value
+    deliveryAddress: 北京市朝阳区示例路123号
+    logisticsNumber: logisticsnumber_value
+    requestData: *id001
+    requestedDate: '2025-01-01 12:00:00'
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/awaiting/detailsdeliverGoods
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

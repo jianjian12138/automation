@@ -1,0 +1,23 @@
+case_code: QrCodeController
+case_name: QrCodeController接口测试
+priority: 2
+steps:
+- data:
+    QrCodeRpcDTO: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /getQrCodeStr
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: '* 获取二维码或条形码的base64信息'
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /check
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: '* 获取二维码或条形码的base64信息'

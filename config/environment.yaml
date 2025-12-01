@@ -1,0 +1,73 @@
+ERP_TEST:
+  servers:
+    default_headers:
+    opi_host: http://192.168.2.112:3456/opi
+    pms_host: http://192.168.2.112:3356/fpi
+    web: http://192.168.2.112:3356/?code=426089190049054721
+  data_base:
+    default:
+      database: micgenerp
+      default: null
+      host: 192.168.2.172
+      password: postgres
+      port: 5432
+      user: postgres
+  redis_base:
+    default:
+      db: 0
+      host: 192.168.2.180
+      max_connections: 10
+      password: zhongzao
+      port: 6379
+      username: null
+      cache_variable:
+        operation_user_hash_key: CacheKey-com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel-NA
+        operation_group_hash_key: CacheKey-com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel-NA
+        page_module_hash_key: CacheKey-com.futurecraftsmen.micgen.dm.service.po.base.PageModule-NA
+        module_hash_key: CacheKey-com.futurecraftsmen.pms.dm.service.po.base.ModuleModel-NA
+        table_hash_key: CacheKey-com.futurecraftsmen.pms.dm.service.po.base.ModuleTableModel-NA
+        field_hash_key: CacheKey-com.futurecraftsmen.pms.dm.service.po.base.ModuleTableFieldModel-NA
+        process_template_hash_key: CacheKey-com.futurecraftsmen.pms.dp.service.po.base.ProcessTemplateModel-NA
+        enum_module_hash_key: CacheKey-com.futurecraftsmen.pms.dm.service.po.base.EnumModule-NA
+        cache_operation_user_version_key: CacheVersion-com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel-NA
+        cache_module_version_key: CacheVersion-com.futurecraftsmen.pms.dm.service.po.base.ModuleModel-NA
+        cache_fields_version_key: CacheVersion-com.futurecraftsmen.pms.dm.service.po.base.ModuleTableFieldModel-NA
+        cache_table_version_key: CacheVersion-com.futurecraftsmen.pms.dm.service.po.base.ModuleTableModel-NA
+        cache_process_template_version_key: CacheVersion-com.futurecraftsmen.pms.dp.service.po.base.ProcessTemplateModel-NA
+        enum_module_version_key: CacheVersion-com.futurecraftsmen.pms.dm.service.po.base.EnumModule-NA
+        cache_operation_group_version_key: CacheVersion-com.futurecraftsmen.pms.operation.service.po.base.OperationGroupModel-NA
+  global_variable:
+    enterprise_code:
+    - 190787210592256000
+    - 426089190049054721
+    - 256159309392642049
+    opi_pass_word: pms2025@!
+    opi_phone_number: 17751020356
+    pms_pass_word: pms2023@!
+    pms_phone_number: 15565025655
+    xihang_pass_word: pms2025@!
+    xihang_phone_number: 17751020356
+    xihang_pass_word: pms2025@!
+    xihang_phone_number: 17751020356
+    geli_pass_word: pms2025@!
+    geli_phone_number: 17751020356
+    phone_number1: 15565025655
+
+AUTO_FIX:
+  enabled: true
+  rerun_after_fix: false
+  max_attempts: 1
+  report_dir: autofix_reports
+  ai_provider: skyvern
+  smart_click_fallback: true
+  attempt_fix: true
+  backup_dir: autofix_backups
+
+STRIX_SECURITY:
+  enabled: false
+  cli_path: strix
+  llm: openai/gpt-5
+  report_dir: reports/security
+  default_targets: []
+  extra_args: []
+

@@ -1,0 +1,90 @@
+case_code: Produce
+case_name: produce
+priority: 2
+steps:
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 12345.12345678
+    pickMaterialList: &id001 []
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 1.0e-08
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 99999999.99999999
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 123.123456785
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 非法字符串
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: -100.5
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    materialCode: $get_db_field(materialcode)
+    materialQty: 0.0
+    pickMaterialList: *id001
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/produce/dispatch/produce
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

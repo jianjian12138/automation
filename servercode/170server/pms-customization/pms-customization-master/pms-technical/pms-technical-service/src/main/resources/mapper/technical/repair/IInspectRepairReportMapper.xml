@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IInspectRepairReportMapper">
+
+    <resultMap id="getReInspectResultResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.product.InspectRepairReportResultModel">
+        <result property="reportFile" column="files" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="checkItems" column="check_item"/>
+    </resultMap>
+
+    <!-- 批量插入新记录 -->
+    <insert id="save">
+        INSERT INTO ${tableName}
+        (primary_key,
+         enterprise_code,
+         inspect_main_id,
+         report_main_id,
+         repair_main_id,
+         batch_no,
+         inspect_num,
+         passed_num,
+         un_passed_num,
+         un_passed_deal,
+         un_passed_remark,
+         finish_date,
+         inspect_user,
+         submit_user_code,
+         check_item,
+         remark,
+         status,
+         scrap_flag,
+         files)
+        VALUES (#{data.primaryKeyValue},
+                #{data.enterpriseCode},
+                #{data.inspectMainId},
+                #{data.reportMainId},
+                #{data.repairMainId},
+                #{data.batchNo},
+                #{data.inspectNum},
+                #{data.passedNum},
+                #{data.unPassedNum},
+                #{data.unPassedDeal},
+                #{data.unPassedRemark},
+                #{data.finishDate},
+                #{data.inspectUser},
+                #{data.submitUserCode},
+                #{data.checkItem},
+                #{data.remark},
+                #{data.status},
+                #{data.scrapFlag},
+                #{data.fileList})
+    </insert>
+
+    <select id="getReInspectResult" resultMap="getReInspectResultResultMap">
+        select *
+        from (select
+        a.primary_key as primaryKeyValue,
+        a.enterprise_code,
+        a.submit_date,
+        a.submit_user_code,
+        c.staff_sign as submitUserName,
+        a.submit_num,
+        a.scrap_num,
+        a.submit_total_num,
+        b.inspect_num,
+        b.passed_num,
+        b.files,
+        b.inspect_user,
+        d.staff_sign as inspectUserName,
+        b.create_time,
+        b.remark,
+        b.batch_no,
+        b.check_item
+        from ${submitTableName} a
+        LEFT JOIN ${reportTableName} b
+        on a.report_main_id = b.report_main_id
+        and b.batch_no = a.batch_no
+        and a.batch_no is not null
+
+        LEFT JOIN ${staffTableName} c on a.submit_user_code = c.primary_key
+        LEFT JOIN ${staffTableName} d on b.inspect_user = d.primary_key
+        where a.report_main_id = #{reportMainId}
+        and a.submit_num > 0
+        ORDER BY
+        MAX(b.create_time) OVER (PARTITION BY b.batch_no) DESC,
+        b.batch_no,
+        b.create_time desc
+        ) t
+        where t.enterprise_code = #{enterpriseCode}
+        <if test="isRepair != null and isRepair == true">
+            and t.submit_user_code is not null
+        </if>
+        <if test="inspectUserCode != null and inspectUserCode != ''">
+            and t.submit_user_code = #{inspectUserCode}
+        </if>
+
+
+    </select>
+
+    <select id="getListByReportMainIdAndSubmitUserCode">
+        select *
+        from ${reportTableName}
+        where enterprise_code = #{enterpriseCode}
+          and report_main_id = #{reportMainId}
+          and submit_user_code = #{submitUserCode}
+    </select>
+
+    <update id="updateStatusByReportMainIdAndSubmitUserCode">
+        update ${reportTableName}
+        set status = #{status}
+        where report_main_id = #{reportMainId}
+          and submit_user_code = #{submitUserCode}
+    </update>
+
+    <select id="getOver">
+        WITH t as (select count(1)
+                   from ${dispatcherTableName}
+                   where report_main_id = #{reportMainId}),
+             t1 as (select count(1)
+                    from (select DISTINCT report_main_id, submit_user_code, status
+                          from ${reportTableName}
+                          where report_main_id = #{reportMainId}
+                            and status = 3))
+        select t.* = t1.*
+        from t,
+             t1
+    </select>
+
+    <select id="hasUnFinished">
+        select count(1) > 0
+        from ${reportTableName}
+        where report_main_id = #{reportMainId}
+          and enterprise_code = #{enterpriseCode}
+          and status != 5
+        and  submit_user_code = #{submitUserCode}
+    </select>
+
+</mapper>

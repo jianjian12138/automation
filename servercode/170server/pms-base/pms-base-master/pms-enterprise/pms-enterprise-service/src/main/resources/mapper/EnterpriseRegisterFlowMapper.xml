@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.enterprise.service.dao.EnterpriseRegisterFlowDao">
+    <select id="getDoneFlowByUcssCode"
+            resultType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseRegisterFlowModel">
+        SELECT flow_code,
+               enterprise_name,
+               uscc_code,
+               user_name,
+               phone_number,
+               org_account_id,
+               user_account_id,
+               enterprise_code,
+               flow_status,
+               start_time,
+               completion_time,
+               e_sign_flow_id,
+               create_time,
+               update_time,
+               delete_flag
+        FROM enterprise_base.t_enterprise_base_register_flow
+        WHERE uscc_code = #{usccCode}
+          AND flow_status &gt; 0
+          AND delete_flag = false
+        LIMIT 1
+    </select>
+
+    <select id="getRegisteringFlowByUcssCodeAndPhone"
+            resultType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseRegisterFlowModel">
+        SELECT flow_code,
+               enterprise_name,
+               uscc_code,
+               user_name,
+               phone_number,
+               org_account_id,
+               user_account_id,
+               enterprise_code,
+               flow_status,
+               start_time,
+               completion_time,
+               e_sign_flow_id,
+               create_time,
+               update_time,
+               delete_flag
+        FROM enterprise_base.t_enterprise_base_register_flow
+        WHERE uscc_code = #{usccCode}
+          AND flow_status = 0
+          AND phone_number = #{phoneNumber}
+          AND delete_flag = false
+        LIMIT 1
+    </select>
+
+    <insert id="createFlow">
+        INSERT INTO enterprise_base.t_enterprise_base_register_flow(flow_code, enterprise_name, uscc_code, user_name,
+                                                                    phone_number, enterprise_code, org_account_id,
+                                                                    user_account_id, flow_status, start_time)
+        VALUES (#{enterpriseRegisterFlowModel.flowCode}, #{enterpriseRegisterFlowModel.enterpriseName},
+                #{enterpriseRegisterFlowModel.usccCode},
+                #{enterpriseRegisterFlowModel.userName}, #{enterpriseRegisterFlowModel.phoneNumber},
+                #{enterpriseRegisterFlowModel.enterpriseCode},
+                #{enterpriseRegisterFlowModel.orgAccountId}, #{enterpriseRegisterFlowModel.userAccountId},
+                #{enterpriseRegisterFlowModel.flowStatus}, #{enterpriseRegisterFlowModel.startTime})
+    </insert>
+
+
+    <select id="getByFlowCode"
+            resultType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseRegisterFlowModel">
+        SELECT flow_code,
+               enterprise_name,
+               uscc_code,
+               user_name,
+               phone_number,
+               org_account_id,
+               user_account_id,
+               enterprise_code,
+               flow_status,
+               start_time,
+               completion_time,
+               e_sign_flow_id,
+               create_time,
+               update_time,
+               delete_flag
+        FROM enterprise_base.t_enterprise_base_register_flow
+        WHERE flow_code = #{flowCode}
+          AND delete_flag = false
+    </select>
+
+    <update id="updateAfterIdentityEnd">
+        UPDATE enterprise_base.t_enterprise_base_register_flow
+        SET flow_status = 1,
+            e_sign_flow_id = #{eSignFlowId}
+        WHERE delete_flag = false
+          AND flow_status = 0
+          AND flow_code = #{flowCode}
+    </update>
+
+    <update id="updateAfterCreateResource">
+        UPDATE enterprise_base.t_enterprise_base_register_flow
+        SET flow_status     = 2,
+            enterprise_name = #{enterpriseName},
+            user_name       = #{userName},
+            completion_time = now()
+        WHERE delete_flag = false
+          AND flow_status = 1
+          AND flow_code = #{flowCode}
+    </update>
+
+
+    <update id="updateAfterAllow">
+        UPDATE enterprise_base.t_enterprise_base_register_flow
+        SET flow_status = 1
+        WHERE delete_flag = false
+          AND (flow_status = 0 OR flow_status = 1)
+          AND flow_code = #{flowCode}
+    </update>
+
+    <update id="updateAfterCreateResourceWithoutAuth">
+        UPDATE enterprise_base.t_enterprise_base_register_flow
+        SET flow_status     = 2,
+            completion_time = now()
+        WHERE delete_flag = false
+          AND flow_status = 1
+          AND flow_code = #{flowCode}
+    </update>
+</mapper>

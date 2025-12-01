@@ -1,0 +1,14 @@
+case_code: ChatClientController
+case_name: ChatClientController接口测试
+priority: 2
+steps:
+- data:
+    AiAgentRpcRequest: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: customer/chat
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 通义千问大语言模型

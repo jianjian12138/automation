@@ -1,0 +1,23 @@
+case_code: CollaborateInspectController
+case_name: CollaborateInspectController接口测试
+priority: 2
+steps:
+- data:
+    InspectPageConditionReq: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /main/page/list
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: Zeusedulous
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /main/getPassedList/{mainId}
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: Zeusedulous

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.ProcessDao">
+    <select id="countUncommittedProcessOfStaff" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE owned_enterprise_code = #{ownedEnterpriseCode}
+        AND apply_staff_code = #{applyStaffCode}
+        AND process_run_code = #{processRunCode}
+        AND process_status = -1
+        <if test="tablePrimaryKey != null">
+            AND #{tablePrimaryKey} = ANY(table_primary_key_list) AND array_length(table_primary_key_list, 1) = 1
+        </if>
+    </select>
+    <select id="getUncommittedProcessOfStaff"
+            resultType="com.futurecraftsmen.pms.dp.api.service.run.dto.ProcessDraftBaseRpcDTO">
+        SELECT t1.description, t1.update_time saveTime, t1.step_code, t1.process_code
+        FROM ${tableNameStep} t1
+        LEFT JOIN ${tableName} t2 ON t1.process_code = t2.process_code
+        WHERE t2.owned_enterprise_code = #{ownedEnterpriseCode}
+        AND t2.apply_staff_code = #{applyStaffCode}
+        AND t2.process_run_code = #{processRunCode}
+        AND t2.process_status = -1
+        <if test="tablePrimaryKey != null">
+            AND #{tablePrimaryKey} = ANY(t2.table_primary_key_list) AND array_length(t2.table_primary_key_list, 1) = 1
+        </if>
+    </select>
+    <insert id="createProcess">
+        INSERT INTO ${tableName} (process_code, owned_enterprise_code, process_run_code, apply_staff_code, next_code,
+                                  transfer_info,
+                                  process_step_info, process_form_info, process_status, table_primary_key_list)
+        VALUES (#{processModel.processCode}, #{processModel.ownedEnterpriseCode}, #{processModel.processRunCode},
+                #{processModel.applyStaffCode},
+                #{processModel.nextCode}, #{processModel.transferInfo}, #{processModel.processStepInfo},
+                #{processModel.processFormInfo}, #{processModel.processStatus},
+                #{processModel.tablePrimaryKeyList})
+        ON CONFLICT (process_code) DO UPDATE SET process_status = EXCLUDED.process_status,
+                                                 next_code      = EXCLUDED.next_code
+    </insert>
+    <resultMap id="processModel" type="com.futurecraftsmen.pms.dp.service.po.base.ProcessModel">
+        <result column="process_code" property="processCode"/>
+        <result column="owned_enterprise_code" property="ownedEnterpriseCode"/>
+        <result column="process_run_code" property="processRunCode"/>
+        <result column="table_primary_key_list" property="tablePrimaryKeyList" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="apply_staff_code" property="applyStaffCode"/>
+        <result column="next_code" property="nextCode"/>
+        <result column="transfer_info" property="transferInfo"/>
+        <result column="process_step_info" property="processStepInfo"/>
+        <result column="process_form_info" property="processFormInfo"/>
+        <result column="process_status" property="processStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+    <select id="getProcessModelByPage" resultMap="processModel">
+        SELECT
+        process_code,
+        owned_enterprise_code,
+        process_run_code,
+        table_primary_key_list::BIGINT[],
+        apply_staff_code,
+        next_code,
+        transfer_info,
+        process_step_info,
+        process_form_info,
+        process_status,
+        create_time,
+        update_time,
+        delete_flag
+        FROM ${tableName} WHERE delete_flag = false AND owned_enterprise_code = #{enterpriseCode}
+        <if test="superPermission == null || superPermission == false">
+            AND (apply_staff_code = #{staffCode} OR transfer_info LIKE '%'||'-'||#{staffCode}||'%' OR ( next_code IN
+            <foreach collection="nodeCodes" index="index" item="nodeCode" open="(" separator="," close=")">
+                #{nodeCode}
+            </foreach>
+            AND transfer_info NOT LIKE '%'||#{staffCode}||'-'||'%'))
+        </if>
+        <if test="processStatus != null">
+            AND process_status = #{processStatus}
+        </if>
+        <if test="processStatus == null">
+            AND process_status > 0
+        </if>
+        <if test="transferFlag != null">
+            <if test="transferFlag == false">
+                AND transfer_info = ''
+            </if>
+            <if test="transferFlag == true">
+                AND transfer_info !=''
+            </if>
+        </if>
+        <if test="processCode != null">
+            AND process_code = #{processCode}
+        </if>
+        ORDER BY process_status ASC, transfer_info DESC , update_time DESC
+    </select>
+    <select id="getProcessModelByCode" resultMap="processModel">
+        SELECT process_code,
+               owned_enterprise_code,
+               process_run_code,
+               table_primary_key_list::BIGINT[],
+               apply_staff_code,
+               next_code,
+               transfer_info,
+               process_step_info,
+               process_form_info,
+               process_status,
+               create_time,
+               update_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND process_code = #{processCode}
+    </select>
+    <update id="cancelProcess">
+        UPDATE ${tableName}
+        SET process_status = 11
+        WHERE process_code = #{processCode}
+          AND apply_staff_code = #{applyStaffCode}
+          AND owned_enterprise_code = #{enterpriseCode}
+          AND process_status = 5
+    </update>
+
+    <delete id="deleteProcess">
+        DELETE
+        FROM ${tableName}
+        WHERE process_code = #{processCode}
+          AND delete_flag = false
+    </delete>
+
+
+    <select id="countTodoProcess" >
+        SELECT COUNT(id)
+        FROM ${tableName} WHERE delete_flag = false AND owned_enterprise_code = #{enterpriseCode}
+        <if test="allPermissionOwner == false">
+            AND (transfer_info LIKE '%'||'-'||#{staffCode}||'%' OR ( next_code IN
+            <foreach collection="nodeCodes" index="index" item="nodeCode" open="(" separator="," close=")">
+                #{nodeCode}
+            </foreach>
+            AND transfer_info NOT LIKE '%'||#{staffCode}||'-'||'%'))
+        </if>
+        AND process_status = 1
+    </select>
+</mapper>

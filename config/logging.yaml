@@ -1,0 +1,41 @@
+version: 1
+disable_existing_loggers: False
+# 定义日志输出格式，可以有多种格式输出
+formatters:
+  simple:
+      format: "%(asctime)s - %(levelname)5s - thread.%(thread)5d - %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+  error:
+      format: "%(asctime)s - %(levelname)5s - thread.%(thread)5d - %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+  color_simple:
+      format: "%(asctime)s - \033[31m%(levelname)5s\033[0m - thread.%(thread)5d - %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+  windows_color:
+      format: "%(asctime)s - %(levelname)5s - thread.%(thread)5d - %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+      class: 'core.color_formatter.WindowsColorFormatter'
+
+# 定义不同的handler，输出不同等级的日志消息
+handlers:
+  console:
+      class: logging.StreamHandler # 输出到控制台
+      level: DEBUG
+      formatter: windows_color
+#      stream: ext://flask.logging.wsgi_errors_stream # 监听flask日志
+  info_file_handler:
+      class: logging.TimedRotatingFileHandler
+      level: INFO
+      formatter: simple
+      filename: ./logs/debug.log
+      backupCount: 20 #most 20 extensions
+      encoding: utf8
+      when: midnight  # 每天凌晨
+  error_file_handler:
+      class: logging.TimedRotatingFileHandler # 输出到文件
+      level: ERROR
+      formatter: error
+      filename: ./logs/error.log
+      backupCount: 20
+      encoding: utf8
+      when: W0  # 每周一
+# 启用handler
+root:
+  level: INFO
+  handlers: [console,info_file_handler,error_file_handler]

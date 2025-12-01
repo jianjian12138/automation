@@ -1,0 +1,14 @@
+case_code: UserConfigController
+case_name: UserConfigController接口测试
+priority: 2
+steps:
+- data:
+    UserConfigRpcDTO: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /set
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 用户配置控制器

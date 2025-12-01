@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IWarehouseInventoryDao">
+    <resultMap id="WarehouseInventoryModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.inventory.WarehouseInventoryModel">
+        <result column="primary_key" property="inventoryRecordCode"/>
+        <result column="product" property="product"/>
+        <result column="part" property="part"/>
+        <result column="total_inventory" property="totalInventory"/>
+        <result column="lock_in_inventor" property="lockInInventor"/>
+    </resultMap>
+
+    <insert id="initWarehouseInventory">
+        INSERT INTO ${tableName} (primary_key, product, part, total_inventory,
+                                  lock_in_inventor, safe_stock, complemen_num, enterprise_code)
+        VALUES (#{inventoryRecordCode}, #{product}, #{part},
+                '0', '0', '0', '0',
+                #{enterpriseCode})
+    </insert>
+
+    <select id="queryMaterialInventories" resultMap="WarehouseInventoryModel">
+        SELECT
+        primary_key,
+        product,
+        part,
+        total_inventory,
+        lock_in_inventor
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND (
+        product IN
+        <foreach collection="materialCodes" index="index" item="materialCode" open="(" separator="," close=")">
+            #{materialCode}
+        </foreach>
+        OR part IN
+        <foreach collection="materialCodes" index="index" item="materialCode" open="(" separator="," close=")">
+            #{materialCode}
+        </foreach>
+        )
+    </select>
+
+    <update id="lockInInventor">
+        UPDATE ${tableName}
+        SET lock_in_inventor = lock_in_inventor + #{lockInPart}
+        WHERE primary_key = #{inventoryRecordCode}
+          AND enterprise_code = #{enterpriseCode}
+          AND total_inventory - lock_in_inventor &gt;= #{lockInPart}
+    </update>
+
+    <insert id="batchInsert">
+        INSERT INTO ${tableName} (primary_key, product, part, total_inventory, lock_in_inventor, safe_stock,
+        complemen_num, remark, enterprise_code)
+        VALUES
+        <foreach collection="models" item="p" separator=",">
+            (#{p.inventoryRecordCode}, #{p.product}, #{p.part},#{p.totalInventory}, '0', #{p.safeStock}, '0',
+            #{p.remark}, #{p.enterpriseCode})
+        </foreach>
+    </insert>
+
+    <resultMap id="warehouseInventoryPageRpcDTO" type="com.futurecraftsmen.pms.technical.api.domain.warehouse.WarehouseInventoryPageRpcDTO">
+        <result column="stock" property="stock"/>
+        <result column="product_part_code" property="productPartCode"/>
+        <result column="product_part_sign" property="productPartSign"/>
+        <result column="model" property="model"/>
+        <result column="pcs" property="pcs"/>
+        <result column="pcsChn" property="pcsChn"/>
+        <result column="total_inventory" property="totalInventory"/>
+        <result column="canUseInventory" property="canUseInventory"/>
+        <result column="positionCodes" property="positionCodes" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="count_cycle" property="countCycle"/>
+        <result column="state" property="state"/>
+        <result column="stateChn" property="stateChn"/>
+        <result column="safe_inventory" property="safeInventory"/>
+        <result column="remark" property="remark"/>
+        <result column="stock_init_state" property="stockInitState"/>
+        <result column="bar_code_number" property="barCodeNumber"/>
+        <result column="type_name" property="typeName"/>
+        <result column="productPartTypeCode" property="productPartTypeCode"/>
+        <result column="attribute" property="attribute"/>
+        <result column="check_flag" property="checkFlag"/>
+        <result column="check_version" property="checkVersion"/>
+        <result column="stocktaking_type" property="stocktakingType"/>
+        <result column="haveBatchFlag" property="haveBatchFlag"/>
+        <result column="stock_limit" property="stockLimit"/>
+        <result column="unity_no" property="partUnityNo"/>
+        <result column="picture" property="picture" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="stockCheckRecordPageRpcDTO" type="com.futurecraftsmen.pms.technical.api.domain.warehouse.StockCheckRecordPageRpcDTO">
+        <result column="part_Unity_No" property="partUnityNo"/>
+        <result column="bar_code_number" property="barCodeNumber"/>
+        <result column="product_part_sign" property="productPartSign"/>
+        <result column="model" property="model"/>
+        <result column="position_code" property="positionCode"/>
+        <result column="position_codes" property="positionCodes" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="total_inventory" property="totalInventory"/>
+        <result column="check_total_inventory" property="checkTotalInventory"/>
+        <result column="disparity" property="disparity"/>
+        <result column="check_operation" property="checkOperation"/>
+        <result column="check_operation_name" property="checkOperationName"/>
+        <result column="check_time" property="checkTime"/>
+        <result column="stocktaking_type" property="stocktakingType"/>
+        <result column="check_version" property="checkVersion"/>
+        <result column="pcs" property="pcs"/>
+        <result column="pcsChn" property="pcsChn"/>
+        <result column="primary_key" property="primaryKey"/>
+        <result column="type_name" property="typeName"/>
+        <result column="attribute" property="attribute"/>
+    </resultMap>
+
+    <select id="pageList" resultMap="warehouseInventoryPageRpcDTO">
+        select t.primary_key stock,
+        t.product_part_code,
+        t.picture,
+        t1.product_part_sign,
+        t1.model,
+        t1.pcs,
+        t2.pieces_sign pcsChn,
+        t.total_inventory,
+        GREATEST(total_inventory - lock_in_inventor, 0)  canUseInventory,
+        t.shipping_space::BIGINT[] positionCodes, t.count_cycle,
+        t.state,
+        case when t.state then '启用' else '停用' end stateChn,
+        t.safe_inventory,
+        t.remark,
+        t.stock_init_state,
+        t.bar_code_number,
+        t3.type_name,
+        t3.primary_key productPartTypeCode,
+        t3.attribute,
+        t.check_version,
+        t.check_flag,
+        t.stocktaking_type,
+        CASE
+        WHEN EXISTS (SELECT 1
+        FROM ${positionStockBatchTableName} t4
+        WHERE t.primary_key = t4.stock_code
+        and t.product_part_code = t4.product_or_part
+        and t.shipping_space[1] = t4.position_code) THEN true
+        ELSE false END AS haveBatchFlag,
+        t.stock_limit
+        from ${stockTableName} t
+        left join ${productPartTableName} t1 on t.product_part_code = t1.primary_key
+        left join ${piecesTableName} t2 on t1.pcs = t2.primary_key
+        left join ${productPartTypeTableName} t3 on t1.product_part_type = t3.primary_key
+        where
+        t.delete_flag = false
+        and t.enterprise_code = #{enterpriseCode}
+
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo != ''">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("t.product_part_code","xihang",requestData.partUnityNo)}
+        </if>
+
+        <if test="requestData.model != null and requestData.model != ''">
+            and t1.model LIKE '%'|| #{requestData.model} ||'%'
+        </if>
+        <if test="requestData.productPartSign != null and requestData.productPartSign != ''">
+            and t1.product_part_sign LIKE '%'|| #{requestData.productPartSign} ||'%'
+        </if>
+        <if test="requestData.searchName != null and requestData.searchName != ''">
+            AND (t1.model ilike '%' || #{requestData.searchName} || '%' or t1.product_part_sign ilike '%' || #{requestData.searchName} || '%')
+        </if>
+        <if test="requestData.barCodeNumber != null and requestData.barCodeNumber != ''">
+            and t.bar_code_number LIKE '%'|| #{requestData.barCodeNumber} ||'%'
+        </if>
+        <if test="requestData.attribute != null">
+            and t3.attribute = #{requestData.attribute}
+        </if>
+
+        <if test="requestData.attributeList != null and requestData.attributeList.size() > 0">
+            and t3.attribute in
+            <foreach collection="requestData.attributeList" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="requestData.productPartCodeList != null and requestData.productPartCodeList.size() > 0">
+            and t.product_part_code in
+            <foreach collection="requestData.productPartCodeList" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="requestData.state != null">
+            and t.state = #{requestData.state}
+        </if>
+        <if test="requestData.stockInitState != null">
+            and t.stock_init_state = #{requestData.stockInitState}
+        </if>
+        <if test="requestData.codes != null and requestData.codes.size() > 0">
+            and t.primary_key in
+            <foreach collection="requestData.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="productPartTypeList != null and productPartTypeList.size() > 0">
+            and t3.primary_key in
+            <foreach collection="productPartTypeList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.positionCodes != null and requestData.positionCodes.size() > 0">
+            and
+            <foreach item="value" collection="requestData.positionCodes" separator=" OR " open="(" close=")">
+                #{value} = ANY (t.shipping_space)
+            </foreach>
+        </if>
+        <if test="partAttributeRightJPAList != null and partAttributeRightJPAList.size() > 0">
+            and t1.attribute in
+            <foreach collection="partAttributeRightJPAList" item="partAttributeRightJPA" open="(" separator="," close=")">
+                #{partAttributeRightJPA}
+            </foreach>
+        </if>
+        order by t.id desc
+        <if test="requestData.pageSize != null and requestData.offset != null
+              and requestData.pageSize > 0 and requestData.offset >=0">
+            LIMIT #{requestData.pageSize} OFFSET #{requestData.offset}
+        </if>
+    </select>
+
+    <update id="updateStock">
+        UPDATE ${stockTableName}
+        <set>
+            <if test="model.safeInventory!= null">
+                safe_inventory = #{model.safeInventory},
+            </if>
+            <if test="model.remark!= null and model.remark != ''">
+                remark = #{model.remark},
+            </if>
+            <if test="model.countCycle!= null">
+                count_cycle = #{model.countCycle},
+            </if>
+            <if test="model.stockInitState!= null">
+                stock_init_state = #{model.stockInitState},
+            </if>
+            <if test="model.state!= null">
+                state = #{model.state},
+            </if>
+            <if test="model.stockLimit!= null">
+                stock_limit = #{model.stockLimit},
+            </if>
+        </set>
+        where
+        enterprise_code = #{enterpriseCode}
+        and primary_key in
+        <foreach collection="model.positionStockCodes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </update>
+
+    <select id="stockDetail" resultMap="warehouseInventoryPageRpcDTO">
+        select t.primary_key                                 stock,
+               t.picture,
+               t.product_part_code,
+               t1.product_part_sign,
+               t1.model,
+               t1.pcs,
+               t2.pieces_sign                                pcsChn,
+               t.total_inventory,
+               t.total_inventory - t.lock_in_inventor        canUseInventory,
+               t.shipping_space::BIGINT[] positionCodes, t.count_cycle,
+               t.state,
+               case when t.state then '停用' else '启用' end stateChn,
+               t.safe_inventory,
+               t.remark
+        from ${stockTableName} t
+                 left join ${productPartTableName} t1 on t.product_part_code = t1.primary_key
+                 left join ${piecesTableName} t2 on t1.pcs = t2.primary_key
+        where t.enterprise_code = #{enterpriseCode}
+          and t.primary_key = #{stockCode}
+          and t.delete_flag = false
+    </select>
+
+    <select id="stockCheckRecordPageList" resultMap="stockCheckRecordPageRpcDTO">
+        select t1.unity_no as part_Unity_No,
+        t4.bar_code_number,
+        t1.product_part_sign,
+        t1.model,
+        t.position_codes::BIGINT[],
+        t.total_inventory,
+        t.check_total_inventory,
+        t.disparity,
+        t.check_operation,
+        t.check_operation_name,
+        t.check_time,
+        t.stocktaking_type,
+        t.check_version,
+        t1.pcs,
+        t3.pieces_sign as pcsChn,
+        t.primary_key,
+        t4.shipping_space::BIGINT[] positionCodes,
+        t2.type_name,
+        t1.attribute
+        from ${stockCheckRecordTableName} t
+        left join ${productPartTableName} t1 on t.product_part_code = t1.primary_key
+        left join ${productPartTypeTableName} t2 on t1.product_part_type = t2.primary_key
+        left join ${piecesTableName} t3 on t1.pcs = t3.primary_key
+        left join ${stockTableName} t4 on t.stock_code = t4.primary_key
+        where t.enterprise_code = #{enterpriseCode}
+        and t.delete_flag = false
+        and t.check_flag = true
+        <if test="requestData.searchName != null and requestData.searchName != ''">
+            AND (t1.model like '%' || #{requestData.searchName} || '%' or t1.product_part_sign like '%' || #{requestData.searchName} || '%')
+        </if>
+        <if test="requestData.barCodeNumber != null and requestData.barCodeNumber != ''">
+            and t4.bar_code_number LIKE '%'|| #{requestData.barCodeNumber} ||'%'
+        </if>
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo != ''">
+            and t1.unity_no ilike '%'|| #{requestData.partUnityNo} ||'%'
+        </if>
+        <if test="requestData.attribute != null">
+            and t1.attribute = #{requestData.attribute}
+        </if>
+
+        <if test="requestData.attributeList != null and requestData.attributeList.size() > 0">
+            and t1.attribute in
+            <foreach collection="requestData.attributeList" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="requestData.stocktakingTypes != null and requestData.stocktakingTypes.size() > 0">
+            and t.stocktaking_type in
+            <foreach collection="requestData.stocktakingTypes" item="stocktakingType" open="(" separator="," close=")">
+                #{stocktakingType}
+            </foreach>
+        </if>
+        <if test="requestData.positionCodes != null and requestData.positionCodes.size() > 0">
+            and
+            <foreach item="value" collection="requestData.positionCodes" separator=" OR " open="(" close=")">
+                #{value} = ANY (t4.shipping_space)
+            </foreach>
+        </if>
+        <if test="productPartTypeList != null and productPartTypeList.size() > 0">
+            and t2.primary_key in
+            <foreach collection="productPartTypeList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.checkOperation != null and requestData.checkOperation.size() > 0 ">
+            and t.check_operation in
+            <foreach collection="requestData.checkOperation" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="requestData.startTime != null">
+            AND t.check_time &gt;= #{requestData.startTime}
+        </if>
+        <if test="requestData.endTime != null">
+            AND t.check_time &lt;= #{requestData.endTime}
+        </if>
+        <if test="requestData.codes != null and requestData.codes.size() > 0">
+            and t.primary_key in
+            <foreach collection="requestData.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="partAttributeRightJPAList != null and partAttributeRightJPAList.size() > 0">
+            and t1.attribute in
+            <foreach collection="partAttributeRightJPAList" item="partAttributeRightJPA" open="(" separator="," close=")">
+                #{partAttributeRightJPA}
+            </foreach>
+        </if>
+        order by t.check_time desc, t.id desc
+        <if test="requestData.pageSize != null and requestData.offset != null
+              and requestData.pageSize > 0 and requestData.offset >=0">
+            LIMIT #{requestData.pageSize} OFFSET #{requestData.offset}
+        </if>
+    </select>
+
+    <update id="batchBingStockPosition">
+        update ${stockTableName}
+        set shipping_space = #{positionCodes,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler}
+        where enterprise_code = #{enterpriseCode}
+        and primary_key in
+        <foreach collection="canBingPositionStockCodes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getInventoryExportList"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.warehouseinventory.StockPositionMergeExportRpcModel">
+        select
+        t3.type_name,
+        t1.product_part_sign,
+        t1.model,
+        t.bar_code_number,
+        t2.pieces_sign pcsChn,
+        t.total_inventory,
+        t.total_inventory - t.lock_in_inventor canUseInventory,
+        t.safe_inventory,
+        t.count_cycle,
+        t.remark,
+        p.position_sign,
+        ps.position_stock_num
+        from
+        ${stockTableName} t
+        left join ${positionStockTableName} ps on ps.stock = t.primary_key
+        left join ${positionTableName} p on ps.position_code = p.primary_key
+        left join ${productPartTableName} t1 on t.product_part_code = t1.primary_key
+        left join ${piecesTableName} t2 on t1.pcs = t2.primary_key
+        left join ${productPartTypeTableName} t3 on t1.product_part_type = t3.primary_key
+        where
+        t.delete_flag = false
+        and t.enterprise_code = #{enterpriseCode}
+        <if test="requestData.model != null and requestData.model != ''">
+            and t1.model LIKE '%'|| #{requestData.model} ||'%'
+        </if>
+        <if test="requestData.state != null">
+            and t.state = #{requestData.state}
+        </if>
+        <if test="requestData.stockInitState != null">
+            and t.stock_init_state = #{requestData.stockInitState}
+        </if>
+        <if test="requestData.codes != null and requestData.codes.size() > 0">
+            and t.primary_key in
+            <foreach collection="requestData.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        order by t.create_time desc
+    </select>
+
+    <select id="getStockInfoByStockCode" resultMap="warehouseInventoryPageRpcDTO">
+        select t.primary_key stock,
+               t.product_part_code,
+               t1.product_part_sign,
+               t1.model,
+               t1.pcs,
+               t2.pieces_sign pcsChn,
+               t.total_inventory,
+               GREATEST(total_inventory - lock_in_inventor, 0)  canUseInventory,
+               t.shipping_space::BIGINT[] positionCodes, t.count_cycle,
+               t.state,
+               case when t.state then '启用' else '停用' end stateChn,
+               t.safe_inventory,
+               t.remark,
+               t.stock_init_state,
+               t.bar_code_number,
+               t3.type_name,
+               t3.primary_key productPartTypeCode,
+               t3.attribute,
+               t.check_version,
+               t.check_flag,
+               t.stocktaking_type,
+               CASE
+                   WHEN EXISTS (SELECT 1
+                                FROM ${positionStockBatchTableName} t4
+                                WHERE t.primary_key = t4.stock_code
+                                  and t.product_part_code = t4.product_or_part
+                                  and t.shipping_space[1] = t4.position_code) THEN true
+                   ELSE false END AS haveBatchFlag,
+               t.stock_limit,
+               t1.unity_no
+        from ${stockTableName} t
+                 left join ${productPartTableName} t1 on t.product_part_code = t1.primary_key
+                 left join ${piecesTableName} t2 on t1.pcs = t2.primary_key
+                 left join ${productPartTypeTableName} t3 on t1.product_part_type = t3.primary_key
+        where
+            t.delete_flag = false
+          and t.enterprise_code = #{enterpriseCode}
+          and t.primary_key = #{stockCode}
+    </select>
+</mapper>

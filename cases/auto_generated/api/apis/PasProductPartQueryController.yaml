@@ -1,0 +1,14 @@
+case_code: PasProductPartQueryController
+case_name: PasProductPartQueryController接口测试
+priority: 2
+steps:
+- data:
+    OptionalProductPartTypeBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /type/optional
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 技术部-产品零件分类接口 控制器

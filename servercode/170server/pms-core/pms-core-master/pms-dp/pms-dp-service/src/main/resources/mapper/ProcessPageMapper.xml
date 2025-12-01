@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.ProcessPageDao">
+    <insert id="mapProcessToPage">
+        INSERT INTO dp_base.t_dp_base_page_map_process (map_code, page_code, process_list, remark)
+        VALUES (#{mapCode}, #{pageCode}, #{processTemplateCodeList}, #{remark})
+        ON CONFLICT (page_code) DO UPDATE SET process_list = EXCLUDED.process_list,
+                                              remark       = EXCLUDED.remark
+    </insert>
+    <select id="getPageProcess" resultType="com.futurecraftsmen.pms.dp.service.po.base.PageMapProcessModel">
+        SELECT map_code, page_code, process_list as processTemplateList, remark
+        FROM dp_base.t_dp_base_page_map_process
+        WHERE delete_flag = false
+          AND page_code = #{pageCode}
+    </select>
+</mapper>

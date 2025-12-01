@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dm.service.dao.ModuleDao">
+    <insert id="addModuleModel">
+        INSERT INTO dm_base.t_dm_base_module (module_code, module_name_en, module_name_chn, icon, owned_enterprise_code,
+                                              module_state, over_started, remark)
+        VALUES (#{moduleModel.moduleCode}, #{moduleModel.moduleNameEn},
+                #{moduleModel.moduleNameChn}, #{moduleModel.icon}, #{moduleModel.ownedEnterpriseCode},
+                #{moduleModel.moduleState}, #{moduleModel.overStarted},
+                #{moduleModel.remark})
+    </insert>
+    <select id="getModuleModelPaging" resultType="com.futurecraftsmen.pms.dm.service.po.base.ModuleModel">
+        SELECT t1.id, t1.module_code, t1.module_name_en, t1.module_name_chn, t1.icon, t1.owned_enterprise_code,
+        t1.module_state, t1.over_started, t1.remark, t1.update_time, t1.create_time, t1.delete_flag
+        FROM dm_base.t_dm_base_module t1
+        WHERE t1.delete_flag = false
+        <if test="moduleFilterCondition.publicPrivateFlag != null">
+            <choose>
+                <when test="moduleFilterCondition.publicPrivateFlag == false">
+                    AND t1.owned_enterprise_code is null
+                </when>
+                <otherwise>
+                    <choose>
+                        <when test="moduleFilterCondition.ownedEnterpriseCode == null">
+                            AND t1.owned_enterprise_code is not null
+                        </when>
+                        <otherwise>
+                            AND t1.owned_enterprise_code = #{moduleFilterCondition.ownedEnterpriseCode}
+                        </otherwise>
+                    </choose>
+                </otherwise>
+            </choose>
+        </if>
+        <if test="moduleFilterCondition.moduleState != null">
+            AND t1.module_state = #{moduleFilterCondition.moduleState}
+        </if>
+        <if test="moduleFilterCondition.moduleName != null and moduleFilterCondition.moduleName != ''">
+            AND (t1.module_name_en LIKE '%'||#{moduleFilterCondition.moduleName}||'%' OR t1.module_name_chn LIKE
+            '%'||#{moduleFilterCondition.moduleName}||'%')
+        </if>
+    </select>
+    <select id="getModuleModelsByCodes" resultType="com.futurecraftsmen.pms.dm.service.po.base.ModuleModel">
+        SELECT t1.id,
+        t1.module_code,
+        t1.module_name_en,
+        t1.module_name_chn,
+        t1.icon,
+        t1.owned_enterprise_code,
+        t1.module_state,
+        t1.over_started,
+        t1.remark,
+        t1.update_time,
+        t1.create_time,
+        t1.delete_flag
+        FROM dm_base.t_dm_base_module t1
+        WHERE t1.module_code IN
+        <foreach collection="moduleCodes" index="index" item="moduleCode" open="(" separator="," close=")">
+            #{moduleCode}
+        </foreach>
+        AND t1.delete_flag = false
+    </select>
+    <update id="updateModuleModel">
+        UPDATE dm_base.t_dm_base_module
+        SET
+        module_code = #{moduleUpdatePDTO.moduleCode}
+        <if test="moduleUpdatePDTO.moduleNameChn != null and moduleUpdatePDTO.moduleNameChn != ''">
+            , module_name_chn = #{moduleUpdatePDTO.moduleNameChn}
+        </if>
+        <if test="moduleUpdatePDTO.icon != null and moduleUpdatePDTO.icon != ''">
+            , icon = #{moduleUpdatePDTO.icon}
+        </if>
+        <if test="moduleUpdatePDTO.remark != null and moduleUpdatePDTO.remark != ''">
+            , remark = #{moduleUpdatePDTO.remark}
+        </if>
+        WHERE module_code = #{moduleUpdatePDTO.moduleCode} AND delete_flag = false
+    </update>
+    <select id="countModuleByModuleCode" resultType="int">
+        SELECT count(*)
+        FROM dm_base.t_dm_base_module t
+        WHERE t.module_code = #{moduleCode}
+          AND t.delete_flag = false
+    </select>
+    <select id="countModuleByModuleNameEn" resultType="int">
+        SELECT count(*)
+        FROM dm_base.t_dm_base_module t
+        WHERE t.module_name_en = #{moduleNameEn}
+          AND t.delete_flag = false
+    </select>
+    <select id="getAllModuleModel" resultType="com.futurecraftsmen.pms.dm.service.po.base.ModuleModel">
+        SELECT id,
+               module_code,
+               module_name_en,
+               module_name_chn,
+               icon,
+               owned_enterprise_code,
+               module_state,
+               over_started,
+               remark,
+               update_time,
+               create_time,
+               delete_flag
+        FROM dm_base.t_dm_base_module
+        WHERE delete_flag = false
+    </select>
+    <update id="changeModuleStatus">
+        UPDATE dm_base.t_dm_base_module
+        SET module_state = CASE
+                               WHEN module_state = true THEN false
+                               WHEN module_state = false THEN true
+            END,
+            over_started = true
+        WHERE module_code = #{moduleCode}
+          AND delete_flag = false
+    </update>
+    <delete id="deleteModule">
+        DELETE
+        FROM dm_base.t_dm_base_module
+        WHERE module_code = #{moduleCode}
+          AND over_started = false
+          AND delete_flag = false
+    </delete>
+</mapper>

@@ -1,0 +1,14 @@
+case_code: ToolEquipmentTypeController
+case_name: ToolEquipmentTypeController接口测试
+priority: 2
+steps:
+- data:
+    ToolEquipmentTypeRequest: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: getEquipmentTypeAll
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 技术部-工装设备 控制器

@@ -1,0 +1,14 @@
+case_code: GlobalNumberController
+case_name: GlobalNumberController接口测试
+priority: 2
+steps:
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params:
+    rightCode: $generate_random_string(10)
+  path: /right/menu
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 部门职责

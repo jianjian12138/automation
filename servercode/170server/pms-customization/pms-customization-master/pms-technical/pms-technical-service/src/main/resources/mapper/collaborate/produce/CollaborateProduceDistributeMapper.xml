@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.produce.CollaborateProduceDistributeMapper">
+
+
+    <select id="reportList" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceDistribute">
+        select buss_number, product_code, manage_user_code, sum(task_num) task_num, max(batch_num) batch_num, max(sell_Order_Code) sell_Order_Code
+                          , contract_code    contract_code
+                          , max(primary_key) primary_key
+        from ${dynamicTableNameProxy.collaborateProduceDistribute} a
+        where enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and delete_flag = false
+          and contract_code = #{data.contractCode}
+          and manage_user_code = ${dynamicTableNameProxy.currentCode}
+        group by buss_number, product_code, manage_user_code, contract_code
+    </select>
+</mapper>

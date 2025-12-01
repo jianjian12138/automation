@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.produce.CollaborateProduceExtendMapper">
+
+
+    <select id="selectCountByPart" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.produce.CollaborateProduceExtend">
+        select part_code, parent_part_code, sum(apply_num) apply_num
+        from ${dynamicTableNameProxy.collaborateProduceExtend}
+        where contract_code = #{contractCode}
+          and delete_flag = false
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        group by part_code, parent_part_code
+    </select>
+
+
+    <update id="updateStatus">
+        update ${dynamicTableNameProxy.collaborateProduceExtend}
+        set pick_Status =1
+        where contract_code = #{contractCode}
+          and delete_flag = false
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+    </update>
+
+</mapper>

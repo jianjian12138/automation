@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.quality.IInspectReportPrintMapper">
+
+    <resultMap id="getInspectResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.quality.inspect.InspectReportPrintModel">
+        <result property="inspectUserCodeList" column="inspect_user_code_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+    </resultMap>
+
+    <insert id="add">
+        INSERT INTO ${tableName} (primary_key,
+                                  enterprise_code,
+                                  produce_main_id,
+                                  inspect_main_id,
+                                  contract_code,
+                                  buss_number,
+                                  batch_num,
+                                  name,
+                                  inspect_basic,
+                                  inspect_type,
+                                  begin_date,
+                                  end_date,
+                                  task_num,
+                                  inspect_num,
+                                  remark,
+                                  check_items,
+                                  print_user_code,
+                                  inspect_result,
+                                  inspect_user_name,
+                                  curr_date,
+                                  inspect_user_code_list,
+                                  enterprise_name)
+        VALUES (#{data.primaryKeyValue},
+                #{data.enterpriseCode},
+                #{data.produceMainId},
+                #{data.inspectMainId},
+                #{data.contractCode},
+                #{data.bussNumber},
+                #{data.batchNum},
+                #{data.name},
+                #{data.inspectBasic},
+                #{data.inspectType},
+                #{data.beginDate},
+                #{data.endDate},
+                #{data.taskNum},
+                #{data.inspectNum},
+                #{data.remark},
+                #{data.checkItems},
+                #{data.printUserCode},
+                #{data.inspectResult},
+                #{data.inspectUserName},
+                #{data.currDate},
+                #{data.inspectUserCodeList},
+                #{data.enterpriseName})
+    </insert>
+
+    <select id="getFirstByInspectMainId" resultMap="getInspectResultMap">
+        select *
+        from ${tableName}
+        where delete_flag = false
+          and enterprise_code = #{enterpriseCode}
+          and inspect_main_id = #{inspectMainId}
+        order by id desc limit 1
+    </select>
+</mapper>

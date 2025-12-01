@@ -1,0 +1,147 @@
+case_code: Formualen
+case_name: formualEn
+priority: 2
+steps:
+- data:
+    assistedCost: 12345.12345678
+    calculation: calculation_value
+    costManually: 12345.12345678
+    deviceCost: 12345.12345678
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: &id001
+    - 123456789
+    manageCost: 12345.12345678
+    partUnityNo: UNITY_NO_001
+    testCost: 12345.12345678
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    assistedCost: 1.0e-08
+    calculation: calculation_value
+    costManually: 1.0e-08
+    deviceCost: 1.0e-08
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: 1.0e-08
+    partUnityNo: UNITY_NO_001
+    testCost: 1.0e-08
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    assistedCost: 99999999.99999999
+    calculation: calculation_value
+    costManually: 99999999.99999999
+    deviceCost: 99999999.99999999
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: 99999999.99999999
+    partUnityNo: UNITY_NO_001
+    testCost: 99999999.99999999
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    assistedCost: 123.123456785
+    calculation: calculation_value
+    costManually: 123.123456785
+    deviceCost: 123.123456785
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: 123.123456785
+    partUnityNo: UNITY_NO_001
+    testCost: 123.123456785
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    assistedCost: 非法字符串
+    calculation: calculation_value
+    costManually: 非法字符串
+    deviceCost: 非法字符串
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: 非法字符串
+    partUnityNo: UNITY_NO_001
+    testCost: 非法字符串
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    assistedCost: -100.5
+    calculation: calculation_value
+    costManually: -100.5
+    deviceCost: -100.5
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: -100.5
+    partUnityNo: UNITY_NO_001
+    testCost: -100.5
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    assistedCost: 0.0
+    calculation: calculation_value
+    costManually: 0.0
+    deviceCost: 0.0
+    formula: formula_value
+    formulaEn: formulaen_value
+    id: 123456789
+    ids: *id001
+    manageCost: 0.0
+    partUnityNo: UNITY_NO_001
+    testCost: 0.0
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/financing/products/price/formualEn
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

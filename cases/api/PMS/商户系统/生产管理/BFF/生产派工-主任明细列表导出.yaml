@@ -1,0 +1,24 @@
+case_name: 生产派工-主任明细列表导出
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/produce/detail/page/allocation/listExport
+  headers: $generate_token(pms_host)
+  method: POST
+  data: {}
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/produce/detail/page/allocation/listExport
+  headers: {}
+  method: POST
+  data: {}
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

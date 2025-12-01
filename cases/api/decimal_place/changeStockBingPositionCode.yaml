@@ -1,0 +1,113 @@
+case_code: Changestockbingpositioncode
+case_name: changeStockBingPositionCode
+priority: 2
+steps:
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 12345.12345678
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: &id001
+    - 123456789
+    toBeDeletePositionCodes: &id002
+    - 123456789
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 1.0e-08
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 99999999.99999999
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 123.123456785
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 非法字符串
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: -100.5
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    changePositionCode: $get_db_field(changepositioncode)
+    positionStockNum: 0.0
+    stockCode: $get_db_field(stock_code)
+    toBeAddPositionCodes: *id001
+    toBeDeletePositionCodes: *id002
+    unChangePositionCode: $get_db_field(unchangepositioncode)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/changeStockBingPositionCode
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

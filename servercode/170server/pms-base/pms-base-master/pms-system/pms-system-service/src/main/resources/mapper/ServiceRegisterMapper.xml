@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.system.service.dao.ServiceRegisterDao">
+    <select id="getServiceRegisterByService"
+            resultType="com.futurecraftsmen.pms.system.service.po.ServiceRegisterModel">
+        SELECT register_code,
+               service_register_num,
+               service_type,
+               service_name,
+               remark
+        FROM system_base.t_system_base_service_register t
+        WHERE t.register_code = #{registerCode}
+          AND t.service_name = #{serviceName}
+    </select>
+</mapper>

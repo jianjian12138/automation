@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.ProcessRunDao">
+
+    <select id="getLastProcessRunList" resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessRunModel">
+        WITH ephemeral_data AS (SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY process_template_code ORDER BY create_time DESC) AS row_num
+        FROM dp_base.t_dp_base_running_process
+        WHERE delete_flag = false
+        <if test="processTemplateCodeList != null and processTemplateCodeList.size() > 0">
+            <foreach collection="processTemplateCodeList" index="index" item="processTemplateCode"
+                     open="AND process_template_code IN ("
+                     separator="," close=")">
+                ${processTemplateCode}
+            </foreach>
+        </if>)
+        SELECT id,
+        process_code,
+        process_name,
+        table_code,
+        owned_enterprise_code,
+        process_info,
+        process_template_code,
+        process_parameter,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM ephemeral_data
+        WHERE row_num = 1;
+    </select>
+    <select id="getLastProcessRun" resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessRunModel">
+        SELECT id,
+               process_code,
+               process_name,
+               table_code,
+               owned_enterprise_code,
+               process_info,
+               process_template_code,
+               process_parameter,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM dp_base.t_dp_base_running_process
+        WHERE delete_flag = false
+          AND process_template_code = #{processTemplateCode}
+        ORDER BY create_time DESC LIMIT 1
+    </select>
+    <select id="getProcessRunByCheckCode"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessRunModel">
+        SELECT id,
+               process_code,
+               process_name,
+               table_code,
+               owned_enterprise_code,
+               process_info,
+               process_template_code,
+               process_parameter,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM dp_base.t_dp_base_running_process
+        WHERE delete_flag = false
+          AND process_code = #{processCheckCode}
+    </select>
+    <select id="getProcessRunsByCheckCode"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessRunModel">
+        SELECT id,
+        process_code,
+        process_name,
+        table_code,
+        owned_enterprise_code,
+        process_info,
+        process_template_code,
+        process_parameter,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM dp_base.t_dp_base_running_process
+        WHERE delete_flag = false
+        AND process_code IN
+        <foreach collection="processCheckCodeList" index="index" item="processCheckCode" open="(" separator=","
+                 close=")">
+            #{processCheckCode}
+        </foreach>
+    </select>
+    <insert id="insertProcessRun">
+        INSERT INTO dp_base.t_dp_base_running_process (process_code, process_name, table_code, owned_enterprise_code,
+                                                       process_info, set_operation_flag,
+                                                       process_template_code, process_parameter, remark)
+        VALUES (#{processRunModel.processCode}, #{processRunModel.processName}, #{processRunModel.tableCode},
+                #{processRunModel.ownedEnterpriseCode}, #{processRunModel.processInfo},
+                #{processRunModel.setOperationFlag}, #{processRunModel.processTemplateCode},
+                #{processRunModel.processParameter}, #{processRunModel.remark}) ON CONFLICT(process_code) DO
+        UPDATE SET delete_flag = false
+    </insert>
+</mapper>

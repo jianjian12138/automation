@@ -1,0 +1,35 @@
+# Dubbo RPC 测试示例
+case_name: Dubbo测试示例
+case_code: DubboExample
+priority: 1
+steps:
+  - step_name: Dubbo服务调用
+    protocol: dubbo
+    host: 192.168.1.100
+    port: 20880
+    interface: com.example.service.UserService
+    method: getUserById
+    parameters:
+      - "123"
+    version: 1.0.0
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $.id == "123"
+        - $.name != null
+
+  - step_name: Dubbo带多个参数
+    protocol: dubbo
+    host: 192.168.1.100
+    port: 20880
+    interface: com.example.service.OrderService
+    method: createOrder
+    parameters:
+      - "user123"
+      - 100.50
+      - "VIP"
+    group: order
+    version: 2.0.0
+    response_assert:
+      status_code_assert: 200
+      response_assert_data: success

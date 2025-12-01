@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.TemplateTypeDao">
+    <resultMap id="templateTypeModel" type="com.futurecraftsmen.pms.ow.service.model.TemplateTypeModel">
+        <result property="templateTypeCode" column="template_type_code"/>
+        <result property="language" column="language"/>
+        <result property="introduction" column="introduction"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+    <insert id="setTemplateType">
+        insert into ow_base.t_template_type (template_type_code, language, introduction)
+        values (#{templateTypeModel.templateTypeCode}, #{templateTypeModel.language}, #{templateTypeModel.introduction})
+        ON CONFLICT (template_type_code) DO UPDATE SET introduction = EXCLUDED.introduction
+    </insert>
+
+    <select id="getTemplateTypeByCodes" resultMap="templateTypeModel">
+        SELECT template_type_code,
+        language,
+        introduction,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ow_base.t_template_type
+        WHERE delete_flag = false
+        AND template_type_code IN
+        <foreach collection="templateTypeCodes" index="index" item="templateTypeCode" open="("
+                 separator="," close=")">
+            #{templateTypeCode}
+        </foreach>
+    </select>
+
+    <select id="getAllTemplateTypeModel" resultMap="templateTypeModel">
+        SELECT template_type_code,
+               language,
+               introduction,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ow_base.t_template_type
+        WHERE delete_flag = false
+    </select>
+
+    <delete id="deleteTemplateType">
+        DELETE
+        FROM ow_base.t_template_type
+        WHERE template_type_code = #{templateTypeCode}
+    </delete>
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.operation.service.dao.OperationUserDao">
+    <insert id="addOperationUser">
+        INSERT INTO operation_base.t_operation_base_user (operation_user_code, operation_user_name, id_number,
+                                                          phone_number, gender, role_level, enable_flag, remark)
+        VALUES (#{operationUserModel.operationUserCode}, #{operationUserModel.operationUserName},
+                #{operationUserModel.idNumber}, #{operationUserModel.phoneNumber}, #{operationUserModel.gender},
+                #{operationUserModel.roleLevel}, #{operationUserModel.enableFlag}, #{operationUserModel.remark})
+    </insert>
+    <update id="changeEnableState">
+        UPDATE operation_base.t_operation_base_user
+        SET enable_flag =
+                CASE
+                    WHEN enable_flag = true THEN false
+                    WHEN enable_flag = false THEN true
+                    END
+        WHERE delete_flag = false
+          AND operation_user_code = #{userCode}
+    </update>
+    <select id="getOperationUserByPhoneNumber"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT id,
+               operation_user_code,
+               operation_user_name,
+               id_number,
+               phone_number,
+               password,
+               gender,
+               role_level,
+               enable_flag,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_user
+        WHERE phone_number = #{phoneNumber}
+          AND delete_flag = false
+    </select>
+    <select id="countOperationUserByPhoneNumber" resultType="Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_user
+        WHERE phone_number = #{phoneNumber}
+          AND delete_flag = false
+    </select>
+    <select id="getUserByUserCode"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT id,
+               operation_user_code,
+               operation_user_name,
+               id_number,
+               phone_number,
+               password,
+               gender,
+               role_level,
+               enable_flag,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_user
+        WHERE operation_user_code = #{userCode}
+          AND delete_flag = false
+    </select>
+    <select id="countOperationUserByIdNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM operation_base.t_operation_base_user
+        WHERE id_number = #{idNumber}
+          AND delete_flag = false
+    </select>
+    <select id="getOperationUserSecondLevel"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT id,
+               operation_user_code,
+               operation_user_name,
+               id_number,
+               phone_number,
+               password,
+               gender,
+               role_level,
+               enable_flag,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_user
+        WHERE role_level = 2
+          AND delete_flag = false
+          AND enable_flag = true
+    </select>
+
+    <update id="changePassword">
+        UPDATE operation_base.t_operation_base_user
+        SET password = #{password}
+        WHERE delete_flag = false
+          AND operation_user_code = #{userCode}
+          AND enable_flag = true
+    </update>
+
+    <select id="getAllOperationUser"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT id,
+               operation_user_code,
+               operation_user_name,
+               id_number,
+               phone_number,
+               password,
+               gender,
+               role_level,
+               enable_flag,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM operation_base.t_operation_base_user
+        WHERE delete_flag = false
+    </select>
+    <select id="getOperationUserPaging"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT t1.id,
+        t1.operation_user_code,
+        t1.operation_user_name,
+        t1.id_number,
+        t1.phone_number,
+        t1.gender,
+        t1.role_level,
+        t1.enable_flag,
+        t1.remark,
+        t1.create_time,
+        t1.update_time,
+        t1.delete_flag,
+        t2.group_code
+        FROM operation_base.t_operation_base_user t1
+        LEFT JOIN operation_base.t_operation_base_group_map_user t2
+        ON t1.operation_user_code = t2.user_code AND t2.delete_flag = false
+        WHERE t1.delete_flag = false
+        <if test="operationUserFilterConditionDTO.operationUserName != null and operationUserFilterConditionDTO.operationUserName != ''">
+            AND t1.operation_user_name LIKE '%'|| #{operationUserFilterConditionDTO.operationUserName} ||'%'
+        </if>
+        <if test="operationUserFilterConditionDTO.roleLevel != null ">
+            AND t1.role_level = #{operationUserFilterConditionDTO.roleLevel}
+        </if>
+        <if test="operationUserFilterConditionDTO.enableFlag != null ">
+            AND t1.enable_flag = #{operationUserFilterConditionDTO.enableFlag}
+        </if>
+    </select>
+    <select id="getUsersByUserCodes"
+            resultType="com.futurecraftsmen.pms.operation.service.po.base.OperationUserModel">
+        SELECT id,
+        operation_user_code,
+        operation_user_name,
+        id_number,
+        phone_number,
+        password,
+        gender,
+        role_level,
+        enable_flag,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM operation_base.t_operation_base_user
+        WHERE operation_user_code IN
+        <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+        AND delete_flag = false
+    </select>
+</mapper>

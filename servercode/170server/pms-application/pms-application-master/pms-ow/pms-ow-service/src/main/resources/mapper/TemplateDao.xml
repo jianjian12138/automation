@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.TemplateDao">
+    <resultMap id="templateModel" type="com.futurecraftsmen.pms.ow.service.model.TemplateModel">
+        <result property="templateCode" column="template_code"/>
+        <result property="templateName" column="template_name"/>
+        <result property="language" column="language"/>
+        <result property="templateTypeCode" column="template_type_code"/>
+        <result property="templatePageUrl" column="template_page_url"/>
+        <result property="enableFlag" column="enable_flag"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <insert id="setTemplate">
+        insert into ow_base.t_template (template_code, template_name, language, template_type_code, template_page_url,
+                                        enable_flag)
+        values (#{templateModel.templateCode}, #{templateModel.templateName}, #{templateModel.language},
+                #{templateModel.templateTypeCode}, #{templateModel.templatePageUrl},
+                #{templateModel.enableFlag}) ON CONFLICT (template_code) DO
+        UPDATE SET template_type_code = EXCLUDED.template_type_code,template_name = EXCLUDED.template_name,template_page_url = EXCLUDED.template_page_url
+    </insert>
+
+    <update id="changeTemplateStatus">
+        UPDATE ow_base.t_template
+        SET enable_flag = CASE
+                              WHEN enable_flag = true THEN false
+                              WHEN enable_flag = false THEN true
+            END
+        WHERE template_code = #{templateCode}
+          AND delete_flag = false
+    </update>
+
+    <select id="getTemplateByCodes" resultMap="templateModel">
+        SELECT
+        template_code,
+        template_name,
+        language,
+        template_type_code,
+        template_page_url,
+        enable_flag,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ow_base.t_template
+        WHERE delete_flag = false
+        AND template_code IN
+        <foreach collection="templateCodes" index="index" item="templateCode" open="("
+                 separator="," close=")">
+            #{templateCode}
+        </foreach>
+    </select>
+
+    <select id="getAllTemplateModel" resultMap="templateModel">
+        SELECT template_code,
+               template_name, language, template_type_code, template_page_url, enable_flag, update_time, create_time, delete_flag
+        FROM ow_base.t_template
+        WHERE delete_flag = false
+    </select>
+</mapper>

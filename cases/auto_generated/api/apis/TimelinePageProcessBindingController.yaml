@@ -1,0 +1,23 @@
+case_code: TimelinePageProcessBindingController
+case_name: TimelinePageProcessBindingController接口测试
+priority: 2
+steps:
+- data:
+    TimelineBatchBindingBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /batch/bind
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 动态时间轴节点页面流程绑定bff
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /get/timeline/enum/list
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 动态时间轴节点页面流程绑定bff

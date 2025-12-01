@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IProcessRouteMapper">
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.processroute.ProcessRouteModel">
+        <result column="primary_key" property="processRouteCode"/>
+        <result column="type" property="type"/>
+        <result column="process_route_name" property="processRouteName"/>
+        <result column="remark" property="remark"/>
+        <result column="state" property="state"/>
+        <result column="product_code" property="productCode"/>
+        <result column="part_code" property="partCode"/>
+        <result column="procedure_info" property="procedureInfo"/>
+        <result column="using_part_codes" property="usingPartCodes" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="data_version" property="dataVersion"/>
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+
+        <result column="temp_procedure_code" property="tempProcedureCode"/>
+    </resultMap>
+
+    <sql id="columns">
+        primary_key, type, process_route_name, remark, state,product_code,part_code, procedure_info,
+            using_part_codes::BIGINT[], enterprise_code,data_version,delete_flag,create_time,update_time
+    </sql>
+
+    <insert id="addProcessRoute">
+        INSERT INTO ${tableName} (primary_key, type, process_route_name, remark,
+                              state,product_code,part_code, procedure_info, using_part_codes, enterprise_code,data_version)
+        VALUES (#{model.processRouteCode}, #{model.type}, #{model.processRouteName}, #{model.remark}, #{model.state}, #{model.productCode},
+                #{model.partCode}, #{model.procedureInfo},
+                #{model.usingPartCodes}, #{model.enterpriseCode}, #{model.dataVersion})
+    </insert>
+
+
+    <update id="updateProcessRoute">
+       UPDATE ${tableName} SET
+                              process_route_name = #{model.processRouteName},
+                              remark =  #{model.remark},
+                              state =  #{model.state},
+                              procedure_info =  #{model.procedureInfo},
+                              using_part_codes =  #{model.usingPartCodes},
+                              data_version =  #{model.dataVersion}
+                        WHERE delete_flag = false
+                          AND enterprise_code = #{model.enterpriseCode}
+                          AND primary_key = #{model.processRouteCode}
+                          AND data_version = #{clientDataVersion}
+    </update>
+
+    <update id="changeProcessRouteState">
+        UPDATE ${tableName} SET
+                                state =  #{model.state},
+                                data_version =  #{model.dataVersion}
+        WHERE delete_flag = false
+          AND enterprise_code = #{model.enterpriseCode}
+          AND primary_key = #{model.processRouteCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+
+    <select id="findModels" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where delete_flag = false
+            and enterprise_code = #{enterpriseCode}
+            <if test="processRouteCodes != null and processRouteCodes.size() > 0">
+                and primary_key in
+                <foreach collection="processRouteCodes" item="processRouteCode" open="(" separator="," close=")">
+                    #{processRouteCode}
+                </foreach>
+            </if>
+    </select>
+
+
+
+
+    <select id="selectByProcedureCodeIn" resultMap="resultMap">
+        select a.* ,b.procedure_code temp_procedure_code
+        from ${tableName} a  ,${procedureRouteRelationship} b
+        where a.delete_flag = false
+        and a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = 'f'
+        and  a.primary_key=b.process_route_data_code
+        and b.enterprise_code = #{enterpriseCode}
+        AND b.delete_flag = 'f'
+        and b.procedure_code in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+
+    </select>
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IOutboundOrderDao">
+    <resultMap id="warehouseOutboundOrderModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.outbound.WarehouseOutboundOrderModel">
+        <result property="outBoundOrderCode" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="productPartCode" column="product_part_code"/>
+        <result property="outStatus" column="out_status"/>
+        <result property="applicant" column="applicant"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <sql id="columns">
+        primary_key, outboundtask_code, outbound_type, buss_code,material_type,product,part,
+                   inventory,required,shipped_out,out_status,remark,record_task_detail,merge_detail,enterprise_code
+    </sql>
+
+    <insert id="addOutboundOrder">
+        INSERT INTO ${tableName} (<include refid="columns"/>)
+        VALUES (
+                #{model.outBoundOrderCode}, #{model.outboundtaskCode}, #{model.outboundType}, #{model.bussCode}, #{model.materialType}, #{model.product}, #{model.part},
+                #{model.inventory}, #{model.required},#{model.shippedOut}, #{model.outStatus},#{model.remark}, #{model.recordTaskDetail}, #{model.mergeDetail,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},#{model.enterpriseCode}
+                )
+    </insert>
+
+    <select id="getOrderByProductPartCode" resultMap="warehouseOutboundOrderModel">
+        SELECT primary_key,
+               enterprise_code,
+               product_part_code,
+               out_status,
+               applicant,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND out_status = #{outStatus}
+          AND product_part_code = #{productPartCode}
+    </select>
+
+</mapper>

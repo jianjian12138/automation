@@ -1,0 +1,14 @@
+case_code: WarehouseStockController
+case_name: WarehouseStockController接口测试
+priority: 2
+steps:
+- data:
+    AddMaterialToPositionBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /position/Material/add/check
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 仓库-库存相关接口 bff

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.warehouse.IShippingSpaceMapper">
+    <resultMap id="resultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.warehouse.ShippingSpaceDetailModel">
+        <id property="primaryKey" column="primary_key"/>
+        <id property="stock" column="stock"/>
+        <id property="totalInventory" column="total_inventory"/>
+        <id property="shippingSpaceCodes" column="shipping_space" jdbcType="ARRAY"
+            typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <id property="picture" column="picture" jdbcType="ARRAY"
+            typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <id property="productPartSign" column="product_part_sign"/>
+        <id property="productOrPartCode" column="product_part_code"/>
+        <id property="model" column="model"/>
+        <id property="pcs" column="pcs"/>
+    </resultMap>
+
+
+    <select id="getShippingSpaceBasenfoList" resultMap="resultMap">
+        select
+        t.primary_key,<!--仓位物料库存主键 -->
+        t.stock stock,<!--库存code -->
+        t1.total_inventory total_inventory,<!--库存总量 -->
+        t1.shipping_space::BIGINT[] shipping_space,<!--仓位code合合集 -->
+        t1.picture::BIGINT[] picture,<!--库存对应的产品零件图片 -->
+        t2.product_part_sign,<!--新技术部产品零件名称 -->
+        t2.primary_key product_part_code,<!--新技术部产品零件单位 -->
+        t2.model model,<!--新技术部产品零件型号规格 -->
+        t2.pcs pcs<!--新技术部产品零件单位 -->
+        from ${positionStockTableName} t
+        inner join ${inventoryTableName} t1 on t.stock = t1.primary_key
+        inner join ${productPartTableName} t2 on t1.product_part_code = t2.primary_key
+        where t.position_code = #{shippingSpaceId}
+        and t.enterprise_code = #{enterpriseCode}
+        and t.delete_flag = false
+        and t1.delete_flag = false
+        and t2.delete_flag = false
+    </select>
+
+    <select id="getShippingSpaceCodeMapName" resultType="org.aerie.forest.core.brick.domain.view.CodeMapName">
+        select
+        primary_key code,
+        warehorse || '-' || position_sign name
+        from ${shippingSpaceTableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        and primary_key in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+</mapper>

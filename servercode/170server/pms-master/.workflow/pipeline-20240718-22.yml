@@ -1,0 +1,41 @@
+version: '1.0'
+name: pipeline-20240718-22
+displayName: pms_default
+triggers:
+  trigger: auto
+  push:
+    branches:
+      precise:
+        - develop
+    commitMessages:
+      include:
+        - ^(?!deploy:).*
+stages:
+  - name: stage-a35d1538
+    displayName: maven构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@maven
+        name: build_maven
+        displayName: Maven 构建
+        jdkVersion: '21'
+        mavenVersion: 3.9.6
+        commands:
+          - mvn clean package -Dmaven.test.skip=true -s /root/workspace/futurecraftsmen/pms/customSettings.xml
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./pms-common/target
+              - ./pms-framework/pms-api/target
+              - ./pms-framework/pms-bff/target
+              - ./pms-framework/pms-service/target
+              - ./pms-framework/pms-starter/target
+        settings: []
+        caches: []
+        notify: []
+        strategy:
+          retry: '0'
+strategy:
+  blocking: true

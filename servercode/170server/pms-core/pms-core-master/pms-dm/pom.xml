@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.futurecraftsmen.pms</groupId>
+        <artifactId>pms-core</artifactId>
+        <version>3.1.1.300</version>
+    </parent>
+    <artifactId>pms-dm</artifactId>
+    <packaging>pom</packaging>
+    <description>动态模块</description>
+    <modules>
+        <module>pms-dm-api</module>
+        <module>pms-dm-service</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.aerie.forest</groupId>
+            <artifactId>forest-dynamic-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aerie.forest</groupId>
+            <artifactId>forest-dynamic-database-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aerie.forest</groupId>
+            <artifactId>forest-dynamic-database-pg</artifactId>
+        </dependency>
+    </dependencies>
+</project>

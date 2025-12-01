@@ -1,0 +1,137 @@
+case_name: 工装设备-列表
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    devictypeStr: 冲刺设备2
+    devicename: '222'
+    specificationAndModel: '33'
+    manufacturerBrand: '444'
+    toolingEquipmentSign: xxx1x1x1
+    maintainCycleStr: 半年
+    equipmentManagerStr: 吴纯
+    meteringCycleStr: 年度
+    equipmentManager: '367033216512819200'
+    maintainCycle: '196440504341364736'
+    meteringCycle: '196440538898235392'
+    devictype: '381517456562585600'
+    importContent: 工装设备批量导入模版
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    devictypeStr: test
+    devicename: test
+    specificationAndModel: test
+    manufacturerBrand: test
+    toolingEquipmentSign: test
+    maintainCycleStr: test
+    equipmentManagerStr: test
+    meteringCycleStr: test
+    equipmentManager: test
+    maintainCycle: test
+    meteringCycle: test
+    devictype: test
+    importContent: test
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-缺少必填参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    devicename: '222'
+    specificationAndModel: '33'
+    manufacturerBrand: '444'
+    toolingEquipmentSign: xxx1x1x1
+    maintainCycleStr: 半年
+    equipmentManagerStr: 吴纯
+    meteringCycleStr: 年度
+    equipmentManager: '367033216512819200'
+    maintainCycle: '196440504341364736'
+    meteringCycle: '196440538898235392'
+    devictype: '381517456562585600'
+    importContent: 工装设备批量导入模版
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 400
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    devictypeStr: 999999999
+    devicename: 999999999
+    specificationAndModel: 999999999
+    manufacturerBrand: 999999999
+    toolingEquipmentSign: 999999999
+    maintainCycleStr: 999999999
+    equipmentManagerStr: 999999999
+    meteringCycleStr: 999999999
+    equipmentManager: 999999999
+    maintainCycle: 999999999
+    meteringCycle: 999999999
+    devictype: 999999999
+    importContent: 999999999
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    devictypeStr: '!@#$%^&*()'
+    devicename: '!@#$%^&*()'
+    specificationAndModel: '!@#$%^&*()'
+    manufacturerBrand: '!@#$%^&*()'
+    toolingEquipmentSign: '!@#$%^&*()'
+    maintainCycleStr: '!@#$%^&*()'
+    equipmentManagerStr: '!@#$%^&*()'
+    meteringCycleStr: '!@#$%^&*()'
+    equipmentManager: '!@#$%^&*()'
+    maintainCycle: '!@#$%^&*()'
+    meteringCycle: '!@#$%^&*()'
+    devictype: '!@#$%^&*()'
+    importContent: '!@#$%^&*()'
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/toolingEquipment/getToolingEquipmentPageList
+  headers: {}
+  method: POST
+  data:
+    devictypeStr: 冲刺设备2
+    devicename: '222'
+    specificationAndModel: '33'
+    manufacturerBrand: '444'
+    toolingEquipmentSign: xxx1x1x1
+    maintainCycleStr: 半年
+    equipmentManagerStr: 吴纯
+    meteringCycleStr: 年度
+    equipmentManager: '367033216512819200'
+    maintainCycle: '196440504341364736'
+    meteringCycle: '196440538898235392'
+    devictype: '381517456562585600'
+    importContent: 工装设备批量导入模版
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

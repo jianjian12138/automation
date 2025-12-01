@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.ProcessStepDao">
+    <select id="getProcessStepInfo"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessStepModel">
+        SELECT step_code,
+               owned_enterprise_code,
+               process_code,
+               node_code,
+               step_param,
+               operation_staff_code,
+               operation_type,
+               description,
+               create_time,
+               update_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND step_code = #{stepCode}
+    </select>
+    <select id="getStepByProcessCode"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessStepModel">
+        SELECT id,
+               step_code,
+               owned_enterprise_code,
+               process_code,
+               node_code,
+               step_param,
+               operation_staff_code,
+               operation_type,
+               description,
+               create_time,
+               update_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND process_code = #{processCode}
+        ORDER BY id ASC
+    </select>
+    <insert id="saveProcessStep">
+        INSERT INTO ${tableName} (step_code, owned_enterprise_code, process_code,
+                                  node_code, step_param, operation_staff_code, operation_type, description)
+        VALUES (#{processStepModel.stepCode}, #{processStepModel.ownedEnterpriseCode},
+                #{processStepModel.processCode}, #{processStepModel.nodeCode},
+                #{processStepModel.stepParam}, #{processStepModel.operationStaffCode},
+                #{processStepModel.operationType}, #{processStepModel.description})
+        ON CONFLICT (step_code) DO UPDATE SET step_param     = #{processStepModel.stepParam},
+                                              operation_type = #{processStepModel.operationType},
+                                              description    = #{processStepModel.description}
+    </insert>
+
+    <delete id="deleteProcessStep">
+        DELETE
+        FROM ${tableName}
+        WHERE step_code = #{stepCode}
+          AND delete_flag = false
+    </delete>
+</mapper>

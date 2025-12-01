@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IDispatchSheetItemMapper">
+    <resultMap id="resultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.dispatchsheet.DispatchSheetItemModel">
+        <id property="dispatchSheetItemCode" column="primary_key"/>
+        <id property="dispatchSheet" column="dispatch_sheet"/>
+        <result property="batchNumber" column="batch_number"/>
+        <result property="productCode" column="product_code"/>
+        <result property="partCode" column="part_code"/>
+        <result property="productDeliver" column="product_deliver"/>
+        <result property="partDeliver" column="part_deliver"/>
+        <result property="productQuantity" column="product_quantity"/>
+        <result property="bodyQuantity" column="body_quantity"/>
+        <result property="remainQuantity" column="remain_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="processRoute" column="process_route"/>
+        <result property="addition" column="addition"/>
+        <result property="dataVersion" column="data_version"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="businessBelong" column="business_belong"/>
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, dispatch_sheet,batch_number, product_code, part_code, product_deliver, part_deliver,
+        product_quantity, body_quantity, remain_quantity, remark, process_route, addition, data_version,
+        enterprise_code, business_belong
+    </sql>
+
+
+    <insert id="addDispatchSheetItems">
+        INSERT INTO ${tableName} (primary_key, dispatch_sheet,batch_number, product_code,
+        part_code, product_deliver, part_deliver,product_quantity,body_quantity,remain_quantity,remark,
+        process_route,addition,data_version,enterprise_code, business_belong)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            ( #{model.dispatchSheetItemCode}, #{model.dispatchSheet}, #{model.batchNumber},
+            #{model.productCode}, #{model.partCode},#{model.productDeliver}, #{model.partDeliver},
+            #{model.productQuantity}, #{model.bodyQuantity}, #{model.remainQuantity}, #{model.remark},
+            #{model.processRoute},#{model.addition}, #{model.dataVersion}, #{model.enterpriseCode}, #{model.businessBelong})
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteAllItemsOfDispatchSheet">
+        DELETE
+        FROM ${tableName}
+        WHERE dispatch_sheet = #{dispatchSheetCode}
+          AND enterprise_code = #{enterpriseCode}
+    </delete>
+
+
+    <delete id="deleteItems">
+        DELETE FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="deleteDispatchSheetItemCodes" item="deleteDispatchSheetItemCode" index="index" open="("
+                 separator="," close=")">
+            #{deleteDispatchSheetItemCode}
+        </foreach>
+    </delete>
+
+
+    <update id="updateItems">
+        UPDATE ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="remain_quantity =case" suffix="end,">
+                <foreach collection="models" item="model" index="index">
+                    <if test="model.remainQuantity !=null">
+                        when primary_key=#{model.dispatchSheetItemCode} then #{model.remainQuantity}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where primary_key in
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.dispatchSheetItemCode}
+        </foreach>
+    </update>
+
+
+    <select id="dispatchSheetItemPage" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND dispatch_sheet = #{dispatchSheetCode}
+        order by product_code, create_time desc
+    </select>
+
+
+    <select id="dispatchSheetItemConditionPage" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        <if test="batchNumber != null and batchNumber !=''">
+            AND batch_number = #{batchNumber}
+        </if>
+        <if test="filterProductCodes != null and filterProductCodes.size() > 0">
+            AND product_code IN
+            <foreach collection="filterProductCodes" index="index" item="filterProductCode" open="(" separator=","
+                     close=")">
+                #{filterProductCode}
+            </foreach>
+        </if>
+        <if test="productDeliverPre != null">
+            AND product_deliver &gt;= #{productDeliverPre}
+        </if>
+        <if test="productDeliverPost != null">
+            AND product_deliver &lt;= #{productDeliverPost}
+        </if>
+        order by product_code,batch_number
+    </select>
+
+    <select id="dispatchSheetItemDetail" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        AND primary_key = #{dispatchSheetItemCode}
+    </select>
+
+    <select id="dispatchSheetItemDetails" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        AND primary_key IN
+        <foreach collection="dispatchSheetItemCodes" index="index" item="dispatchSheetItemCode" open="(" separator=","
+                 close=")">
+            #{dispatchSheetItemCode}
+        </foreach>
+    </select>
+
+    <select id="countByBatchNumber">
+        select COUNT(id)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and delete_flag = false
+          AND batch_number = #{batchNumber}
+    </select>
+
+
+    <select id="canMergedProductItemCount" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND product_code = #{productCode}
+        AND part_code IS NULL
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+    </select>
+
+    <select id="canMergedProductItemPage" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND product_code = #{productCode}
+        AND part_code IS NULL
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+        ORDER BY CASE WHEN primary_key = #{firstDispatchSheetItemCode} THEN 0 ELSE 1 END,
+        batch_number
+    </select>
+
+
+    <select id="canMergedProductItemRemainQuantitySum" resultType="java.math.BigDecimal">
+        select SUM(remain_quantity)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND product_code = #{productCode}
+        AND part_code IS NULL
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+    </select>
+
+
+    <select id="canMergedPartItemCount" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND part_code = #{partCode}
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+    </select>
+
+
+    <select id="canMergedPartItemPage" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND part_code = #{partCode}
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+        ORDER BY CASE WHEN primary_key = #{firstDispatchSheetItemCode} THEN 0 ELSE 1 END,
+        batch_number
+    </select>
+
+
+    <select id="canMergedPartItemRemainQuantitySum" resultType="java.math.BigDecimal">
+        select SUM(remain_quantity)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND part_code = #{partCode}
+        <if test="processRouteCode==null">
+            AND process_route IS NULL
+        </if>
+        <if test="processRouteCode!=null">
+            AND process_route = #{processRouteCode}
+        </if>
+    </select>
+
+
+    <select id="couldMergedItemPage" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND (part_code IS NULL OR part_code != #{excludedPart} )
+        <if test="processRouteCodes != null and processRouteCodes.size() > 0">
+            AND process_route IN
+            <foreach collection="processRouteCodes" index="index" item="processRouteCode" open="(" separator=","
+                     close=")">
+                #{processRouteCode}
+            </foreach>
+        </if>
+        ORDER BY batch_number,product_code,part_code
+    </select>
+
+    <select id="couldMergedItemBatchNumberCount" resultType="java.lang.Integer">
+        select COUNT (DISTINCT batch_number)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND (part_code IS NULL OR part_code != #{excludedPart} )
+        <if test="processRouteCodes != null and processRouteCodes.size() > 0">
+            AND process_route IN
+            <foreach collection="processRouteCodes" index="index" item="processRouteCode" open="(" separator=","
+                     close=")">
+                #{processRouteCode}
+            </foreach>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IDispatchTaskPartMapper">
+  <resultMap id="BaseResultMap" type="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchTaskPartModel">
+    <!--@mbg.generated-->
+    <!--@Table ${tableName}-->
+    <id column="primary_key" property="dispatchTaskPartCode" />
+    <result column="id" property="id" />
+    <result column="total_sum" property="totalSum" />
+    <result column="enterprise_code" property="enterpriseCode" />
+    <result column="batch_number" property="batchNumber" />
+    <result column="product_code" property="productCode" />
+    <result column="remain_quantity" property="remainQuantity" />
+    <result column="delivery_date" property="deliveryDate" />
+    <result column="part_code" property="partCode" />
+    <result column="dynamic_sort" property="dynamicSort" />
+    <result column="mix_field_0" property="mixField0" />
+    <result column="mix_field_1" property="mixField1" />
+    <result column="mix_field_2" property="mixField2" />
+    <result column="mix_field_3" property="mixField3" />
+    <result column="mix_field_4" property="mixField4" />
+    <result column="mix_field_5" property="mixField5" />
+    <result column="mix_field_6" property="mixField6" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="delete_flag" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    primary_key, id, total_sum, enterprise_code, batch_number, product_code, remain_quantity, 
+    delivery_date, part_code, dynamic_sort, mix_field_0, mix_field_1, mix_field_2, mix_field_3, 
+    mix_field_4, mix_field_5, mix_field_6, create_time, update_time, delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from ${tableName}
+    where primary_key = #{primaryKey}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from ${tableName}
+    where primary_key = #{primaryKey}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchTaskPartModel">
+    <!--@mbg.generated-->
+    insert into ${tableName}
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="primaryKey != null">
+        primary_key,
+      </if>
+      <if test="id != null">
+        id,
+      </if>
+      <if test="totalSum != null">
+        total_sum,
+      </if>
+      <if test="enterpriseCode != null">
+        enterprise_code,
+      </if>
+      <if test="batchNumber != null">
+        batch_number,
+      </if>
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="remainQuantity != null">
+        remain_quantity,
+      </if>
+      <if test="deliveryDate != null">
+        delivery_date,
+      </if>
+      <if test="partCode != null">
+        part_code,
+      </if>
+      <if test="dynamicSort != null">
+        dynamic_sort,
+      </if>
+      <if test="mixField0 != null">
+        mix_field_0,
+      </if>
+      <if test="mixField1 != null">
+        mix_field_1,
+      </if>
+      <if test="mixField2 != null">
+        mix_field_2,
+      </if>
+      <if test="mixField3 != null">
+        mix_field_3,
+      </if>
+      <if test="mixField4 != null">
+        mix_field_4,
+      </if>
+      <if test="mixField5 != null">
+        mix_field_5,
+      </if>
+      <if test="mixField6 != null">
+        mix_field_6,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="primaryKey != null">
+        #{primaryKey},
+      </if>
+      <if test="id != null">
+        #{id},
+      </if>
+      <if test="totalSum != null">
+        #{totalSum},
+      </if>
+      <if test="enterpriseCode != null">
+        #{enterpriseCode},
+      </if>
+      <if test="batchNumber != null">
+        #{batchNumber},
+      </if>
+      <if test="productCode != null">
+        #{productCode},
+      </if>
+      <if test="remainQuantity != null">
+        #{remainQuantity},
+      </if>
+      <if test="deliveryDate != null">
+        #{deliveryDate},
+      </if>
+      <if test="partCode != null">
+        #{partCode},
+      </if>
+      <if test="dynamicSort != null">
+        #{dynamicSort},
+      </if>
+      <if test="mixField0 != null">
+        #{mixField0},
+      </if>
+      <if test="mixField1 != null">
+        #{mixField1},
+      </if>
+      <if test="mixField2 != null">
+        #{mixField2},
+      </if>
+      <if test="mixField3 != null">
+        #{mixField3},
+      </if>
+      <if test="mixField4 != null">
+        #{mixField4},
+      </if>
+      <if test="mixField5 != null">
+        #{mixField5},
+      </if>
+      <if test="mixField6 != null">
+        #{mixField6},
+      </if>
+      <if test="createTime != null">
+        #{createTime},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchTaskPartModel">
+    <!--@mbg.generated-->
+    update ${tableName}
+    <set>
+      <if test="id != null">
+        id = #{id},
+      </if>
+      <if test="totalSum != null">
+        total_sum = #{totalSum},
+      </if>
+      <if test="enterpriseCode != null">
+        enterprise_code = #{enterpriseCode},
+      </if>
+      <if test="batchNumber != null">
+        batch_number = #{batchNumber},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode},
+      </if>
+      <if test="remainQuantity != null">
+        remain_quantity = #{remainQuantity},
+      </if>
+      <if test="deliveryDate != null">
+        delivery_date = #{deliveryDate},
+      </if>
+      <if test="partCode != null">
+        part_code = #{partCode},
+      </if>
+      <if test="dynamicSort != null">
+        dynamic_sort = #{dynamicSort},
+      </if>
+      <if test="mixField0 != null">
+        mix_field_0 = #{mixField0},
+      </if>
+      <if test="mixField1 != null">
+        mix_field_1 = #{mixField1},
+      </if>
+      <if test="mixField2 != null">
+        mix_field_2 = #{mixField2},
+      </if>
+      <if test="mixField3 != null">
+        mix_field_3 = #{mixField3},
+      </if>
+      <if test="mixField4 != null">
+        mix_field_4 = #{mixField4},
+      </if>
+      <if test="mixField5 != null">
+        mix_field_5 = #{mixField5},
+      </if>
+      <if test="mixField6 != null">
+        mix_field_6 = #{mixField6},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag},
+      </if>
+    </set>
+    where primary_key = #{primaryKey}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchTaskPartModel">
+    <!--@mbg.generated-->
+    update ${tableName}
+    set id = #{id},
+      total_sum = #{totalSum},
+      enterprise_code = #{enterpriseCode},
+      batch_number = #{batchNumber},
+      product_code = #{productCode},
+      remain_quantity = #{remainQuantity},
+      delivery_date = #{deliveryDate},
+      part_code = #{partCode},
+      dynamic_sort = #{dynamicSort},
+      mix_field_0 = #{mixField0},
+      mix_field_1 = #{mixField1},
+      mix_field_2 = #{mixField2},
+      mix_field_3 = #{mixField3},
+      mix_field_4 = #{mixField4},
+      mix_field_5 = #{mixField5},
+      mix_field_6 = #{mixField6},
+      create_time = #{createTime},
+      update_time = #{updateTime},
+      delete_flag = #{deleteFlag}
+    where primary_key = #{primaryKey}
+  </update>
+</mapper>

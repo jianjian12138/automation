@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IDispatchSheetMapper">
+
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.dispatchsheet.DispatchSheetModel">
+        <id property="dispatchSheetCode" column="primary_key" />
+        <result property="batchNumber" column="batch_number" />
+        <result property="source" column="source" />
+        <result property="deliverDate" column="deliver_date" />
+        <result property="contractRemark" column="contract_remark" />
+        <result property="hasSchedule" column="has_schedule" />
+        <result property="enterpriseCode" column="enterprise_code" />
+        <result property="businessBelong" column="business_belong" />
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, batch_number, source, deliver_date, contract_remark, has_schedule, enterprise_code, business_belong
+    </sql>
+
+    <insert id="addDispatchSheet">
+        INSERT INTO ${tableName} (primary_key, batch_number, source, deliver_date, contract_remark,
+                                  has_schedule,enterprise_code, business_belong)
+        VALUES (#{model.dispatchSheetCode}, #{model.batchNumber}, #{model.source}, #{model.deliverDate},
+                #{model.contractRemark}, #{model.hasSchedule},
+                #{model.enterpriseCode}, #{model.businessBelong})
+    </insert>
+
+    <select id="dispatchSheetPage" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        <if test="batchNumber != null and batchNumber != ''">
+            and batch_number LIKE '%'|| #{batchNumber} ||'%'
+        </if>
+        <if test="deliverDatePre != null">
+            AND deliver_date &gt;= #{deliverDatePre}
+        </if>
+        <if test="deliverDatePost != null">
+            AND deliver_date &lt;= #{deliverDatePost}
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        order by deliver_date ASC, create_time DESC
+    </select>
+
+    <select id="dispatchSheetDetail" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        AND primary_key = #{dispatchSheetCode}
+    </select>
+
+    <update id="deleteDispatchSheet">
+        DELETE FROM  ${tableName}
+        WHERE batch_number = #{batchNumber}
+          AND  enterprise_code= #{enterpriseCode}
+          AND delete_flag = 'f'
+    </update>
+
+
+    <update id="updateHasScheduled">
+        update ${tableName}
+        set has_schedule = 'true'
+        where batch_number = #{batchNumber}
+          and enterprise_code = #{enterpriseCode}
+          and delete_flag = false
+    </update>
+
+
+</mapper>

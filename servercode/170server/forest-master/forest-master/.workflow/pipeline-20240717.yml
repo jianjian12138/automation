@@ -1,0 +1,89 @@
+version: '1.0'
+name: pipeline-20240717
+displayName: forest_4-0-1_开源认证
+triggers:
+  trigger: manual
+  push:
+    branches:
+      precise:
+        - v4.0.1GA
+  schedule:
+    - cron: '* 0 18 ? * 3 *'
+stages:
+  - name: stage-ee214529
+    displayName: maven构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@maven
+        name: build_maven
+        displayName: Maven 构建
+        jdkVersion: '21'
+        mavenVersion: 3.9.6
+        commands:
+          - mvn clean deploy -Dmaven.test.skip=true -s /root/workspace/futurecraftsmen/forest/customSettings.xml
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./forest-boot/target
+              - ./forest-cache/target
+              - ./forest-core/target
+              - ./forest-dynamic/forest-dynamic-common/target
+              - ./forest-dynamic/forest-dynamic-database/forest-dynamic-database-model/target
+              - ./forest-dynamic/forest-dynamic-database/forest-dynamic-database-pg/target
+              - ./forest-dynamic/forest-dynamic-form/target
+              - ./forest-dynamic/forest-dynamic-process/target
+              - ./forest-extensions/forest-extensions-base/target
+              - ./forest-extensions/forest-extensions-datatransmit/target
+              - ./forest-signature/target
+        settings: []
+        caches: []
+        notify:
+          - certificate: 665aaca0-25a2-013d-e10a-52c9b4a70496
+            events:
+              - success
+              - fail
+              - cancel
+              - skip
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: dingtalk
+        strategy:
+          retry: '1'
+  - name: stage-0f5d5d7e
+    displayName: 开源认证
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: sc@opensca
+        name: open_sca
+        displayName: OpenSCA 开源组件检测
+        detectPath: ./
+        notify:
+          - certificate: 665aaca0-25a2-013d-e10a-52c9b4a70496
+            events:
+              - success
+              - fail
+              - cancel
+              - skip
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: dingtalk
+        strategy:
+          retry: '1'
+strategy:
+  blocking: true

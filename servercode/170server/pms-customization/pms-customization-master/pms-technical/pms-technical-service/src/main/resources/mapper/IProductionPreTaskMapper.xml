@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IProductionPreTaskDao">
+
+
+
+
+    <insert id="addProductionPreTasks">
+        INSERT INTO ${tableName} (primary_key, part_code,part_name,part_num,
+        pre_product_task,pre_purchase_task,pre_outsource_task,pre_outbound_task,enterprise_code)
+        VALUES
+        <foreach collection="productionPreTaskModels" index="index" item="model" separator=",">
+            ( #{model.productionPreTaskRecordCode}, #{model.partCode}, #{model.partName},
+            #{model.partNum},
+             #{model.preProductTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.prePurchaseTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.preOutsourceTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+             #{model.preOutboundTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.enterpriseCode} )
+        </foreach>
+    </insert>
+
+    <update id="appendProductionPreTask">
+        UPDATE ${tableName}
+        SET
+        <if test="productionPreTaskUpdate.preProductTaskNeedAppend !=null">
+            pre_product_task = array_append(COALESCE(pre_product_task, '{}')::bigint[],
+            #{productionPreTaskUpdate.preProductTaskNeedAppend}),
+        </if>
+        <if test="productionPreTaskUpdate.prePurchaseTaskNeedAppend !=null">
+            pre_purchase_task = array_append(COALESCE(pre_purchase_task, '{}')::bigint[],
+            #{productionPreTaskUpdate.prePurchaseTaskNeedAppend}),
+        </if>
+        <if test="productionPreTaskUpdate.preOutsourceTaskNeedAppend !=null">
+            pre_outsource_task = array_append(COALESCE(pre_outsource_task, '{}')::bigint[],
+            #{productionPreTaskUpdate.preOutsourceTaskNeedAppend}),
+        </if>
+        <if test="productionPreTaskUpdate.preOutboundTaskNeedAppend !=null">
+            pre_outbound_task = array_append(COALESCE(pre_outbound_task, '{}')::bigint[],
+            #{productionPreTaskUpdate.preOutboundTaskNeedAppend})
+        </if>
+        <if test="productionPreTaskUpdate.preOutboundTaskNeedAppend == null">
+            update_time = now()
+        </if>
+        where primary_key = #{productionPreTaskUpdate.productionPreTaskRecordCode}
+        and enterprise_code = #{productionPreTaskUpdate.enterpriseCode}
+    </update>
+
+
+</mapper>

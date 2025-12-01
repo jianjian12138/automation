@@ -1,0 +1,142 @@
+case_code: Outboundcreateorupdate
+case_name: outboundCreateOrUpdate
+priority: 2
+steps:
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: &id001
+    - applyNum: 0.0
+      coverOutTotalWhileUpdate: true
+      outboundApplyDetails:
+      - applyNum: 100.5
+        applyStaff: 1
+        applyTime: '2025-01-01 12:00:00'
+        batchGlobalCode: $get_db_field(batch_global_code)
+        remark: ''
+        stockType: 类型A
+      productPartCode: $get_db_field(product_part_code)
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    batchNum: batchnum_value
+    businessCode: CODE_001
+    contractNumber: contractnumber_value
+    enterpriseCode: $get_db_field(enterprisecode)
+    isSelfCreate: true
+    isSellOrderUp: true
+    outStorageType: 1
+    outboundDetails: *id001
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/warehouse/outbound/outboundCreateOrUpdate
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

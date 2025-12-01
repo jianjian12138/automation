@@ -1,0 +1,84 @@
+case_name: Mock数据生成示例
+case_code: MockDataDemo
+priority: 1
+steps:
+  - step_name: 基础Mock - 自动推断类型
+    host: $get_host(ERP_TEST,pms_host)
+    path: /user/register
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      userName: $mock_data(userName)           # 自动生成中文姓名
+      phoneNumber: $mock_data(phoneNumber)     # 自动生成手机号
+      email: $mock_data(email)                 # 自动生成邮箱
+      companyName: $mock_data(companyName)     # 自动生成公司名
+      department: $mock_data(department)       # 自动生成部门
+      remark: $mock_data(remark)              # 自动生成备注文本
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 指定类型Mock - 整数
+    host: $get_host(ERP_TEST,pms_host)
+    path: /user/update
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      userId: $mock_data(userId, string)
+      age: $mock_data(age, int, min=18, max=60)              # 18-60的年龄
+      workYears: $mock_data(workYears, int, min=0, max=40)   # 0-40年工作经验
+      salary: $mock_data(salary, int, min=5000, max=50000)   # 5000-50000薪资
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 指定类型Mock - 浮点数（金额）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /purchase/contract/invoiceRecord/add
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      contractCode: $mock_data(contractCode, string)
+      invoiceAmount: $mock_data(invoiceAmount, float, min=0.01, max=10000.00, decimals=2)     # 2位小数
+      taxAmount: $mock_data(taxAmount, float, min=0.01, max=1000.00, decimals=2)              # 税额
+      totalAmount: $mock_data(totalAmount, float, min=100.00, max=50000.00, decimals=8)       # 8位小数
+      recordBatch: 1
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: Mock日期时间
+    host: $get_host(ERP_TEST,pms_host)
+    path: /order/create
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      orderCode: $mock_data(orderCode)
+      orderDate: $mock_data(orderDate, date, days_ago=365)           # 最近一年的日期
+      createTime: $mock_data(createTime, datetime, days_ago=30)      # 最近30天的时间
+      deliveryDate: $mock_data(deliveryDate, date, days_ago=90)      # 最近90天
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: Mock状态和类型（枚举值）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /contract/create
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      contractCode: $mock_data(contractCode)
+      status: $mock_data(status, string, options=['草稿', '待审核', '已审核', '已完成'])
+      contractType: $mock_data(contractType, string, options=['采购合同', '销售合同', '服务合同'])
+      priority: $mock_data(priority, string, options=['高', '中', '低'])
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: Mock编码（指定长度）
+    host: $get_host(ERP_TEST,pms_host)
+    path: /product/create
+    headers: $generate_token(pms_host)
+    method: POST
+    data:
+      productCode: $mock_data(productCode, string, length=18)        # 18位编码
+      barCode: $mock_data(barCode, string, length=13)                # 13位条形码
+      serialNumber: $mock_data(serialNumber, string, length=20)      # 20位序列号
+    response_assert:
+      status_code_assert: 200
+

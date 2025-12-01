@@ -1,0 +1,24 @@
+case_name: 通过产品零件Code获取对应仓位物料库存
+case_code: Code
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getPositionStockListByProductPartCode
+  headers: $generate_token(pms_host)
+  method: GET
+  data: null
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getPositionStockListByProductPartCode
+  headers: {}
+  method: GET
+  data: null
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

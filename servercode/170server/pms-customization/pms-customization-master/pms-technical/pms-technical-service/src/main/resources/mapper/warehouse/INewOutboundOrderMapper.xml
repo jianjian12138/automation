@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.warehouse.INewOutboundOrderMapper">
+
+
+    <resultMap id="NewOutboundOrderModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.warehouse.NewOutboundOrderModel">
+        <result property="outboundOrderCode" column="primary_key"/>
+        <result property="outboundStatus" column="outbound_status"/>
+        <result property="outboundStaff" column="outbound_staff" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="details" column="details" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="outboundStaff" column="outbound_staff" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="outboundNumber" column="outbound_number"/>
+        <result property="outboundType" column="outbound_type"/>
+        <result property="remark" column="remark"/>
+        <result property="businessCode" column="business_code"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="batchNum" column="batch_num"/>
+    </resultMap>
+
+    <resultMap id="OutboundOrderDetailForProductOrPart"
+               type="com.futurecraftsmen.pms.technical.api.domain.warehouse.WarehouseOutboundProductOrPartPageRpcDTO">
+        <result property="outboundOrderCode" column="outbound_order"/>
+        <result property="outboundOrderDetailCode" column="outboundOrderDetailCode"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="outboundType" column="outbound_type"/>
+        <result property="productOrPartName" column="product_part_sign"/>
+        <result property="productPartCode" column="productPartCode"/>
+        <result property="partUnityNo" column="unity_no"/>
+        <result property="model" column="model"/>
+        <result property="barCodeNumber" column="bar_code_number"/>
+        <result property="positionCodes" column="shipping_space" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="outTotal" column="out_total"/>
+        <result property="accrualOutTotal" column="accrual_out_total"/>
+        <result property="accrualLockInInventory" column="accrual_lock_in_inventory"/>
+        <result property="totalInventory" column="total_inventory"/>
+        <result property="lockInInventor" column="lock_in_inventor"/>
+        <result property="awaitNum" column="await_num"/>
+        <result property="outNum" column="out_num"/>
+        <result property="pcs" column="pcs"/>
+        <result property="outboundStatus" column="outbound_status"/>
+        <result property="applyDetails" column="apply_details" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="outboundStaff" column="outbound_staff" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="businessCode" column="business_code"/>
+        <result property="remark" column="remark"/>
+        <result property="batchNum" column="batch_num"/>
+        <result property="stockInitState" column="stock_init_state"/>
+        <result property="stock" column="stock"/>
+    </resultMap>
+
+    <select id="queryByCodes" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+        outbound_status,
+        outbound_staff::BIGINT[],
+        enterprise_code
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="outboundOrderCodes" item="outboundOrderCode" open="(" close=")" separator=",">
+            #{outboundOrderCode}
+        </foreach>
+    </select>
+
+
+    <select id="querySumNumOutStockByPartCodeAndContractCode" resultType="java.math.BigDecimal">
+        select sum(a.operation_num)
+        from ${dynamicTableNameProxy.positionOperation} a,
+             ${dynamicTableNameProxy.inOrOutOperationDetailRecord} b
+        where a.operation_version = b.operation_version
+          and b.outbound_type is not null
+          and contract_number = #{bussNumber}
+          and product_or_part = #{partCode}
+
+    </select>
+
+
+    <update id="distribute">
+        <foreach collection="models" item="item" index="index" separator=";">
+        UPDATE ${tableName}
+        SET outbound_status = #{item.outboundStatus},
+            outbound_staff = #{item.outboundStaff,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler}
+        WHERE primary_key  = #{item.outboundOrderCode}
+        AND outbound_status != #{outboundOrderStatusFinished}
+        </foreach>
+    </update>
+
+
+
+    <select id="selectByBusinessCode" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+        outbound_status,
+        outbound_staff::BIGINT[],
+                business_code,
+               outbound_type,
+               outbound_number,
+               details::BIGINT[],
+                remark,
+        enterprise_code
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND business_code  =#{businessCode}
+
+    </select>
+
+
+    <insert id="insertNewOutboundOrder" parameterType="com.futurecraftsmen.pms.technical.service.domain.warehouse.NewOutboundOrderModel">
+        INSERT INTO ${tableName} (primary_key,
+                                  outbound_status,
+                                  outbound_staff,
+                                  details,
+                                  enterprise_code,
+                                  outbound_number,
+                                  outbound_type,
+                                  remark,
+                                  business_code, batch_Num,Contract_Number)
+        VALUES (#{data.outboundOrderCode},
+                #{data.outboundStatus},
+                #{data.outboundStaff, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+                #{data.details, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+                #{data.enterpriseCode},
+                #{data.outboundNumber},
+                #{data.outboundType},
+                #{data.remark},
+                #{data.businessCode},
+                #{data.batchNum},#{data.contractNumber})
+    </insert>
+
+    <select id="selectListByIdIn" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+        outbound_status,
+        outbound_staff::BIGINT[],
+        business_code,
+        outbound_type,
+        outbound_number,
+        details::BIGINT[],
+        remark,
+        enterprise_code
+        FROM ${tableName}
+        WHERE delete_flag = false
+
+        AND primary_key in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </select>
+
+
+    <update id="updateDetailsById" >
+       update ${tableName}  set  details=#{dids}  , outbound_staff=#{staffs}
+        where  primary_key =#{id}
+
+    </update>
+
+
+
+    <select id="selectByBatchNumberAndType" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+               outbound_status,
+               outbound_staff::BIGINT[], business_code,
+               outbound_type,
+               outbound_number,
+               details::BIGINT[], remark,
+               enterprise_code
+        FROM ${tableName}
+        WHERE delete_flag = false
+
+          and batch_Num = #{batchNumber}
+          and outbound_type = #{type}
+          AND enterprise_code = #{enterpriseCode}
+
+    </select>
+
+
+    <select id="selectByBusinessCodeAndType" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+               outbound_status,
+               outbound_staff::BIGINT[], business_code,
+               outbound_type,
+               outbound_number,
+               details::BIGINT[], remark,
+               enterprise_code
+        FROM ${tableName}
+        WHERE delete_flag = false
+
+          and business_code = #{businessCode}
+          and outbound_type = #{type}
+          AND enterprise_code = #{enterpriseCode}
+
+    </select>
+
+    <select id="list" resultMap="NewOutboundOrderModel">
+        SELECT
+        o.primary_key,
+        o.outbound_status,
+        o.outbound_staff::BIGINT[],
+        o.enterprise_code,
+        o.details::BIGINT[],
+        o.business_code,
+        o.outbound_number,
+        o.outbound_type,
+        o.remark,
+        o.business_belong,
+        o.contract_number,
+        o.batch_num
+        FROM ${tableName} o
+        WHERE o.delete_flag = false
+        AND o.enterprise_code = #{enterpriseCode}
+        <if test="requestData.oddNumbers != null and requestData.oddNumbers !=''">
+            AND o.contract_number LIKE '%'|| #{requestData.oddNumbers} ||'%'
+        </if>
+        <if test="requestData.outboundStaff != null and !requestData.outboundStaff.isEmpty()">
+            AND o.outbound_staff &amp;&amp; ARRAY[
+            <foreach collection="requestData.outboundStaff" item="item" separator=",">
+                #{item}
+            </foreach>
+            ]::bigint[]
+        </if>
+        <if test="requestData.outboundStatus != null and requestData.outboundStatus.size() > 0">
+            AND o.outbound_status IN
+            <foreach collection="requestData.outboundStatus" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.outboundTypes != null and requestData.outboundTypes.size() > 0">
+            AND o.outbound_type IN
+            <foreach collection="requestData.outboundTypes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        order by o.create_time desc
+    </select>
+
+    <select id="listNew" resultMap="NewOutboundOrderModel">
+        SELECT
+        o.primary_key,
+        o.outbound_status,
+        o.outbound_staff::BIGINT[],
+        o.enterprise_code,
+        o.details::BIGINT[],
+        o.business_code,
+        o.outbound_number,
+        o.outbound_type,
+        o.remark,
+        o.business_belong,
+        o.contract_number,
+        o.batch_num
+        FROM ${tableName} o
+        WHERE o.delete_flag = false
+        AND o.enterprise_code = #{enterpriseCode}
+        AND (
+        o.outbound_type != #{typeCode}
+        OR
+            (
+        o.outbound_type = #{typeCode}
+        AND EXISTS (
+        SELECT 1
+        FROM ${detailTableName} d
+        WHERE d.outbound_order = o.primary_key
+        AND d.accrual_out_total > 0
+        AND d.delete_flag = false
+                )
+            )
+        )
+        <if test="requestData.oddNumbers != null and requestData.oddNumbers !=''">
+            AND o.contract_number LIKE '%'|| #{requestData.oddNumbers} ||'%'
+        </if>
+        <if test="requestData.outboundStaff != null and !requestData.outboundStaff.isEmpty()">
+            AND o.outbound_staff &amp;&amp; ARRAY[
+            <foreach collection="requestData.outboundStaff" item="item" separator=",">
+                #{item}
+            </foreach>
+            ]::bigint[]
+        </if>
+        <if test="requestData.outboundStatus != null and requestData.outboundStatus.size() > 0">
+            AND o.outbound_status IN
+            <foreach collection="requestData.outboundStatus" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.outboundTypes != null and requestData.outboundTypes.size() > 0">
+            AND o.outbound_type IN
+            <foreach collection="requestData.outboundTypes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        order by o.create_time desc
+    </select>
+
+    <update id="updateOutboundOrderState">
+        UPDATE ${outboundOrderTableName}
+        SET outbound_status = #{outboundStatus}
+        WHERE primary_key  = #{outboundOrderCode}
+          and enterprise_code = #{enterpriseCode}
+    </update>
+
+    <select id="getOutboundOrderByOutboundOrderCode" resultMap="NewOutboundOrderModel">
+        SELECT primary_key,
+               outbound_status,
+               outbound_staff::BIGINT[],
+                enterprise_code,
+               details::BIGINT[],
+                business_code,
+               outbound_number,
+               outbound_type,
+               remark,
+               business_belong,
+               contract_number,
+               create_time,
+               update_time
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND primary_key = #{outboundOrder}
+    </select>
+
+    <insert id="batchInsertProducePickingMaterial">
+        INSERT INTO ${tableName} (
+        primary_key,
+        product_part_code,
+        enterprise_code,
+        batch_num,
+        picking_num,
+        picking_date,
+        picking,
+        create_time,
+        update_time,
+        delete_flag ,
+        global_Batch_Code,
+        buss_number,
+        contract_code,receive_Type,material_belong
+        ) VALUES
+        <foreach collection="producePickingMaterial" item="item" index="index" separator=",">
+        (#{item.producePickingMaterialCode}, #{item.productPartCode}, #{enterpriseCode}, #{item.batchNum}, #{item.pickingNum},
+            #{item.pickingDate}, #{item.picking}, now(), now(), 'f',#{item.globalBatchCode},#{item.bussNumber},#{item.contractCode}
+            ,#{item.receiveType},#{item.materialBelong})
+        </foreach>
+    </insert>
+
+    <select id="getProducePickingMaterialList"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.warehouse.ProducePickingMaterialRpcDTO">
+        select
+        primary_key producePickingMaterialCode,
+        product_part_code,
+        enterprise_code,
+        batch_num,
+        picking_num,
+        picking_date,
+        picking,
+        buss_number,
+        contract_code,
+        material_belong
+        from
+        ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and product_part_code = #{productPartCode}
+        and buss_number = #{bussNumber}
+
+        <if test="batchGlobalCode!=null  and batchGlobalCode   &gt; 0 ">
+            and global_batch_code= #{batchGlobalCode}
+        </if>
+
+
+        <choose>
+            <when test="type != null">
+                and receive_Type = #{type}
+            </when>
+            <otherwise>
+                and ( receive_Type is null or receive_Type !='3' )
+            </otherwise>
+        </choose>
+        and delete_flag = 'f'
+        order by create_time desc
+    </select>
+
+
+    <select id="pickInfoListByPartIds" resultType="com.futurecraftsmen.pms.technical.api.domain.warehouse.ProducePickingMaterialRpcDTO">
+        select
+        *
+        from
+            ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        <if test="ids != null and ids.size() > 0">
+            AND (product_part_code , buss_number) in
+            <foreach collection="ids" item="item" index="index" separator="," open="(" close=")">
+                (#{item.code}, #{item.name})
+            </foreach>
+        </if>
+          and delete_flag = 'f'
+        and global_batch_code=#{batchCode}
+        and (receive_Type is null or receive_Type!='3' )
+    </select>
+
+
+    <select id="pickListByPartIdsAndBus" resultType="com.futurecraftsmen.pms.technical.api.domain.warehouse.ProducePickingMaterialRpcDTO">
+        select
+        *
+        from
+        ${dynamicTableNameProxy.producePickingMaterial}
+        where enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and (product_part_code , buss_number) in
+        <foreach collection="partCodes" item="item" index="index" separator="," open="(" close=")">
+            (#{item}, #{bussNumber})
+        </foreach>
+        and global_batch_code=#{batchCode}
+        and receive_Type=#{type}
+        and delete_flag = 'f'
+    </select>
+
+
+    <update id="updateStatusAndDetailCodes">
+        UPDATE ${outboundOrderTableName}
+        SET outbound_status = #{outBoundOrderStatus},
+            details = #{detailsArray,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler}
+        WHERE primary_key  = #{outboundOrderCode}
+          and enterprise_code = #{enterpriseCode}
+    </update>
+
+    <select id="listForProductOrPart" resultMap="OutboundOrderDetailForProductOrPart">
+        select
+            t.outbound_order,
+            t.primary_key outboundOrderDetailCode,
+            t1.contract_number,
+            t1.outbound_type,
+            p.product_part_sign,
+            p.primary_key productPartCode,
+            p.model,
+            s.bar_code_number,
+            s.shipping_space::BIGINT[],
+            t.out_total,
+            t.accrual_out_total,
+            t.accrual_lock_in_inventory,
+            s.total_inventory,
+            s.lock_in_inventor,
+            t.await_num,
+            t.out_num,
+            p.pcs,
+            t.outbound_status,
+            t.apply_details::BIGINT[],
+            t.outbound_staff::BIGINT[],
+            t1.business_code,
+            t1.remark,
+            t1.batch_num,
+            s.stock_init_state,
+            s.primary_key stock
+        from ${outboundOrderDetailTableName} t
+                 left join
+             ${productPartTableName} p on t.product_or_part = p.primary_key
+                 left join
+             ${stockTableName} s on t.product_or_part = s.product_part_code
+                 left join
+             ${outboundOrderTableName} t1 on t.outbound_order = t1.primary_key
+        where t.enterprise_code = #{enterpriseCode}
+        and t.delete_flag = false
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("t.product_or_part","xihang",requestData.partUnityNo)}
+        </if>
+        <if test="requestData.contractNumber != null and requestData.contractNumber !=''">
+            AND t1.contract_number like '%'|| #{requestData.contractNumber} ||'%'
+        </if>
+        <if test="requestData.outboundStaff != null and !requestData.outboundStaff.isEmpty()">
+            AND t.outbound_staff &amp;&amp; ARRAY[
+            <foreach collection="requestData.outboundStaff" item="item" separator=",">
+                #{item}
+            </foreach>
+            ]::bigint[]
+        </if>
+        <if test="requestData.productOrPartName != null and requestData.productOrPartName !=''">
+            AND p.product_part_sign like '%'|| #{requestData.productOrPartName} ||'%'
+        </if>
+        <if test="requestData.model != null and requestData.model !=''">
+            AND p.model like '%'|| #{requestData.model} ||'%'
+        </if>
+        <if test="requestData.searchName != null and requestData.searchName !=''">
+            AND (p.model like '%'|| #{requestData.searchName} ||'%' or  p.product_part_sign like '%'|| #{requestData.searchName} ||'%')
+        </if>
+        <if test="requestData.outboundDetailStatus != null and requestData.outboundDetailStatus.size() > 0">
+            AND t.outbound_status IN
+            <foreach collection="requestData.outboundDetailStatus" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.outboundTypes != null and requestData.outboundTypes.size() > 0">
+            AND t1.outbound_type IN
+            <foreach collection="requestData.outboundTypes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        order by t.create_time desc,t.id desc
+    </select>
+
+    <select id="listForProductOrPartNew" resultMap="OutboundOrderDetailForProductOrPart">
+        select
+            t.outbound_order,
+            t.primary_key outboundOrderDetailCode,
+            t1.contract_number,
+            t1.outbound_type,
+            p.product_part_sign,
+            p.primary_key productPartCode,
+            p.model,
+            s.bar_code_number,
+            s.shipping_space::BIGINT[],
+            t.out_total,
+            t.accrual_out_total,
+            t.accrual_lock_in_inventory,
+            s.total_inventory,
+            s.lock_in_inventor,
+            t.await_num,
+            t.out_num,
+            p.pcs,
+            t.outbound_status,
+            t.apply_details::BIGINT[],
+            t.outbound_staff::BIGINT[],
+            t1.business_code,
+            t1.remark,
+            t1.batch_num,
+            s.stock_init_state,
+            s.primary_key stock
+        from ${outboundOrderDetailTableName} t
+                 left join
+             ${productPartTableName} p on t.product_or_part = p.primary_key
+                 left join
+             ${stockTableName} s on t.product_or_part = s.product_part_code
+                 left join
+             ${outboundOrderTableName} t1 on t.outbound_order = t1.primary_key
+        where t.enterprise_code = #{enterpriseCode}
+        and t.delete_flag = false
+        and (
+        t1.outbound_type != #{typeCode}
+        OR
+        (t1.outbound_type = #{typeCode} AND t.accrual_out_total > 0)
+        )
+        <if test="requestData.partUnityNo != null and requestData.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("t.product_or_part","xihang",requestData.partUnityNo)}
+        </if>
+        <if test="requestData.contractNumber != null and requestData.contractNumber !=''">
+            AND t1.contract_number like '%'|| #{requestData.contractNumber} ||'%'
+        </if>
+        <if test="requestData.outboundStaff != null and !requestData.outboundStaff.isEmpty()">
+            AND t.outbound_staff &amp;&amp; ARRAY[
+            <foreach collection="requestData.outboundStaff" item="item" separator=",">
+                #{item}
+            </foreach>
+            ]::bigint[]
+        </if>
+        <if test="requestData.productOrPartName != null and requestData.productOrPartName !=''">
+            AND p.product_part_sign like '%'|| #{requestData.productOrPartName} ||'%'
+        </if>
+        <if test="requestData.model != null and requestData.model !=''">
+            AND p.model like '%'|| #{requestData.model} ||'%'
+        </if>
+        <if test="requestData.searchName != null and requestData.searchName !=''">
+            AND (p.model like '%'|| #{requestData.searchName} ||'%' or  p.product_part_sign like '%'|| #{requestData.searchName} ||'%')
+        </if>
+        <if test="requestData.outboundDetailStatus != null and requestData.outboundDetailStatus.size() > 0">
+            AND t.outbound_status IN
+            <foreach collection="requestData.outboundDetailStatus" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="requestData.outboundTypes != null and requestData.outboundTypes.size() > 0">
+            AND t1.outbound_type IN
+            <foreach collection="requestData.outboundTypes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        order by t.create_time desc,t.id desc
+    </select>
+
+    <update id="updateOutboundOrderRemarkByPrimaryKey">
+        update
+            ${outboundOrderTableName}
+        set remark = #{requestData.remark}
+        where primary_key = #{requestData.primaryKey}
+          and enterprise_code = #{enterpriseCode}
+    </update>
+
+    <resultMap id="warehouseOutboundDetailPageRpcDTO"
+               type="com.futurecraftsmen.pms.technical.api.domain.warehouse.WarehouseOutboundDetailPageRpcDTO">
+        <result property="outboundOrderDetailCode" column="primary_key"/>
+        <!--        <result property="productOrPartName" column="product_part_sign"/>-->
+        <!--        <result property="model" column="model"/>-->
+        <result property="outTotal" column="out_total"/>
+        <result property="awaitNum" column="await_num"/>
+        <result property="outNum" column="out_num"/>
+        <result property="outboundStatus" column="outbound_status"/>
+        <result property="productPartCode" column="productPartCode"/>
+        <result property="applyDetails" column="apply_details" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="accrualOutTotal" column="accrual_out_total"/>
+        <result property="accrualLockInInventory" column="accrual_lock_in_inventory"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="outboundStaff" column="outbound_staff" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="businessCode" column="business_code"/>
+        <result property="outboundType" column="outbound_type"/>
+    </resultMap>
+
+    <select id="getOutboundOrderDetailList" resultMap="warehouseOutboundDetailPageRpcDTO">
+        select
+        t.primary_key,
+        t.out_total,
+        t.await_num,
+        t.out_num,
+        t.outbound_status,
+        t.apply_details::BIGINT[],
+        t.product_or_part as productPartCode,
+        t.accrual_out_total,
+        t.outbound_staff,
+        t.accrual_lock_in_inventory,
+        t1.contract_number,
+        t1.business_code,
+        t1.outbound_type,
+        t2.total_inventory - COALESCE(t2.lock_in_inventor,0) + COALESCE(t.accrual_lock_in_inventory,0) as totalInventory
+        from ${outboundOrderTableName} t1
+        left join ${outboundOrderDetailTableName} t
+        on t1.primary_key = t.outbound_order
+        left join ${stockTableName} t2 on t2.primary_key = t.stcok
+        where t1.enterprise_code = #{enterpriseCode}
+        <if test="contractNumbers != null and contractNumbers.size() > 0">
+            and t1.contract_number IN
+            <foreach collection="contractNumbers" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="productPartCodes != null and productPartCodes.size() > 0">
+            and t.product_or_part IN
+            <foreach collection="productPartCodes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and t1.delete_flag = 'f'
+    </select>
+
+    <select id="getOutboundOrderDetailList4Collaborate" resultMap="warehouseOutboundDetailPageRpcDTO">
+        select
+        t1.primary_key,
+        t1.outbound_quantity as outNum,
+        t1.collaborate_material as productPartCode,
+        t1.contract_number,
+        t2.total_inventory - COALESCE(t2.lock_in_inventor,0) + COALESCE(t1.accrual_lock_in_inventory,0) as
+        totalInventory,
+        t1.accrual_lock_in_inventory,
+        t1.outbound_quantity as out_num,
+        t1.schedule_quantity
+        from ${collaborateScheduleItemTableName} t1
+        left join ${positionOperationTableName} t
+        on t1.primary_key = t.detail_code
+        left join ${stockTableName} t2 on t2.product_part_code = t1.collaborate_material
+        where t1.enterprise_code = #{enterpriseCode}
+        and t1.collaborate_type = 0
+        <if test="contractNumbers != null and contractNumbers.size() > 0">
+            and t1.contract_number IN
+            <foreach collection="contractNumbers" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="productPartCodes != null and productPartCodes.size() > 0">
+            and t1.collaborate_material IN
+            <foreach collection="productPartCodes" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and t1.delete_flag = 'f'
+    </select>
+
+
+    <select id="selectJoinOutInfoByCondition" resultType="com.futurecraftsmen.pms.technical.api.domain.warehouse.StockDWDTO">
+
+        select a.outbound_Type,
+        a.contract_Number,
+        a.outbound_Status,
+        a.business_Code,
+        a.primary_key order_Id,
+        b.primary_key detail_Id,
+        b.product_Or_Part,
+        c.primary_key apply_Id,
+        c.batch_Global_Code,
+        c.stock_Type,
+        c.produce_Bubble
+        from ${dynamicTableNameProxy.outboundOrder} a,
+        ${dynamicTableNameProxy.outboundOrderDetail} b,
+        ${dynamicTableNameProxy.outboundApplyDetail} c
+        where a.primary_key = b.outbound_order
+        and c.primary_key = any (b.apply_details)
+
+        and a.delete_flag = false
+        and a.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and c.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and b.delete_flag = false
+        and c.delete_flag = false
+
+        <if test="data.batchGlobalCode!=null  ">
+            and c.batch_global_code = #{data.batchGlobalCode}
+        </if>
+
+        <if test="data.outboundType!=null  ">
+            and a.outbound_Type = #{data.outboundType}
+        </if>
+
+        <if test="data.contractNumber!=null  ">
+            and a.contract_number = #{data.contractNumber}
+        </if>
+
+
+        <if test="data.orderId!=null  ">
+            and a.primary_key = #{data.orderId}
+        </if>
+
+    </select>
+
+
+    <select id="pageForReport" resultMap="OutboundOrderDetailForProductOrPart">
+        SELECT
+        pp.unity_no,
+        pp.product_part_sign,
+        pp.model,
+        SUM(COALESCE(ood.accrual_out_total, 0)) AS accrual_out_total,
+        SUM(COALESCE(ood.out_num, 0)) AS out_num,
+        SUM(COALESCE(ood.accrual_out_total, 0)) - SUM(COALESCE(ood.out_num, 0)) AS difference
+        FROM ${outboundOrderDetailTableName} ood
+        LEFT JOIN ${productPartTableName} pp ON ood.product_or_part = pp.primary_key
+        WHERE ood.outbound_status != #{state}
+        and ood.enterprise_code = #{enterpriseCode}
+        and ood.delete_flag = false
+        <if test="requestData.startTime != null">
+            AND ood.create_time &gt;= #{requestData.startTime}
+        </if>
+        <if test="requestData.endTime != null">
+            AND ood.create_time &lt;= #{requestData.endTime}
+        </if>
+        GROUP BY
+        pp.unity_no,
+        pp.product_part_sign,
+        pp.model
+        order by difference desc
+    </select>
+
+    <!-- 🔥 新增：根据合同编号查询所有出库单编号 -->
+    <select id="getOutboundOrderCodesByContractNumber" resultType="java.lang.Long">
+        SELECT primary_key
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND contract_number = #{contractNumber}
+          AND (outbound_type = 323909030715064320)
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

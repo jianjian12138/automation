@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IProductionTaskOrderDao">
+
+
+
+
+    <insert id="addProductionTaskOrders">
+        INSERT INTO ${tableName} (primary_key, task_order_code,process_code,product_code,
+        part_code,part_name,production_num ,unit,quality_flag,inspect_project,remark,record_detail,pre_task,
+        merge_detail,   quantity_ordered,   completed_num ,  enterprise_code)
+        VALUES
+        <foreach collection="productionTaskOrderModels" index="index" item="model" separator=",">
+            ( #{model.productionTaskOrderCode}, #{model.taskOrderCode}, #{model.processCode},
+            #{model.productCode},
+            #{model.partCode},
+            #{model.partName},
+            #{model.productionNum},
+            #{model.unit},
+            #{model.qualityFlag},
+            #{model.inspectProject,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.remark},
+            #{model.recordDetail},
+            #{model.preTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.mergeDetail,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.quantityOrdered},
+            #{model.completedNum},
+            #{model.enterpriseCode} )
+        </foreach>
+    </insert>
+
+
+</mapper>

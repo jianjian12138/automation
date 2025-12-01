@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IInspectRepairMapper">
+
+    <resultMap id="queryPageResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.product.InspectRepairModel">
+        <result property="reportFile" column="report_file" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+    </resultMap>
+
+
+    <!-- 批量插入新记录 -->
+    <insert id="save">
+        INSERT INTO ${tableName}
+        (primary_key,
+         enterprise_code,
+         contract_code,
+         buss_number,
+         batch_num,
+         main_id,
+         produce_main_id,
+         report_main_id,
+         inspect_origin_type,
+         inspect_origin_name,
+         procedure_code,
+         procedure_name,
+         product_or_part_code,
+         product_or_part_name,
+         model,
+         pcs_name,
+         repair_num,
+         check_item,
+         remark,
+         status,
+         operator_user_code,
+         inspect_user_code,
+         batch,
+         batch_global_code,
+         product_flag,
+         delivery_date,
+         collaborate_produce_report_id,
+         report_file)
+        VALUES (#{data.primaryKeyValue},
+                #{data.enterpriseCode},
+                #{data.contractCode},
+                #{data.bussNumber},
+                #{data.batchNum},
+                #{data.mainId},
+                #{data.produceMainId},
+                #{data.reportMainId},
+                #{data.inspectOriginType},
+                #{data.inspectOriginName},
+                #{data.procedureCode},
+                #{data.procedureName},
+                #{data.productOrPartCode},
+                #{data.productOrPartName},
+                #{data.model},
+                #{data.pcsName},
+                #{data.repairNum},
+                #{data.checkItem},
+                #{data.remark},
+                #{data.status},
+                #{data.operatorUserCode},
+                #{data.inspectUserCode},
+                #{data.batch},
+                #{data.batchGlobalCode},
+                #{data.productFlag},
+                #{data.deliveryDate},
+                #{data.collaborateProduceReportId},
+                #{data.reportFile})
+    </insert>
+
+    <select id="queryMainPageByCondition" resultMap="queryPageResultMap">
+        with t1 as (select a.* ,
+        a.primary_key as primaryKeyValue,
+        c.report_main_id as batch_no
+        from ${repairTable} a
+        LEFT JOIN (
+        select DISTINCT report_main_id from ${reportTable}
+        where scrap_flag is null or scrap_flag != true
+        ) c
+        on c.report_main_id = a.report_main_id
+        where a.enterprise_code = #{enterpriseCode}
+        and a.delete_flag = false
+        <if test="data.name != null and data.name != ''">
+            and a.product_or_part_name like concat('%',#{data.name}, '%')
+        </if>
+        <if test="data.bussNumber != null and data.bussNumber != ''">
+            and a.buss_number like concat('%',#{data.bussNumber}, '%')
+        </if>
+        <if test="data.status != null and data.status != ''">
+            and a.status = #{data.status}
+        </if>
+        <if test="data.operatorUserCode != null and data.operatorUserCode.size() > 0">
+            AND a.operator_user_code IN
+            <foreach collection="data.operatorUserCode" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="data.repairUserCode != null ">
+            AND exists ( select 1 from ${dispatcherTable} b
+            where b.operator_user_code=#{data.repairUserCode} and b.repair_main_id = a.primary_key)
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part_code","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part_code",data.searchName)}
+
+
+        order by a.create_time desc
+        )
+        select * from(
+        select t1.* ,a.create_time as inspectTime ,a.un_passed_remark from t1 ,${inspectIntoReportTable} a where
+        t1.report_main_id =
+        a.primary_key and
+        t1.inspect_origin_type = 3
+        union ALL
+        select t1.* ,a.create_time as inspectTime ,a.un_passed_remark from t1 ,${inspectProcessReportTable} a where
+        t1.report_main_id =
+        a.primary_key and
+        t1.inspect_origin_type = 1
+        union ALL
+        select t1.* ,a.create_time as inspectTime ,a.un_passed_remark from t1 ,${inspectFinishReportTable} a where
+        t1.report_main_id =
+        a.primary_key and
+        t1.inspect_origin_type = 2
+        ) tt order by tt.create_time desc
+
+    </select>
+
+    <select id="queryStaffPageByCondition" resultMap="queryPageResultMap">
+        with t2 as(
+        with t as(
+        select repair_main_id,
+        sum(submit_total_num) as submit_total_num
+        from ${submitTable}
+        where submit_user_code = #{data.repairUserCode}
+        GROUP BY repair_main_id
+        ),
+        t1 as(
+        select sum(un_passed_num) as un_passed_num ,repair_main_id
+        from ${reportTable}
+        where submit_user_code = #{data.repairUserCode}
+        and un_passed_deal = 5
+        GROUP BY repair_main_id
+        )
+        select a.primary_key as primaryKeyValue,
+        c.report_main_id as batch_no,
+        a.contract_code,
+        a.buss_number,
+        a.main_id,
+        a.create_time,
+        a.report_main_id,
+        a.produce_Main_Id,
+        a.inspect_origin_type,
+        a.inspect_origin_name,
+        a.product_or_part_code,
+        a.product_or_part_name,
+        a.model,
+        a.pcs_name,
+        a.repair_num,
+        a.check_item,
+        b.remark,
+        a.operator_user_code,
+        a.inspect_user_code,
+        a.report_file,
+        b.status,
+        b.assign_num as repairNum,
+        (b.assign_num - COALESCE(t.submit_total_num,0) + COALESCE(t1.un_passed_num,0)) as
+        awaitInspectNum,
+        b.finish_date
+        from ${repairTable} a
+        left join ${dispatcherTable} b on a.primary_key = b.repair_main_id
+        LEFT JOIN (
+        select DISTINCT report_main_id,submit_user_code from ${reportTable}
+        where scrap_flag is null or scrap_flag != true
+        ) c on c.report_main_id =
+        b.report_main_id
+        and c.submit_user_code = b.operator_user_code
+        LEFT JOIN t on a.primary_key = t.repair_main_id
+        LEFT JOIN t1 on a.primary_key = t1.repair_main_id
+        where a.enterprise_code = #{enterpriseCode}
+        and b.operator_user_code=#{data.repairUserCode}
+        and a.delete_flag = false
+        <if test="data.name != null and data.name != ''">
+            and a.product_or_part_name like concat('%',#{data.name}, '%')
+        </if>
+        <if test="data.bussNumber != null and data.bussNumber != ''">
+            and a.buss_number like concat('%',#{data.bussNumber}, '%')
+        </if>
+        <if test="data.status != null and data.status != ''">
+            and b.status = #{data.status}
+        </if>
+        <if test="data.operatorUserCode != null and data.operatorUserCode.size() > 0">
+            AND a.operator_user_code IN
+            <foreach collection="data.operatorUserCode" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_Or_Part_Code","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part_code",data.searchName)}
+
+        order by a.create_time desc
+        )
+        select * from(
+        select t2.* ,a.create_time as inspectTime from t2 ,${inspectIntoReportTable} a where t2.report_main_id =
+        a.primary_key and
+        t2.inspect_origin_type = 3
+        union ALL
+        select t2.* ,a.create_time as inspectTime from t2 ,${inspectProcessReportTable} a where t2.report_main_id =
+        a.primary_key and
+        t2.inspect_origin_type = 1
+        union ALL
+        select t2.* ,a.create_time as inspectTime from t2 ,${inspectFinishReportTable} a where t2.report_main_id =
+        a.primary_key and
+        t2.inspect_origin_type = 2
+        ) tt order by tt.create_time desc
+    </select>
+
+    <update id="updateStatusByPrimaryKeys">
+        update ${tableName}
+        set status = #{status}
+        where primary_key in (
+        <foreach collection="primaryKeyList" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+
+    <select id="queryByReportId">
+        select a.*, a.primary_key as primaryKeyValue
+        from ${repairTable} a
+        where report_main_id = #{reportMainId}
+          and enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="queryAwaitNum">
+        with t as (select COALESCE(sum(submit_total_num), 0) as submit_total_num
+                   from ${submitTable}
+                   where submit_user_code = #{repairUserCode}
+                     and report_main_id = #{reportMainId}),
+             t1 as (select COALESCE(sum(un_passed_num), 0) as un_passed_num
+                    from ${reportTable}
+                    where submit_user_code = #{repairUserCode}
+                      and report_main_id = #{reportMainId}
+                      and un_passed_deal = 5)
+
+        select a.assign_num,
+               t.submit_total_num,
+               t1.un_passed_num,
+               (a.assign_num - t.submit_total_num + t1.un_passed_num) as awaitInspectNum
+        from ${dispatcherTable} a,
+             t,
+             t1
+        where a.operator_user_code = #{repairUserCode}
+          and a.report_main_id = #{reportMainId}
+          and a.enterprise_code = #{enterpriseCode}
+          and a.delete_flag = false
+    </select>
+</mapper>

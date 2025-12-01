@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.right.service.dao.RightDao">
+    <insert id="addRight">
+        insert into right_base.t_right_base_right (right_code, right_name,
+                                                   right_sort_code, page_code_list, global_description, remark)
+        VALUES (#{rightModel.rightCode}, #{rightModel.rightName},
+                #{rightModel.rightSortCode}, #{rightModel.pageCodeList}, #{rightModel.globalDescription},
+                #{rightModel.remark})
+    </insert>
+    <update id="updateRight">
+        UPDATE right_base.t_right_base_right
+        SET
+        delete_flag = false
+        <if test="rightModel.rightName != null and rightModel.rightName != ''">
+            , right_name = #{rightModel.rightName}
+        </if>
+        <if test="rightModel.rightSortCode != null">
+            , right_sort_code = #{rightModel.rightSortCode}
+        </if>
+        <if test="rightModel.pageCodeList != null">
+            , page_code_list = #{rightModel.pageCodeList}
+        </if>
+        <if test="rightModel.globalDescription != null and rightModel.globalDescription != ''">
+            , global_description = #{rightModel.globalDescription}
+        </if>
+        <if test="rightModel.remark != null">
+            , remark = #{rightModel.remark}
+        </if>
+        WHERE right_code = #{rightModel.rightCode} AND delete_flag = false
+    </update>
+    <update id="deleteRight">
+        UPDATE right_base.t_right_base_right
+        SET delete_flag = true
+        WHERE right_code = #{rightCode}
+          AND delete_flag = false
+    </update>
+    <resultMap id="rightModel" type="com.futurecraftsmen.pms.right.service.po.RightModel">
+        <result column="right_code" property="rightCode"/>
+        <result column="right_name" property="rightName"/>
+        <result column="right_sort_code" property="rightSortCode"/>
+        <result column="page_code_list" property="pageCodeList" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="global_description" property="globalDescription"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+    <select id="getAllRightModels" resultMap="rightModel">
+        SELECT id,
+               right_code,
+               right_name,
+               right_sort_code,
+               page_code_list::BIGINT[],
+               global_description,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM right_base.t_right_base_right
+        WHERE delete_flag = false
+    </select>
+    <select id="getRightsByCodes" resultMap="rightModel">
+        SELECT id,
+        right_code,
+        right_name,
+        right_sort_code,
+        page_code_list::BIGINT[],
+        global_description,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM right_base.t_right_base_right
+        WHERE delete_flag = false AND right_code IN
+        <foreach collection="rightCodes" item="rightCode" index="index" open="(" separator=","
+                 close=")">
+            #{rightCode}
+        </foreach>
+    </select>
+</mapper>

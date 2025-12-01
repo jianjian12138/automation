@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.lackmaterial.OutPartSendOrderDao">
+
+
+    <resultMap id="OutPartSendOrderModel"
+               type="com.futurecraftsmen.pms.pas.service.po.lackmaterialtask.OutPartSendOrderModel">
+        <result column="primary_key" property="outPartSendOrderCode"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="send_order_number" property="sendOrderNumber"/>
+        <result column="vender" property="vender"/>
+        <result column="vender_name" property="venderName"/>
+        <result column="consignee_name" property="consigneeName"/>
+        <result column="delivery_address" property="deliveryAddress"/>
+        <result column="sender" property="sender"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="logistics_number" property="logisticsNumber"/>
+        <result column="logistics_info" property="logisticsInfo" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="send_order_title" property="sendOrderTitle"/>
+        <result column="package_info" property="packageInfo"/>
+        <result column="temp_detail" property="tempDetail"/>
+        <result column="packaged" property="packaged"/>
+    </resultMap>
+
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key
+        , send_order_number, vender, vender_name, consignee_name,delivery_address, sender, send_time, logistics_number,
+                                  logistics_info,send_order_title,package_info,temp_detail,packaged, enterprise_code, delete_flag
+    </sql>
+
+    <insert id="addOutPartSendOrder">
+        INSERT INTO ${tableName} (primary_key, send_order_number, vender, vender_name, consignee_name, delivery_address, sender, send_time,
+                                  logistics_number,
+                                  logistics_info, send_order_title, package_info, temp_detail, packaged, enterprise_code, delete_flag)
+        VALUES (#{model.outPartSendOrderCode}, #{model.sendOrderNumber}, #{model.vender}, #{model.venderName},
+                #{model.consigneeName}, #{model.deliveryAddress}, #{model.sender}, #{model.sendTime}, #{model.logisticsNumber},
+                #{model.logisticsInfo},
+                #{model.sendOrderTitle}, #{model.packageInfo}, #{model.tempDetail}, #{model.packaged},
+              #{model.enterpriseCode},'f')
+    </insert>
+
+
+    <select id="page" resultMap="OutPartSendOrderModel">
+        SELECT primary_key, send_order_number, vender, vender_name, consignee_name, delivery_address, sender, send_time,
+        logistics_number,
+        logistics_info, send_order_title, package_info, temp_detail, packaged,enterprise_code, delete_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="sendOrderNumber != null and sendOrderNumber !=''">
+            AND send_order_number LIKE '%'|| #{sendOrderNumber} ||'%'
+        </if>
+        <if test="venderName != null and venderName !=''">
+            AND vender_name LIKE '%'|| #{venderName} ||'%'
+        </if>
+        <if test="consigneeName != null and consigneeName !=''">
+            AND consignee_name LIKE '%'|| #{consigneeName} ||'%'
+        </if>
+        <if test="senders != null and senders.size()!=0">
+            AND sender IN
+            <foreach collection="senders" index="index" item="sender" open="(" separator="," close=")">
+                #{sender}
+            </foreach>
+        </if>
+        <if test="logisticsNumber != null and logisticsNumber !=''">
+            AND logistics_number LIKE '%'|| #{logisticsNumber} ||'%'
+        </if>
+        <if test="sendTimePreDate != null">
+            AND send_time &gt;= #{sendTimePreDate}
+        </if>
+        <if test="sendTimePostDate != null">
+            AND send_time &lt;= #{sendTimePostDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY id DESC
+    </select>
+
+
+    <select id="detail" resultMap="OutPartSendOrderModel">
+        SELECT primary_key, send_order_number, vender, vender_name, consignee_name, delivery_address, sender, send_time,
+        logistics_number,
+        logistics_info, send_order_title, package_info, temp_detail,packaged, enterprise_code, delete_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key= #{outPartSendOrderCode}
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <update id="clearTempDetail">
+        UPDATE ${tableName}
+        SET temp_detail = NULL
+        WHERE enterprise_code = #{model.enterpriseCode}
+          AND primary_key = #{model.outPartSendOrderCode}
+          AND temp_detail IS NOT NULL
+    </update>
+
+    <update id="updateTempDetail">
+        UPDATE ${tableName}
+        SET temp_detail = #{model.tempDetail}
+        WHERE enterprise_code = #{model.enterpriseCode}
+          AND primary_key = #{model.outPartSendOrderCode}
+    </update>
+
+
+    <update id="update">
+        UPDATE ${tableName}
+        SET send_order_number   = #{model.sendOrderNumber},
+            logistics_number = #{model.logisticsNumber},
+            send_order_title = #{model.sendOrderTitle},
+            package_info        = #{model.packageInfo},
+            packaged = #{model.packaged},
+            temp_detail         = NULL
+        WHERE enterprise_code = #{model.enterpriseCode}
+          AND primary_key = #{model.outPartSendOrderCode}
+    </update>
+
+
+    <select id="innerDetail" resultMap="OutPartSendOrderModel">
+        SELECT primary_key,
+               send_order_number,
+               vender,
+               vender_name,
+               consignee_name,
+               delivery_address,
+               sender,
+               send_time,
+               logistics_number,
+               logistics_info,
+               send_order_title,
+               package_info,
+               temp_detail,
+               packaged,
+               enterprise_code,
+               delete_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{outPartSendOrderCode}
+    </select>
+
+    <select id="countByOrderNumber" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key != #{excludeSendOrderCode}
+          AND send_order_number = #{sendOrderNumber}
+          AND delete_flag = 'f'
+    </select>
+</mapper>

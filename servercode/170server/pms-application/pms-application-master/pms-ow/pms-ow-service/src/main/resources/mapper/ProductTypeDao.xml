@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.ProductTypeDao">
+    <resultMap id="productTypeModel" type="com.futurecraftsmen.pms.ow.service.model.base.ProductTypeBaseModel">
+        <result property="productTypeCode" column="product_type_code"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="productTypeNamePms" column="product_type_name_pms"/>
+        <result property="productTypeName" column="product_type_name"/>
+        <result property="productTypeNamePreset" column="product_type_name_preset"/>
+        <result property="superior" column="superior"/>
+        <result property="superiorPreset" column="superior_preset"/>
+        <result property="fileList" column="file_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="fileListPreset" column="file_list_preset" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="showFlag" column="show_flag"/>
+        <result property="showFlagPreset" column="show_flag_preset"/>
+        <result property="releaseFlag" column="release_flag"/>
+        <result property="releasedFlag" column="released_flag"/>
+        <result property="owAddFlag" column="ow_add_flag"/>
+        <result property="customNameFlag" column="custom_name_flag"/>
+        <result property="changeCount" column="change_count"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <insert id="syncData" parameterType="java.util.List">
+        insert into ${tableName}
+        (product_type_code, enterprise_code, product_type_name_pms, product_type_name_preset, superior_preset,
+        show_flag_preset, release_flag, released_flag, ow_add_flag, custom_name_flag, change_count)
+        values
+        <foreach collection="productTypeList" index="index" item="productType" separator=",">
+            (#{productType.productTypeCode}, #{productType.enterpriseCode}, #{productType.productTypeNamePms},
+            #{productType.productTypeNamePreset},#{productType.superiorPreset}, #{productType.showFlagPreset},
+            #{productType.releaseFlag},#{productType.releasedFlag}, #{productType.owAddFlag},
+            #{productType.customNameFlag}, #{productType.changeCount})
+        </foreach>
+        ON CONFLICT (product_type_code) DO UPDATE SET product_type_name_pms = EXCLUDED.product_type_name_pms,
+        product_type_name_preset = EXCLUDED.product_type_name_preset,
+        show_flag = EXCLUDED.show_flag,
+        change_count = EXCLUDED.change_count,
+        release_flag = EXCLUDED.release_flag
+    </insert>
+
+    <update id="batchUpdateProductType" parameterType="list">
+        <foreach collection="modelList" item="productType" separator=";">
+            UPDATE ${tableName}
+            SET product_type_name = #{productType.productTypeName},
+            product_type_name_preset = #{productType.productTypeNamePreset},
+            superior = #{productType.superior},
+            superior_preset = #{productType.superiorPreset},
+            file_list =
+            #{productType.fileList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            file_list_preset =
+            #{productType.fileListPreset, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            show_flag = #{productType.showFlag},
+            show_flag_preset = #{productType.showFlagPreset},
+            release_flag = #{productType.releaseFlag},
+            released_flag = #{productType.releasedFlag},
+            change_count = #{productType.changeCount}
+            WHERE product_type_code = #{productType.productTypeCode}
+        </foreach>
+    </update>
+
+    <update id="updateProductType">
+        UPDATE ${tableName}
+        SET product_type_name_pms    = #{productType.productTypeNamePms},
+            product_type_name        = #{productType.productTypeName},
+            product_type_name_preset = #{productType.productTypeNamePreset},
+            superior                 = #{productType.superior},
+            superior_preset          = #{productType.superiorPreset},
+            file_list                = #{productType.fileList},
+            file_list_preset         = #{productType.fileListPreset},
+            show_flag                = #{productType.showFlag},
+            show_flag_preset         = #{productType.showFlagPreset},
+            release_flag             = #{productType.releaseFlag},
+            released_flag            = #{productType.releasedFlag},
+            change_count             = #{productType.changeCount},
+            custom_name_flag         = #{productType.customNameFlag}
+        WHERE product_type_code = #{productType.productTypeCode}
+    </update>
+
+    <insert id="saveProductType">
+        insert into ${tableName} (product_type_code, enterprise_code, product_type_name_pms, product_type_name_preset,
+                                  superior_preset, show_flag_preset, release_flag, released_flag, ow_add_flag,
+                                  custom_name_flag, change_count)
+        values (#{productType.productTypeCode}, #{productType.enterpriseCode}, #{productType.productTypeNamePms},
+                #{productType.productTypeNamePreset}, #{productType.superiorPreset}, #{productType.showFlagPreset},
+                #{productType.releaseFlag}, #{productType.releasedFlag}, #{productType.owAddFlag},
+                #{productType.customNameFlag}, #{productType.changeCount})
+    </insert>
+
+    <update id="batchUpdateProductTypeShowFlag">
+        UPDATE ${tableName}
+        SET show_flag_preset = #{showFlag},
+        release_flag = false
+        WHERE delete_flag = false
+        AND product_type_code IN
+        <foreach collection="codeList" index="index" item="productTypeCode" open="(" separator="," close=")">
+            #{productTypeCode}
+        </foreach>
+    </update>
+
+    <select id="getAllProductType" resultMap="productTypeModel">
+        SELECT product_type_code,
+               enterprise_code,
+               product_type_name_pms,
+               product_type_name,
+               product_type_name_preset,
+               superior,
+               superior_preset,
+               file_list::BIGINT[],
+               file_list_preset::BIGINT[],
+               show_flag,
+               show_flag_preset,
+               release_flag,
+               released_flag,
+               ow_add_flag,
+               custom_name_flag,
+               change_count,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="getProductTypesByCodes" resultMap="productTypeModel">
+        SELECT product_type_code,
+        enterprise_code,
+        product_type_name_pms,
+        product_type_name,
+        product_type_name_preset,
+        superior,
+        superior_preset,
+        file_list::BIGINT[],
+        file_list_preset::BIGINT[],
+        show_flag,
+        show_flag_preset,
+        release_flag,
+        released_flag,
+        ow_add_flag,
+        custom_name_flag,
+        change_count,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND product_type_code IN
+        <foreach collection="productTypeCodes" index="index" item="productTypeCode" open="(" separator="," close=")">
+            #{productTypeCode}
+        </foreach>
+    </select>
+
+    <delete id="deleteProductType">
+        DELETE
+        FROM ${tableName}
+        WHERE product_type_code = #{productTypeCode}
+          AND enterprise_code = #{enterpriseCode}
+    </delete>
+
+    <update id="resetChangeCount">
+        UPDATE ${tableName}
+        SET change_count = 0
+        WHERE enterprise_code = #{enterpriseCode}
+        AND product_type_code IN
+        <foreach collection="codeList" index="index" item="productTypeCode" open="(" separator="," close=")">
+            #{productTypeCode}
+        </foreach>
+    </update>
+
+    <update id="batchCloseProductReleaseFlag">
+        UPDATE ${tableName}
+        SET release_flag = false
+        WHERE delete_flag = false
+        AND product_type_code IN
+        <foreach collection="codeList" index="index" item="productTypeCode" open="(" separator="," close=")">
+            #{productTypeCode}
+        </foreach>
+    </update>
+</mapper>

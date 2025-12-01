@@ -1,0 +1,61 @@
+case_name: 出库任务列表-新插页 ---出库任务详情状态列表下拉
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getOutboundDetailStatusList
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    current: 1
+    size: 10
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getOutboundDetailStatusList
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    current: 1
+    size: 1
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getOutboundDetailStatusList
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    current: 非法字符串
+    size: 非法字符串
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getOutboundDetailStatusList
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    current: 1
+    size: 10
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/outbound/getOutboundDetailStatusList
+  headers: {}
+  method: GET
+  data:
+    current: 1
+    size: 10
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

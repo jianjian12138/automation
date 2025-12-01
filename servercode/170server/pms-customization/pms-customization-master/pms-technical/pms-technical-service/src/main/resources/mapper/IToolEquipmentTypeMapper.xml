@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IToolEquipmentTypeMapper">
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.toolequipment.ToolEquipmentTypeModel">
+        <id property="toolEquipmentTypeCode" column="primary_key" />
+        <result property="toolEquipTypeSign" column="tool_equip_type_sign" />
+        <result property="enterpriseCode" column="enterprise_code" />
+        <result property="deleteFlag" column="delete_flag" />
+    </resultMap>
+
+    <sql id="columns">
+        primary_key, tool_equip_type_sign, enterprise_code, delete_flag
+    </sql>
+
+    <select id="findByCodes" resultMap="resultMap">
+        SELECT <include refid="columns" />
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+            AND delete_flag = false
+            AND primary_key IN
+                <foreach collection="primaryKeys" item="primaryKey" open="(" close=")" separator=",">
+                    #{primaryKey}
+                </foreach>
+    </select>
+
+</mapper>

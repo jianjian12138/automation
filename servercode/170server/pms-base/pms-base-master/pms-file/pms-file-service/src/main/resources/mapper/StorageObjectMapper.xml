@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.file.service.dao.StorageObjectDao">
+    <resultMap type="com.futurecraftsmen.pms.file.common.model.StorageObjectModel" id="StorageObjectMap">
+        <result property="fileId" column="file_id"/>
+        <result property="originalFilename" column="original_filename" jdbcType="VARCHAR"/>
+        <result property="userCode" column="user_code"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="bytes" column="bytes"/>
+        <result property="region" column="region"/>
+        <result property="scene" column="scene"/>
+        <result property="fileType" column="file_type"/>
+        <result property="objectLocation" column="object_location"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+    <insert id="insertOld">
+        insert into ${tableName}(file_id, original_filename, user_code, user_name, enterprise_code, bytes, region,
+                                 scene, file_type, object_location,file_number,remark)
+        values (#{storageObjectModel.fileId}, #{storageObjectModel.originalFilename}, #{storageObjectModel.userCode},
+                #{storageObjectModel.userName}, #{storageObjectModel.enterpriseCode}, #{storageObjectModel.bytes},
+                #{storageObjectModel.region}, #{storageObjectModel.scene}, #{storageObjectModel.fileType},
+                #{storageObjectModel.objectLocation}, #{storageObjectModel.fileNumber,jdbcType=VARCHAR}, #{storageObjectModel.remark,jdbcType=VARCHAR})
+    </insert>
+
+
+    <select id="queryByFileIdListAndEnterpriseCode" resultMap="StorageObjectMap">
+        select
+        file_id, original_filename, user_code, user_name, enterprise_code, bytes, region, scene, file_type,
+        object_location, update_time
+        from ${tableName}
+        where
+        enterprise_code = #{enterpriseCode}
+        and
+        file_id IN
+        (
+        <choose>
+            <when test="entities!=null and !entities.isEmpty()">
+                <foreach collection="entities" item="entity" separator=",">
+                    #{entity}
+                </foreach>
+            </when>
+            <otherwise>
+                '000'
+            </otherwise>
+        </choose>
+        )
+    </select>
+
+
+    <delete id="deleteByFileIdListAndEnterpriseCode">
+        delete
+        from ${tableName}
+        where
+        enterprise_code = #{enterpriseCode}
+        and
+        file_id IN
+        (
+        <foreach collection="entities" item="entity" separator=",">
+            #{entity}
+        </foreach>
+        )
+    </delete>
+
+    <select id="query" resultMap="StorageObjectMap">
+        select
+        *
+        from ${tableName}
+        where
+        enterprise_code = #{enterpriseCode}
+        <if test="maxUpdateTime != null">
+            and update_time &lt;= #{maxUpdateTime}
+        </if>
+        <if test="excludeIdList != null and excludeIdList.size !=0 ">
+            and file_id NOT IN
+            (
+            <foreach collection="excludeIdList" item="excludeId" separator=",">
+                #{excludeId}
+            </foreach>
+            )
+        </if>
+        order by update_time desc
+        limit #{maxDataSize}
+    </select>
+</mapper>

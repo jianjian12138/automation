@@ -1,0 +1,163 @@
+# 客户信息更新场景
+# 使用的数据库表：
+# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，查询 primaryKey）
+# 2. dm_m9.sell_t_dm_m9_customer_contacts_9 - 客户联系人表（查询 contactPrimaryKey）
+# 3. dm_m9.sell_t_dm_m9_customer_address_9 - 客户地址表（查询 address primaryKey）
+# 注意：此接口为数据更新接口，需要传入已存在的 primaryKey 进行更新
+# 注意值的唯一性，使用 $mock_data 生成唯一值避免冲突
+# 小数点位限制：无特殊小数位限制（主要测试数据更新功能）
+
+case_code: CustomerUpdate
+case_name: customerUpdate
+priority: 2
+steps:
+- step_name: 正常场景-更新客户信息
+  host: $get_host(ERP_TEST,pms_host)
+  path: /sell/customer/update
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    current: 1
+    size: 10
+    primaryKey: $get_db_field(customerPrimaryKey)
+    customersSign: $mock_data(customersSign, string, length=10)
+    customerGrade: "true"
+    customersBelong:
+    - "464507374770847810"
+    countryLocation: "false"
+    location: "123"
+    taxNumber: $mock_data(taxNumber, string, length=13)
+    accountNumber: $mock_data(accountNumber, string, length=11)
+    openingBank: $mock_data(openingBank, string, length=15)
+    invoiceTel: $mock_data(invoiceTel, string, length=12)
+    homeCity: 110101
+    homeCityName: "北京市市辖区东城区"
+    remark: "123123"
+    enterpriseRegion:
+    - 11
+    - 1101
+    - 110101
+    customerContacts:
+    - contactPrimaryKey: null
+      contactName: $mock_data(contactName, string, length=8)
+      contactPhone: $mock_data(phoneNumber, string)
+      contactEmail: $mock_data(email, string)
+      contactJob: "oo"
+      allowLogin: false
+    customerContactIds: []
+    address:
+    - customerCode: null
+      primaryKey: null
+      defaultAddress: false
+      owner: 0
+      addressDetail: "223"
+      consigneeName: "xx3"
+      consigneePhone: "18612345675"
+      addressRegion: ""
+      vender: null
+    addressIds: []
+    unityNo: $mock_data(unityNo, string, length=8)
+    remarkKp: "1231231233"
+  response_assert:
+    response_assert_data: 客户修改成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..resCode == 200 or $..resCode == 202
+
+- step_name: 异常场景-缺少必填参数primaryKey
+  host: $get_host(ERP_TEST,pms_host)
+  path: /sell/customer/update
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    current: 1
+    size: 10
+    customersSign: $mock_data(customersSign, string, length=10)
+    customerGrade: "true"
+    countryLocation: "false"
+    location: "123"
+    homeCity: 110101
+    # 故意不提供primaryKey参数
+  response_assert:
+    status_code_assert: 500
+
+- step_name: 异常场景-无效的primaryKey
+  host: $get_host(ERP_TEST,pms_host)
+  path: /sell/customer/update
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    current: 1
+    size: 10
+    primaryKey: "999999999999999999"
+    customersSign: $mock_data(customersSign, string, length=10)
+    customerGrade: "true"
+    countryLocation: "false"
+    location: "123"
+    homeCity: 110101
+  response_assert:
+    status_code_assert: 500
+
+- step_name: 边界值测试-最小参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /sell/customer/update
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    primaryKey: $get_db_field(customerPrimaryKey)
+    customersSign: $mock_data(customersSign, string, length=1)
+    customerGrade: "true"
+    customersBelong: []
+    countryLocation: "false"
+    location: "123"
+    homeCity: 110101
+    customerContactIds: []
+    addressIds: []
+    unityNo: $mock_data(unityNo, string, length=8)
+  response_assert:
+    response_assert_data: 客户修改成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..resCode == 200 or $..resCode == 202
+
+- step_name: 正常场景-更新已有联系人信息
+  host: $get_host(ERP_TEST,pms_host)
+  path: /sell/customer/update
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    current: 1
+    size: 10
+    primaryKey: $get_db_field(customerPrimaryKey)
+    customersSign: $mock_data(customersSign, string, length=10)
+    customerGrade: "true"
+    customersBelong:
+    - "464507374770847810"
+    countryLocation: "false"
+    location: "123"
+    taxNumber: $mock_data(taxNumber, string, length=13)
+    homeCity: 110101
+    homeCityName: "北京市市辖区东城区"
+    remark: "更新联系人测试"
+    enterpriseRegion:
+    - 11
+    - 1101
+    - 110101
+    customerContacts:
+    - contactPrimaryKey: null
+      contactName: $mock_data(contactName, string, length=8)
+      contactPhone: $mock_data(phoneNumber, string)
+      contactEmail: $mock_data(email, string)
+      contactJob: "更新职位"
+      allowLogin: false
+    customerContactIds: []
+    address: []
+    addressIds: []
+    unityNo: $mock_data(unityNo, string, length=8)
+    remarkKp: "更新备注"
+  response_assert:
+    response_assert_data: 客户修改成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..resCode == 200 or $..resCode == 202
+

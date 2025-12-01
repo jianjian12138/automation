@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dm.service.dao.TimelineBindingDao">
+    <resultMap id="timelineBindingModel" type="com.futurecraftsmen.pms.dm.service.po.TimelineBindingModel">
+        <result column="bind_code" property="bindCode"/>
+        <result column="page_code" property="pageCode"/>
+        <result column="process_code" property="processCode"/>
+        <result column="timeline_enum_code" property="timelineEnumCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+
+    <select id="getBindingByPageAndProcessCode" resultMap="timelineBindingModel">
+        SELECT bind_code,
+               page_code,
+               process_code,
+               timeline_enum_code,
+               create_time,
+               update_time,
+               delete_flag
+        FROM dm_base.t_dm_base_timeline_bind
+        WHERE delete_flag = false
+          AND page_code = #{pageCode}
+          AND process_code = #{processCode}
+        limit 1
+    </select>
+
+    <insert id="batchAddBinding">
+        insert into dm_base.t_dm_base_timeline_bind (bind_code, page_code, process_code, timeline_enum_code)
+        values
+        <foreach collection="modelList" index="index" item="model" separator=",">
+            (#{model.bindCode}, #{model.pageCode}, #{model.processCode}, #{model.timelineEnumCode})
+        </foreach>
+    </insert>
+
+    <delete id="deleteTimelineBinding">
+        DELETE
+        FROM dm_base.t_dm_base_timeline_bind
+        WHERE page_code = #{pageCode}
+    </delete>
+
+    <select id="getTimelineBindingByPage" resultMap="timelineBindingModel">
+        SELECT bind_code,
+               page_code,
+               process_code,
+               timeline_enum_code,
+               create_time,
+               update_time,
+               delete_flag
+        FROM dm_base.t_dm_base_timeline_bind
+        WHERE delete_flag = false
+          AND page_code = #{pageCode}
+    </select>
+</mapper>

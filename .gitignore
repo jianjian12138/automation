@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+logs/
+*.log
+
+# Reports
+reports/
+
+# Autofix
+autofix/
+autofix_backups/
+autofix_reports/
+
+# Token
+token.txt
+
+# Test assets
+test_assets/
+
+# Server code (if needed)
+# servercode/
+
+# Database schemas
+database_schemas/
+
+# Web
+tools/
+web/
+
+# Others
+simulate_login_after.html
+*.bak

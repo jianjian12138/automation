@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IProduceSubDispatcherMapper">
+
+    <resultMap id="ProduceSubDispatcherModelResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.produce.ProduceSubDispatcherModel">
+        <id property="primaryKeyValue" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="taskNum" column="task_num"/>
+        <result property="allocationNum" column="allocation_num"/>
+        <result property="status" column="status"/>
+        <result property="creator" column="creator"/>
+        <result property="operator" column="operator"/>
+        <result property="finishDate" column="finish_date"/>
+        <result property="remark" column="remark"/>
+        <result property="flowNo" column="flow_no"/>
+        <result property="draftName" column="draft_name"/>
+        <result property="mainId" column="main_id"/>
+        <result property="devIds" column="dev_Ids" typeHandler="org.apache.ibatis.type.ArrayTypeHandler"/>
+        <result property="createTime" column="create_time"/>
+        <result property="materialFlag" column="material_flag"/>
+        <result property="produceUnityNo" column="produce_Unity_No"/>
+    </resultMap>
+
+
+    <!-- 插入新记录 -->
+    <insert id="add">
+        INSERT INTO ${tableName} (primary_key, enterprise_code,
+                                  task_num, allocation_num,
+                                  status, creator, operator, finish_date,
+                                  remark, flow_no, draft_name, main_id, dev_Ids, produce_unity_no)
+        VALUES (#{data.primaryKeyValue}, #{data.enterpriseCode},
+                #{data.taskNum}, #{data.allocationNum},
+                #{data.status}, #{data.creator}, #{data.operator}, #{data.finishDate}, #{data.remark},
+                #{data.flowNo}, #{data.draftName}, #{data.mainId},
+                #{data.devIds, typeHandler=org.apache.ibatis.type.ArrayTypeHandler}, #{data.produceUnityNo})
+    </insert>
+
+
+    <!-- 批量插入新记录 -->
+    <insert id="batchAdd">
+        INSERT INTO ${tableName} (
+        primary_key,
+        enterprise_code,
+        task_num,
+        allocation_num,
+        status,
+        creator,
+        operator,
+        finish_date,
+        remark,
+        flow_no,
+        draft_name,
+        main_id,dev_Ids,
+        material_flag,produce_Unity_No
+        )
+        VALUES
+        <foreach collection="produceSublist" item="data" separator=",">
+            (
+            #{data.primaryKeyValue},
+            #{data.enterpriseCode},
+            #{data.taskNum},
+            #{data.allocationNum},
+            #{data.status},
+            #{data.creator},
+            #{data.operator},
+            #{data.finishDate},
+            #{data.remark},
+            #{data.flowNo},
+            #{data.draftName},
+            #{data.mainId} , #{data.devIds, typeHandler=org.apache.ibatis.type.ArrayTypeHandler},
+            #{data.materialFlag} ,#{data.produceUnityNo}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据流水号删除记录 -->
+    <delete id="deleteByFlowNo">
+        delete
+        from ${tableName}
+        where flow_no = #{flowNo}
+          AND enterprise_code = #{enterpriseCode}
+          and delete_flag = false
+    </delete>
+
+
+    <select id="queryDraftListByOperatorAndStatus">
+        select flow_no,
+        draft_name,
+        update_time
+        from ${tableName}
+        where creator = #{creator}
+        and status = #{status}
+        AND enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        and main_id in
+        <foreach collection="mainIdList" item="mainId" open="(" close=")" separator=",">
+            #{mainId}
+        </foreach>
+        group by flow_no,draft_name,update_time
+        ORDER BY update_time desc
+    </select>
+
+    <select id="queryDraftDetail">
+        select primary_key as primaryKeyValue,
+               enterprise_code,
+               task_num,
+               allocation_num,
+               status,
+               creator,
+               operator,
+               finish_date,
+               remark,
+               flow_no,
+               draft_name,
+               main_id
+        from ${tableName}
+        where flow_no = #{flowNo}
+          AND enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+    </select>
+
+    <select id="getUnFinishedList">
+        select a.main_id,
+               a.task_num,
+               a.finish_date,
+               b.status,
+               a.remark,
+               a.update_time,
+               a.operator,
+               a.allocation_num
+        from ${produceSubDispatcherTableName} a
+                 INNER JOIN ${produceMainTableName} b
+                            on a.main_id = b.primary_key
+        where a.delete_flag = FALSE
+          and b.delete_flag = FALSE
+          and a."operator" = #{operator}
+          and a.status in (30, 40)
+    </select>
+
+    <update id="updateStatusByMainId">
+        update ${tableName}
+        set status = #{status}
+        where main_id = #{mainId}
+        AND enterprise_code = #{enterpriseCode}
+        <if test="operator != null">
+            and operator = #{operator}
+        </if>
+        AND delete_flag = false
+        and status not in (10,20,50)
+    </update>
+
+
+    <update id="updateStatusAndDevByMainId">
+        update ${tableName}
+        set status = #{status} ,dev_Ids=#{devs, typeHandler=org.apache.ibatis.type.ArrayTypeHandler},
+        material_flag = false
+        where main_id = #{mainId}
+        AND enterprise_code = #{enterpriseCode}
+        <if test="operator != null">
+            and operator = #{operator}
+        </if>
+        AND delete_flag = false
+        and status not in (10,20,50)
+    </update>
+
+
+    <update id="updatePickMaterialStatusAndDevByMainId">
+        update ${dynamicTableNameProxy.produceSubDispatcher}
+        set
+        <if test="devs != null  and  devs.length>0 ">
+            dev_Ids=#{devs, typeHandler=org.apache.ibatis.type.ArrayTypeHandler},
+        </if>
+
+        material_flag = false
+        where main_id = #{mainId}
+        AND enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        <if test="operator != null">
+            and operator = #{operator}
+        </if>
+        AND delete_flag = false
+        and status not in (10,20,50)
+    </update>
+
+
+    <update id="updateProduceUnityNo">
+        update ${dynamicTableNameProxy.produceSubDispatcher}
+        set Produce_Unity_No = #{no}
+
+        where primary_key = #{id}
+    </update>
+
+
+    <select id="queryListByMainIds" resultMap="ProduceSubDispatcherModelResultMap">
+        select *
+        from ${tableName}
+        where
+        enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        and main_id in
+        <foreach collection="mainIds" item="mainId" open="(" close=")" separator=",">
+            #{mainId}
+        </foreach>
+
+        order by create_time
+    </select>
+
+    <select id="queryFirstByMainIdAndOperator">
+        select *
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+          and main_id = #{mainId}
+          and "operator" = #{operator}
+        order by create_time desc limit 1
+    </select>
+
+    <select id="queryListByMainIdAndStatusAndOperator">
+        select *
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+          and main_id = #{mainId}
+          and status = #{status}
+          and operator = #{operator}
+        order by create_time asc
+    </select>
+
+
+    <select id="queryListByMainIdAndOperator">
+        select *
+        from ${dynamicTableNameProxy.produceSubDispatcher}
+        where delete_flag = false
+          AND enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and main_id = #{id}
+          and operator = #{user}
+
+        order by create_time desc, id desc
+    </select>
+
+    <update id="updateTime">
+        update ${dynamicTableNameProxy.produceSubDispatcher}
+        set produce_Time=now()
+        where enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and main_id = #{id}
+          and operator = #{user}
+          and produce_Time is null
+    </update>
+
+
+    <select id="queryProduceUnityNo">
+        select a.primary_key, c.unity_no produce_Unity_No
+        from ${dynamicTableNameProxy.produceSubDispatcher} a
+        , ${dynamicTableNameProxy.produceMain} b
+        , ${dynamicTableNameProxy.produceMain} c
+        where a.main_id = b.primary_key
+        and c.batch_global_code = b.batch_global_code
+        and a.primary_key in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+        and c.unity_no is not null
+        and a.delete_flag = false
+        AND a.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and b.delete_flag = false
+        AND b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and c.delete_flag = false
+        AND c.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+    </select>
+
+
+    <update id="updateMainProduceUnityNo">
+        update ${dynamicTableNameProxy.produceMain}
+        set unity_no=#{no},
+            produce_unity_no=#{no}
+        where primary_key = #{id}
+    </update>
+
+
+</mapper>

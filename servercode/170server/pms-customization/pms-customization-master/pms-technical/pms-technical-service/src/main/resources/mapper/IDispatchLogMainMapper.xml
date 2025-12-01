@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IDispatchLogMainMapper">
+    <resultMap id="BaseResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchLogMainModel">
+        <!--@mbg.generated-->
+        <!--@Table ${tableName}-->
+        <id column="primary_key" property="dispatchTaskCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+
+        <result column="request_log" property="requestLog"/>
+        <result column="dtype" property="dtype"/>
+        <result column="batch_log" property="batchLog"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="lock_count" property="lockCount"/>
+        <result column="global_number" property="globalNumber"/>
+
+        <result property="enterpriseCode" column="enterprise_code"/>
+    </resultMap>
+
+
+    <insert id="insertDispatchLogMain">
+        INSERT INTO ${tableName} (request_log,
+                                  dtype,
+                                  batch_log,
+                                  batch_number, primary_key, lock_count, global_Number, enterprise_code)
+        VALUES (#{data.requestLog},
+                #{data.dtype},
+                #{data.batchLog},
+                #{data.batchNumber}, #{data.primaryKey}, 0, #{data.globalNumber}, #{data.enterpriseCode})
+    </insert>
+
+
+    <update id="updateStatusById">
+        update ${tableName}
+        set batchLog= false
+        where primary_key = #{id}
+    </update>
+
+
+    <update id="updateCountById">
+        update ${tableName}
+        set lock_count=lock_count + 1
+        where primary_key = #{id}
+          and lock_count = #{count}
+    </update>
+
+
+    <select id="selectByBatchNumberFirst">
+        select *
+        from ${tableName}
+        where batch_number = #{id} limit 1
+    </select>
+
+</mapper>

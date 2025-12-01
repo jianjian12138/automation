@@ -1,0 +1,128 @@
+case_name: 入库
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    batchNum: NJHJ-XSHT-250205-01
+    inStorageType: 323747576816861184
+    remark: 采购入库
+    relatedParty: 供方-南京中造软件有限公司
+    inboundDetails: &id001
+    - productPartCode: 357971007264391168
+      storedNum: 100
+      awaitUnQualified: 50
+      awaitQualified: 50
+      inboundApplyDetails:
+      - applyNum: 50
+        remark: 采购入库-吴纯
+        qualified: 20
+        applyTime: '2025-02-19 08:19:04'
+        applyStaff: 329759695592226817
+        unQualified: 30
+      - applyNum: 50
+        remark: 采购入库-严振宁
+        qualified: 30
+        applyTime: '2025-02-19 08:19:04'
+        applyStaff: 329769775628812288
+        unQualified: 20
+    - productPartCode: 357619349518942208
+      storedNum: 200
+      awaitUnQualified: 50
+      awaitQualified: 150
+      inboundApplyDetails:
+      - applyNum: 200
+        remark: 采购入库-严振宁
+        qualified: 150
+        applyTime: '2025-02-18 18:19:04'
+        applyStaff: 329769775628812288
+        unQualified: 50
+    - productPartCode: 357976495200796672
+      storedNum: 200
+      awaitUnQualified: 50
+      awaitQualified: 150
+      inboundApplyDetails:
+      - applyNum: 200
+        remark: 采购入库-严振宁
+        qualified: 150
+        applyTime: '2025-02-18 18:19:04'
+        applyStaff: 329769775628812288
+        unQualified: 50
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    batchNum: test
+    inStorageType: 1
+    remark: test
+    relatedParty: test
+    inboundDetails: *id001
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-缺少必填参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    inStorageType: 323747576816861184
+    remark: 采购入库
+    relatedParty: 供方-南京中造软件有限公司
+    inboundDetails: *id001
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 400
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    batchNum: 999999999
+    inStorageType: 非法字符串
+    remark: 999999999
+    relatedParty: 999999999
+    inboundDetails: *id001
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    batchNum: '!@#$%^&*()'
+    inStorageType: 323747576816861184
+    remark: '!@#$%^&*()'
+    relatedParty: '!@#$%^&*()'
+    inboundDetails: *id001
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: warehouse/inbound/inboundCreateOrUpdate
+  headers: {}
+  method: POST
+  data:
+    batchNum: NJHJ-XSHT-250205-01
+    inStorageType: 323747576816861184
+    remark: 采购入库
+    relatedParty: 供方-南京中造软件有限公司
+    inboundDetails: *id001
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

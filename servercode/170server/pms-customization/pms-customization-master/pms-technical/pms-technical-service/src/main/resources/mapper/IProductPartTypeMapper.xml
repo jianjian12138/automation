@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IProductPartTypeMapper">
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.technical.type.ProductPartTypeModel">
+        <id property="productPartTypeCode" column="primary_key"/>
+        <id property="typeName" column="type_name"/>
+        <id property="superior" column="superior"/>
+        <id property="hasChild" column="has_child"/>
+        <id property="attribute" column="attribute"/>
+    </resultMap>
+
+    <sql id="columns">
+        primary_key,
+        attribute,
+        type_name,
+        has_child,
+        superior
+    </sql>
+
+    <!--    <select id="queryByPartTypeName" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--          AND part_type_sign = #{partTypeName}-->
+    <!--    </select>-->
+
+
+    <!--    <select id="queryPartTypeNameSameSuperior" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--          AND part_type_sign = #{partTypeName}-->
+    <!--        <if test="excludePartTypeCode != null">-->
+    <!--            AND primary_key != #{excludePartTypeCode}-->
+    <!--        </if>-->
+    <!--        <if test="superior != null and superior == '0'.toString()">-->
+    <!--            AND superior IS NULL-->
+    <!--        </if>-->
+    <!--        <if test="superior != null and superior != '0'.toString()">-->
+    <!--            AND superior = #{superior}-->
+    <!--        </if>-->
+    <!--        <if test="superior == null">-->
+    <!--            AND superior IS NULL-->
+    <!--        </if>-->
+    <!--    </select>-->
+
+
+    <!--    <select id="queryByPartTypeCode" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--          AND primary_key = #{partTypeCode}-->
+    <!--    </select>-->
+
+    <!--    <select id="queryByPartTypeCodes" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--        <if test="partTypeCodes != null and partTypeCodes.size() > 0">-->
+    <!--            AND primary_key IN-->
+    <!--            <foreach collection="partTypeCodes" index="index" item="partTypeCode" open="(" separator="," close=")">-->
+    <!--                #{partTypeCode}-->
+    <!--            </foreach>-->
+    <!--        </if>-->
+    <!--        <if test="partTypeCodes == null or partTypeCodes.isEmpty()">-->
+    <!--            AND primary_key IS NULL-->
+    <!--        </if>-->
+    <!--        ORDER BY create_time DESC-->
+    <!--    </select>-->
+
+
+    <!--    <update id="updateHasChild">-->
+    <!--        UPDATE ${tableName}-->
+    <!--        SET has_child = #{model.hasChild}-->
+    <!--        WHERE primary_key = #{model.partTypeCode}-->
+    <!--          and enterprise_code = #{model.ownedEnterpriseCode}-->
+    <!--          and delete_flag = false-->
+    <!--    </update>-->
+
+
+    <!--    <insert id="addPartType">-->
+    <!--        INSERT INTO ${tableName} (<include refid="columns"/>)-->
+    <!--        VALUES (#{model.partTypeCode}, #{model.partTypeName}, #{model.superior}, #{model.creator}, #{model.hasChild}, #{model.ownedEnterpriseCode})-->
+    <!--    </insert>-->
+
+    <!--    <select id="findDirectChildren" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--          AND superior = #{partTypeCode}-->
+    <!--        ORDER BY create_time DESC-->
+    <!--    </select>-->
+
+    <select id="findWithChildren" resultMap="resultMap">
+        WITH RECURSIVE PartType AS (SELECT primary_key, type_name, superior, has_child
+                                    FROM ${tableName}
+                                    WHERE primary_key = #{partTypeCode}
+                                    UNION ALL
+                                    SELECT t.primary_key, t.type_name, t.superior, t.has_child
+                                    FROM ${tableName} t
+                                             INNER JOIN PartType pt ON t.superior = pt.primary_key)
+        SELECT *
+        FROM PartType
+    </select>
+
+    <!--    <update id="updatePartType">-->
+    <!--        UPDATE ${tableName}-->
+    <!--        SET part_type_sign = #{model.partTypeName},-->
+    <!--            superior       = #{model.superior}-->
+    <!--        WHERE primary_key = #{model.partTypeCode}-->
+    <!--          and enterprise_code = #{model.ownedEnterpriseCode}-->
+    <!--          and delete_flag = false-->
+    <!--    </update>-->
+    <!--    <delete id="deletePartType">-->
+    <!--        DELETE-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE primary_key = #{partTypeCode}-->
+    <!--          and enterprise_code = #{enterpriseCode}-->
+    <!--          and delete_flag = false-->
+    <!--    </delete>-->
+        <select id="findAll" resultMap="resultMap">
+            SELECT
+            <include refid="columns"/>
+            FROM ${tableName}
+            WHERE delete_flag = false
+              AND enterprise_code = #{enterpriseCode}
+            <if test="requestData.attribute != null">
+                AND attribute = #{requestData.attribute}
+            </if>
+            ORDER BY create_time DESC
+        </select>
+
+    <!--    <select id="queryPartTypesConfigurableForParts" resultMap="resultMap">-->
+    <!--        SELECT-->
+    <!--        <include refid="columns"/>-->
+    <!--        FROM ${tableName}-->
+    <!--        WHERE delete_flag = false-->
+    <!--          AND enterprise_code = #{enterpriseCode}-->
+    <!--          AND has_child = false-->
+    <!--    </select>-->
+</mapper>

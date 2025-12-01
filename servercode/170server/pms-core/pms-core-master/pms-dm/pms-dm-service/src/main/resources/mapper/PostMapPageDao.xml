@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dm.service.dao.PostMapPageDao">
+    <insert id="batchAddPostMapPage">
+        INSERT INTO ${tableName} (map_code, enterprise_code, post_code, page_code, detail,custom_page_detail,reports)
+        VALUES
+        <foreach collection="postMapPageModelList" index="index" item="postMapPageModel" separator=",">
+            (#{postMapPageModel.mapCode}, #{postMapPageModel.enterpriseCode}, #{postMapPageModel.postCode},
+            #{postMapPageModel.pageCode},#{postMapPageModel.detail},#{postMapPageModel.customPageDetail},#{postMapPageModel.reports})
+        </foreach>
+    </insert>
+
+    <update id="updatePostMapPage">
+        UPDATE ${tableName}
+        set detail = #{postMapPageModel.detail},
+            custom_page_detail = #{postMapPageModel.customPageDetail},
+            reports = #{postMapPageModel.reports}
+        where map_code= #{postMapPageModel.mapCode}
+    </update>
+
+    <select id="getPostMapPageByCode"
+            resultType="com.futurecraftsmen.pms.dm.service.po.PostMapPageModel">
+        SELECT map_code,
+               enterprise_code,
+               post_code,
+               page_code,
+               detail,
+               custom_page_detail,
+               reports,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE post_code = #{postCode}
+          AND enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+    </select>
+
+    <select id="getPostMapPagesByCodes" resultType="com.futurecraftsmen.pms.dm.service.po.PostMapPageModel">
+        SELECT map_code,
+        enterprise_code,
+        post_code,
+        page_code,
+        detail,
+        custom_page_detail,
+        reports,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND map_code IN
+        <foreach collection="mapCodes" index="index" item="mapCode" open="("
+                 separator="," close=")">
+            #{mapCode}
+        </foreach>
+    </select>
+
+    <select id="getAllPostMapPageModel" resultType="com.futurecraftsmen.pms.dm.service.po.PostMapPageModel">
+        SELECT map_code,
+               enterprise_code,
+               post_code,
+               page_code,
+               detail,
+               custom_page_detail,
+               reports,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <delete id="batchDelete">
+        delete
+        from ${tableName}
+        where map_code IN
+        <foreach collection="mapCodes" index="index" item="mapCode" open="("
+                 separator="," close=")">
+            #{mapCode}
+        </foreach>
+    </delete>
+
+</mapper>

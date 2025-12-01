@@ -1,0 +1,168 @@
+case_code: Inventoryaddinboundorder
+case_name: inventoryaddInboundOrder
+priority: 2
+steps:
+- data:
+    applyNum: 12345.12345678
+    contractNumber: contractnumber_value
+    inboundDetails: &id001 []
+    processInventoryInOutList: &id002
+    - count: 0.0
+      genOutboundOrderFlag: true
+      isBatchPullDown: true
+      noQualifiedList:
+      - applyDetailCode: $get_db_field(apply_detail_code)
+        batch: batch_value
+        batchCode: $get_db_field(batch_code)
+        batchGlobalCode: $get_db_field(batch_global_code)
+        batchNumber: BATCH_20250101_001
+        count: 100.5
+        isBatchPullDown: true
+        positionCode: $get_db_field(position_code)
+        positionStockBatchCode: $get_db_field(position_stock_batch_code)
+        remark: ''
+        stockType: 类型A
+      operationTime: '2025-01-01 12:00:00'
+      positionStockNum: 0.0
+      productPartCode: $get_db_field(product_part_code)
+      qualifiedList:
+      - applyDetailCode: $get_db_field(apply_detail_code)
+        batch: batch_value
+        batchCode: $get_db_field(batch_code)
+        batchGlobalCode: $get_db_field(batch_global_code)
+        batchNumber: BATCH_20250101_001
+        count: 100.5
+        isBatchPullDown: true
+        positionCode: $get_db_field(position_code)
+        positionStockBatchCode: $get_db_field(position_stock_batch_code)
+        remark: ''
+        stockType: 类型A
+      receiveType: 类型A
+      remark: ''
+      status: 1
+      stockBingPositionList:
+      - changePositionCode: $get_db_field(position_code)
+        positionStockNum: 100.5
+        stockCode: $get_db_field(stock_code)
+        toBeAddPositionCodes:
+        - $get_db_field(position_code)
+        toBeDeletePositionCodes:
+        - $get_db_field(position_code)
+        unChangePositionCode: $get_db_field(position_code)
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: &id003
+    - changePositionCode: $get_db_field(position_code)
+      positionStockNum: 0.0
+      stockCode: $get_db_field(stock_code)
+      toBeAddPositionCodes:
+      - $get_db_field(position_code)
+      toBeDeletePositionCodes:
+      - $get_db_field(position_code)
+      unChangePositionCode: $get_db_field(position_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    applyNum: 1.0e-08
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    applyNum: 99999999.99999999
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    applyNum: 123.123456785
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    applyNum: 非法字符串
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    applyNum: -100.5
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    applyNum: 0.0
+    contractNumber: contractnumber_value
+    inboundDetails: *id001
+    processInventoryInOutList: *id002
+    productPartCode: $get_db_field(product_part_code)
+    remark: ''
+    stockBingPositionList: *id003
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventoryaddInboundOrder
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

@@ -1,0 +1,127 @@
+case_code: Stockchecksaveorcommit
+case_name: stockCheckSaveOrCommit
+priority: 2
+steps:
+- data:
+    checkVersion: 1
+    children: &id001
+    - batch: batch_value
+      batchCode: $get_db_field(batch_code)
+      positionBatchDamageNum: 0.0
+      positionBatchIntactNum: 0.0
+      positionBatchNum: 0.0
+      positionCode: $get_db_field(position_code)
+      primaryKey: $get_db_field(primary_key)
+      remark: ''
+    positionCodes: &id002
+    - $get_db_field(position_code)
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    checkVersion: 1
+    children: *id001
+    positionCodes: *id002
+    productPartCode: $get_db_field(product_part_code)
+    saveOrCommit: true
+    stockCode: $get_db_field(stock_code)
+    stocktakingType: 1
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/technology/inventory/stockCheck/stockCheckSaveOrCommit
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

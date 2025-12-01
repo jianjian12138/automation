@@ -1,0 +1,3163 @@
+[
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-application/pms-ow/pms-ow-api/src/main/java/com/futurecraftsmen/pms/ow/api/service/dto/product/ProductInventoryRpcDTO.java",
+    "class_name": "ProductInventoryRpcDTO",
+    "fields": [
+      "inventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-application/pms-ow/pms-ow-api/src/main/java/com/futurecraftsmen/pms/ow/api/service/dto/product/ProductRpcDTO.java",
+    "class_name": "ProductRpcDTO",
+    "fields": [
+      "price"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-application/pms-ow/pms-ow-service/src/main/java/com/futurecraftsmen/pms/ow/service/model/base/ProductBaseModel.java",
+    "class_name": "ProductBaseModel",
+    "fields": [
+      "price",
+      "pricePreset",
+      "inventory",
+      "inventoryPreset"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/trigger/CollaboratePurchaseContractItemInboundInfo.java",
+    "class_name": "CollaboratePurchaseContractItemInboundInfo",
+    "fields": [
+      "inboundNum",
+      "inboundQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/SellOrderDispatchRpcDTO.java",
+    "class_name": "SellOrderDispatchRpcDTO",
+    "fields": [
+      "needNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/SellOrderProductRpcDto.java",
+    "class_name": "SellOrderProductRpcDto",
+    "fields": [
+      "productQuantity",
+      "remainQuantity",
+      "totleNum",
+      "waitNum",
+      "inventoryNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/BatchProduct.java",
+    "class_name": "BatchProduct",
+    "fields": [
+      "needNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/ProcessRouteNeedPartRpcDTO.java",
+    "class_name": "ProcessRouteNeedPartRpcDTO",
+    "fields": [
+      "inventoryNum",
+      "quantity",
+      "partNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/ProduceDetailConditionDTO.java",
+    "class_name": "ProduceDetailConditionDTO",
+    "fields": [
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/sellorder/ProductBatchAssignedDispatchDTO.java",
+    "class_name": "ProductBatchAssignedDispatchDTO",
+    "fields": [
+      "needNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/sell/SellContractImportRequest.java",
+    "class_name": "SellContractImportRequest",
+    "fields": [
+      "quantity",
+      "unitPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/financing/ProductPriceFollow.java",
+    "class_name": "ProductPriceFollow",
+    "fields": [
+      "price",
+      "priceEn",
+      "productCost",
+      "manageCost"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/financing/SignedContractStatisticsResultRpcDTO.java",
+    "class_name": "SignedContractStatisticsResultRpcDTO",
+    "fields": [
+      "totalAmountNotReceived",
+      "totalAmountNotPayed"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/financing/CostQueryConditionDTO.java",
+    "class_name": "CostQueryConditionDTO",
+    "fields": [
+      "costManually",
+      "deviceCost",
+      "assistedCost",
+      "testCost",
+      "manageCost"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/purchase/PurchaseContractImportRequest.java",
+    "class_name": "PurchaseContractImportRequest",
+    "fields": [
+      "quantity",
+      "unitPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/base/ContractMoneyRecordAddRpcDTO.java",
+    "class_name": "ContractMoneyRecordAddRpcDTO",
+    "fields": [
+      "recordAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/base/ContractInvoiceRecordEditRpcDTO.java",
+    "class_name": "ContractInvoiceRecordEditRpcDTO",
+    "fields": [
+      "invoiceAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/base/ContractInvoiceRecordAddRpcDTO.java",
+    "class_name": "ContractInvoiceRecordAddRpcDTO",
+    "fields": [
+      "invoiceAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/contract/base/ContractMoneyRecordEditRpcDTO.java",
+    "class_name": "ContractMoneyRecordEditRpcDTO",
+    "fields": [
+      "recordAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/quality/ReportDetailRpcDTO.java",
+    "class_name": "ReportDetailRpcDTO",
+    "fields": [
+      "taskNum",
+      "inspectNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/invoiceorder/InvoiceOrderPackageInfoUpdateRpcDTO.java",
+    "class_name": "InvoiceOrderPackageInfoUpdateRpcDTO",
+    "fields": [
+      "weight"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/invoiceorder/InvoiceOrderUpdateItemQuantityRpcDTO.java",
+    "class_name": "InvoiceOrderUpdateItemQuantityRpcDTO",
+    "fields": [
+      "itemQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/productgrade/ProductGradeUpdateRpcDTO.java",
+    "class_name": "ProductGradeUpdateRpcDTO",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/productgrade/ProductGradeAddRpcDTO.java",
+    "class_name": "ProductGradeAddRpcDTO",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/lackmaterialtask/base/MergedLackMaterialTask.java",
+    "class_name": "MergedLackMaterialTask",
+    "fields": [
+      "mergedEnquiryNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/lackmaterialtask/base/LackMaterialTaskRunningInfo.java",
+    "class_name": "LackMaterialTaskRunningInfo",
+    "fields": [
+      "collaborateEnquiryNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/lackmaterialtask/base/MergedCollaborateItem.java",
+    "class_name": "MergedCollaborateItem",
+    "fields": [
+      "mergedEnquiryNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/paymentstrategy/PaymentStrategyUpdateRpcDTO.java",
+    "class_name": "PaymentStrategyUpdateRpcDTO",
+    "fields": [
+      "exchangeRateRmb",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/paymentstrategy/PaymentStrategyAddRpcDTO.java",
+    "class_name": "PaymentStrategyAddRpcDTO",
+    "fields": [
+      "exchangeRateRmb",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/outpartorder/SendOrderUpdateItemQuantityRpcDTO.java",
+    "class_name": "SendOrderUpdateItemQuantityRpcDTO",
+    "fields": [
+      "itemQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/outpartorder/SendOrderPackageInfoUpdateRpcDTO.java",
+    "class_name": "SendOrderPackageInfoUpdateRpcDTO",
+    "fields": [
+      "weight"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/BatchUpdateProductUnitPriceRpcDTO.java",
+    "class_name": "BatchUpdateProductUnitPriceRpcDTO",
+    "fields": [
+      "operand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/ProductElementRpcDTO.java",
+    "class_name": "ProductElementRpcDTO",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/BatchAddProductRpcDTO.java",
+    "class_name": "BatchAddProductRpcDTO",
+    "fields": [
+      "quantity",
+      "unitPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/UpdateProductUnitPriceRpcDTO.java",
+    "class_name": "UpdateProductUnitPriceRpcDTO",
+    "fields": [
+      "unitPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/ParsedProductElementRpcDTO.java",
+    "class_name": "ParsedProductElementRpcDTO",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/base/product/UpdateProductQuantityRpcDTO.java",
+    "class_name": "UpdateProductQuantityRpcDTO",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/produce/ProduceSubDetailDTO.java",
+    "class_name": "ProduceSubDetailDTO",
+    "fields": [
+      "finishNum",
+      "allocationNum",
+      "sumAllocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/produce/ProduceDetailRpcDTO.java",
+    "class_name": "ProduceDetailRpcDTO",
+    "fields": [
+      "taskNum",
+      "allocationNum",
+      "finishNum",
+      "discardNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/produce/ProducePartInfoDTO.java",
+    "class_name": "ProducePartInfoDTO",
+    "fields": [
+      "matchingNum",
+      "singleNum",
+      "pickingNum",
+      "unPickingNum",
+      "applyNum",
+      "stockNum",
+      "taskNum",
+      "availableNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/customer/CustomerFactorUpdateRpcDTO.java",
+    "class_name": "CustomerFactorUpdateRpcDTO",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-api/src/main/java/com/futurecraftsmen/pms/pas/api/rpc/customer/NewCustomerVisitDTO.java",
+    "class_name": "NewCustomerVisitDTO",
+    "fields": [
+      "estimatedCost",
+      "actualCosts"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/impl/inner/historyprice/HistoryPriceInfo.java",
+    "class_name": "HistoryPriceInfo",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/impl/report/innerInterface/sellDetailStatistics/SellerSaleTotal.java",
+    "class_name": "SellerSaleTotal",
+    "fields": [
+      "total"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/impl/report/innerInterface/productSaleInfo/ProductSalesSummary.java",
+    "class_name": "ProductSalesSummary",
+    "fields": [
+      "totalQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/impl/report/innerInterface/purchaseDetailStatistics/VenderPurchaseDetail.java",
+    "class_name": "VenderPurchaseDetail",
+    "fields": [
+      "total",
+      "paymentTotal",
+      "received"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/product/ProductDetail.java",
+    "class_name": "ProductDetail",
+    "fields": [
+      "productAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/product/SellProductElement.java",
+    "class_name": "SellProductElement",
+    "fields": [
+      "sellProductStandardPrice",
+      "enterprisePrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/product/ProductElementChangeInfo.java",
+    "class_name": "ProductElementChangeInfo",
+    "fields": [
+      "oldQuantity",
+      "oldUnitPrice",
+      "newQuantity",
+      "newUnitPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/product/SelfProductElement.java",
+    "class_name": "SelfProductElement",
+    "fields": [
+      "standardPrice",
+      "enterprisePrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/product/NotSellProductElement.java",
+    "class_name": "NotSellProductElement",
+    "fields": [
+      "notSellProductStandardPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/dataquery/SimpleProductDetail.java",
+    "class_name": "SimpleProductDetail",
+    "fields": [
+      "productAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/dataquery/SimpleProductElement.java",
+    "class_name": "SimpleProductElement",
+    "fields": [
+      "quantity",
+      "unitPrice",
+      "totalPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/outpart/PreciseOutboundCalculator.java",
+    "class_name": "PreciseOutboundCalculator",
+    "fields": [
+      "sendSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/core/paymentStrategy/PaymentStrategy.java",
+    "class_name": "PaymentStrategy",
+    "fields": [
+      "exchangeRate2RMB",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/PaymentStrategyModel.java",
+    "class_name": "PaymentStrategyModel",
+    "fields": [
+      "exchangeRateRmb",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/ProductGradeModel.java",
+    "class_name": "ProductGradeModel",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/WarehouseInventoryModel.java",
+    "class_name": "WarehouseInventoryModel",
+    "fields": [
+      "totalInventory",
+      "lockInInventor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/SellDetailInfoModel.java",
+    "class_name": "SellDetailInfoModel",
+    "fields": [
+      "exchangeRate",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/LatestHistoryPrice.java",
+    "class_name": "LatestHistoryPrice",
+    "fields": [
+      "minPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/SellQuotationFilingModel.java",
+    "class_name": "SellQuotationFilingModel",
+    "fields": [
+      "quotationAmount",
+      "dealAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/PurchaseDetailInfoModel.java",
+    "class_name": "PurchaseDetailInfoModel",
+    "fields": [
+      "exchangeRate",
+      "taxRatePercent"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/WarehouseStockModel.java",
+    "class_name": "WarehouseStockModel",
+    "fields": [
+      "totalInventory",
+      "lockInInventor",
+      "stockLimit",
+      "safeInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/HistoryPriceModel.java",
+    "class_name": "HistoryPriceModel",
+    "fields": [
+      "exchangeRate",
+      "taxRatePercent",
+      "productQuantity",
+      "productUnitPrice",
+      "productTotalPrice",
+      "productRmbUnitPrice",
+      "productRmbTotalPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/sellorder/SellOrderProductQuantityUpdate.java",
+    "class_name": "SellOrderProductQuantityUpdate",
+    "fields": [
+      "oldProductQuantity",
+      "productQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/sellorder/SellOrderProductModel.java",
+    "class_name": "SellOrderProductModel",
+    "fields": [
+      "productQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/quality/InspectIntoModel.java",
+    "class_name": "InspectIntoModel",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum",
+      "contractQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/aftersale/AfterSaleDetailModel.java",
+    "class_name": "AfterSaleDetailModel",
+    "fields": [
+      "contractQuantity",
+      "feedbackNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/awaiting/AwaitingDetailProductQuantityUpdate.java",
+    "class_name": "AwaitingDetailProductQuantityUpdate",
+    "fields": [
+      "productQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/feedback/FeedBackDetailModel.java",
+    "class_name": "FeedBackDetailModel",
+    "fields": [
+      "receive",
+      "inspection",
+      "feedbackNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/newContract/ContractInvoiceRecordModel.java",
+    "class_name": "ContractInvoiceRecordModel",
+    "fields": [
+      "contractAmount",
+      "invoiceAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/newContract/SignedContractModel.java",
+    "class_name": "SignedContractModel",
+    "fields": [
+      "contractAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/newContract/ContractMoneyRecordModel.java",
+    "class_name": "ContractMoneyRecordModel",
+    "fields": [
+      "contractAmount",
+      "recordAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/newContract/ContractFinancingOperateModel.java",
+    "class_name": "ContractFinancingOperateModel",
+    "fields": [
+      "applyAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/newContract/ContractMoneyRecordSummary.java",
+    "class_name": "ContractMoneyRecordSummary",
+    "fields": [
+      "collectSum",
+      "paymentSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/OutPartTaskSendDetailModel.java",
+    "class_name": "OutPartTaskSendDetailModel",
+    "fields": [
+      "outSum",
+      "applySum",
+      "sendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/OutPartDetailModel.java",
+    "class_name": "OutPartDetailModel",
+    "fields": [
+      "outSum",
+      "sendSum",
+      "scheduleOutbound"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/OutPartDetailSendSumUpdater.java",
+    "class_name": "OutPartDetailSendSumUpdater",
+    "fields": [
+      "sendSumNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/LackMaterialTaskModel.java",
+    "class_name": "LackMaterialTaskModel",
+    "fields": [
+      "demand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/OutPartTaskModel.java",
+    "class_name": "OutPartTaskModel",
+    "fields": [
+      "outSum",
+      "applySum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/lackmaterialtask/TaskPurchaseDetailModel.java",
+    "class_name": "TaskPurchaseDetailModel",
+    "fields": [
+      "enquiryNum",
+      "contractNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/receiving/NewSelfReceivingRecordModel.java",
+    "class_name": "NewSelfReceivingRecordModel",
+    "fields": [
+      "receive",
+      "inspection"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/receiving/NewSelfReceivingDetailModel.java",
+    "class_name": "NewSelfReceivingDetailModel",
+    "fields": [
+      "contractQuantity",
+      "qualifiedQuantity",
+      "receivedQuantity",
+      "sellerSendQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/receiving/SelfReceivingRecordModel.java",
+    "class_name": "SelfReceivingRecordModel",
+    "fields": [
+      "receive",
+      "inspection"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/receiving/SelfReceivingDetailModel.java",
+    "class_name": "SelfReceivingDetailModel",
+    "fields": [
+      "contractQuantity",
+      "sellerSendQuantity",
+      "receivedQuantity",
+      "qualifiedQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/receiving/ShippingRecordFromSellModel.java",
+    "class_name": "ShippingRecordFromSellModel",
+    "fields": [
+      "sendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/production/MaterialApplyModel.java",
+    "class_name": "MaterialApplyModel",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/production/ProductionComponentSendSumUpdater.java",
+    "class_name": "ProductionComponentSendSumUpdater",
+    "fields": [
+      "sendSumNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/production/ProductionComponentModel.java",
+    "class_name": "ProductionComponentModel",
+    "fields": [
+      "quantity",
+      "sendSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/purchasetask/UpdateAfterReceivingDetailDrop.java",
+    "class_name": "UpdateAfterReceivingDetailDrop",
+    "fields": [
+      "minedNumNeedReduce"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/purchasetask/UpdateAfterReceivingDetailCreate.java",
+    "class_name": "UpdateAfterReceivingDetailCreate",
+    "fields": [
+      "minedNumNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/customer/NewCustomerModel.java",
+    "class_name": "NewCustomerModel",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/customer/CustomerFactorModel.java",
+    "class_name": "CustomerFactorModel",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/po/customer/NewCustomerVisitModel.java",
+    "class_name": "NewCustomerVisitModel",
+    "fields": [
+      "estimatedCost",
+      "actualCosts"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/base/ContractRecordAmountSum.java",
+    "class_name": "ContractRecordAmountSum",
+    "fields": [
+      "confirmedAmountSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/base/TotalAmount.java",
+    "class_name": "TotalAmount",
+    "fields": [
+      "data"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-pas/pms-pas-service/src/main/java/com/futurecraftsmen/pms/pas/service/base/PriceCheckResult.java",
+    "class_name": "PriceCheckResult",
+    "fields": [
+      "amountWaterLowLevel",
+      "enterpriseProductAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/service/temp/feedback/FeedBackBase.java",
+    "class_name": "FeedBackBase",
+    "fields": [
+      "receive",
+      "inspection",
+      "feedbackNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/sellorder/SellOrderProductScheduleDetailRpcDTO.java",
+    "class_name": "SellOrderProductScheduleDetailRpcDTO",
+    "fields": [
+      "productQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/record/ProduceRecordDto.java",
+    "class_name": "ProduceRecordDto",
+    "fields": [
+      "allocationNum",
+      "finishNum",
+      "scrapNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/record/StockRecordDto.java",
+    "class_name": "StockRecordDto",
+    "fields": [
+      "operationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/ReportDetailRpcDTO.java",
+    "class_name": "ReportDetailRpcDTO",
+    "fields": [
+      "taskNum",
+      "inspectNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishDetailRpcDTO.java",
+    "class_name": "InspectFinishDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishReportTotalRpcDTO.java",
+    "class_name": "InspectFinishReportTotalRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishReportDetailRpcDTO.java",
+    "class_name": "InspectFinishReportDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishReportDetailPageRpcDTO.java",
+    "class_name": "InspectFinishReportDetailPageRpcDTO",
+    "fields": [
+      "totalInspectNum",
+      "totalPassedNum",
+      "totalPassedRate",
+      "totalTaskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishReportRpcDTO.java",
+    "class_name": "InspectFinishReportRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishDispatcherBatchSubmitRpcDTO.java",
+    "class_name": "InspectFinishDispatcherBatchSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishRpcDTO.java",
+    "class_name": "InspectFinishRpcDTO",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishDispatcherRpcDTO.java",
+    "class_name": "InspectFinishDispatcherRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishDispatcherSubmitRpcDTO.java",
+    "class_name": "InspectFinishDispatcherSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishDispatcherOperatorRpcDTO.java",
+    "class_name": "InspectFinishDispatcherOperatorRpcDTO",
+    "fields": [
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/finish/InspectFinishPageConditionDTO.java",
+    "class_name": "InspectFinishPageConditionDTO",
+    "fields": [
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoReportRpcDTO.java",
+    "class_name": "InspectIntoReportRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoReportTotalRpcDTO.java",
+    "class_name": "InspectIntoReportTotalRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoReportDetailRpcDTO.java",
+    "class_name": "InspectIntoReportDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoDetailRpcDTO.java",
+    "class_name": "InspectIntoDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoReportDetailPageRpcDTO.java",
+    "class_name": "InspectIntoReportDetailPageRpcDTO",
+    "fields": [
+      "totalInspectNum",
+      "totalPassedNum",
+      "totalPassedRate",
+      "totalTaskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoDispatcherOperatorRpcDTO.java",
+    "class_name": "InspectIntoDispatcherOperatorRpcDTO",
+    "fields": [
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoPageConditionDTO.java",
+    "class_name": "InspectIntoPageConditionDTO",
+    "fields": [
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoDispatcherBatchSubmitRpcDTO.java",
+    "class_name": "InspectIntoDispatcherBatchSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoDispatcherSubmitRpcDTO.java",
+    "class_name": "InspectIntoDispatcherSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoDispatcherRpcDTO.java",
+    "class_name": "InspectIntoDispatcherRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/into/InspectIntoRpcDTO.java",
+    "class_name": "InspectIntoRpcDTO",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum",
+      "contractQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessDispatcherBatchSubmitRpcDTO.java",
+    "class_name": "InspectProcessDispatcherBatchSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessDispatcherRpcDTO.java",
+    "class_name": "InspectProcessDispatcherRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessDispatcherOperatorRpcDTO.java",
+    "class_name": "InspectProcessDispatcherOperatorRpcDTO",
+    "fields": [
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessReportRpcDTO.java",
+    "class_name": "InspectProcessReportRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessPageConditionDTO.java",
+    "class_name": "InspectProcessPageConditionDTO",
+    "fields": [
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessReportDetailRpcDTO.java",
+    "class_name": "InspectProcessReportDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessDetailRpcDTO.java",
+    "class_name": "InspectProcessDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessDispatcherSubmitRpcDTO.java",
+    "class_name": "InspectProcessDispatcherSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessReportDetailPageRpcDTO.java",
+    "class_name": "InspectProcessReportDetailPageRpcDTO",
+    "fields": [
+      "totalInspectNum",
+      "totalPassedNum",
+      "totalPassedRate",
+      "totalTaskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessReportTotalRpcDTO.java",
+    "class_name": "InspectProcessReportTotalRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/inspect/process/InspectProcessRpcDTO.java",
+    "class_name": "InspectProcessRpcDTO",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/unqualified/InspectUnqualifiedReportRpcDTO.java",
+    "class_name": "InspectUnqualifiedReportRpcDTO",
+    "fields": [
+      "inspectRatio"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/unqualified/InspectUnqualifiedRpcDTO.java",
+    "class_name": "InspectUnqualifiedRpcDTO",
+    "fields": [
+      "inspectNum",
+      "unPassNum",
+      "submitTotalNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/quality/approve/InspectApproveRpcDTO.java",
+    "class_name": "InspectApproveRpcDTO",
+    "fields": [
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/DisCountOptimal.java",
+    "class_name": "DisCountOptimal",
+    "fields": [
+      "needNum",
+      "ratio",
+      "taskNum",
+      "orderNum",
+      "sumNeedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/DispatchRpcDTO.java",
+    "class_name": "DispatchRpcDTO",
+    "fields": [
+      "usingStockCount",
+      "usingOnWayStockCount",
+      "outPurchaseCount",
+      "purchaseCount",
+      "productionCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/DisSnapshot.java",
+    "class_name": "DisSnapshot",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/record/TypeNameDTO.java",
+    "class_name": "TypeNameDTO",
+    "fields": [
+      "num"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/record/DispatchRecordNewResponse.java",
+    "class_name": "DispatchRecordNewResponse",
+    "fields": [
+      "plan",
+      "needTotal",
+      "orderTotal",
+      "sumNeedNum",
+      "realNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/record/DispatchRecordResponse.java",
+    "class_name": "DispatchRecordResponse",
+    "fields": [
+      "ratio",
+      "purchaseNum",
+      "purchaseProduceNum",
+      "stockNum",
+      "produceNum",
+      "total",
+      "needTotal",
+      "partAllTotal",
+      "sellOrderTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/dispatch/base/MergeDispatchSimpleRpcDTO.java",
+    "class_name": "MergeDispatchSimpleRpcDTO",
+    "fields": [
+      "expectDispatchSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouseinventory/WarehousePositionDetailModel.java",
+    "class_name": "WarehousePositionDetailModel",
+    "fields": [
+      "positionBatchNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouseinventory/WarehouseMergeImportBzRpcModel.java",
+    "class_name": "WarehouseMergeImportBzRpcModel",
+    "fields": [
+      "positionBatchNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouseinventory/StockAddOrUpdateRpcRequest.java",
+    "class_name": "StockAddOrUpdateRpcRequest",
+    "fields": [
+      "totalInventory",
+      "lockInInventor",
+      "safeInventory",
+      "unqualifiedInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouseinventory/StockBatchImportRpcRequest.java",
+    "class_name": "StockBatchImportRpcRequest",
+    "fields": [
+      "totalInventory",
+      "safeInventory",
+      "positionStockNum",
+      "positionStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouseinventory/WarehouseMergeImportRpcModel.java",
+    "class_name": "WarehouseMergeImportRpcModel",
+    "fields": [
+      "positionBatchNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/orderdetails/OrderDetailsRpcDTO.java",
+    "class_name": "OrderDetailsRpcDTO",
+    "fields": [
+      "storedNum",
+      "awaitQualified",
+      "awaitUnQualified",
+      "needInStorageNum",
+      "outNum",
+      "outTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/orderdetails/ProcessInOutDetailRpcDTO.java",
+    "class_name": "ProcessInOutDetailRpcDTO",
+    "fields": [
+      "count"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/RecordInfo.java",
+    "class_name": "RecordInfo",
+    "fields": [
+      "finishNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/OutStockApply.java",
+    "class_name": "OutStockApply",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/InStockApply.java",
+    "class_name": "InStockApply",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectDispatcherSubmitRpcDTO.java",
+    "class_name": "CollaborateInspectDispatcherSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectDispatcherBatchSubmitRpcDTO.java",
+    "class_name": "CollaborateInspectDispatcherBatchSubmitRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectDispatcherOperatorRpcDTO.java",
+    "class_name": "CollaborateInspectDispatcherOperatorRpcDTO",
+    "fields": [
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectRpcDTO.java",
+    "class_name": "CollaborateInspectRpcDTO",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum",
+      "contractQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectReportDetailRpcDTO.java",
+    "class_name": "CollaborateInspectReportDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectPageConditionDTO.java",
+    "class_name": "CollaborateInspectPageConditionDTO",
+    "fields": [
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectReportRpcDTO.java",
+    "class_name": "CollaborateInspectReportRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectDispatcherRpcDTO.java",
+    "class_name": "CollaborateInspectDispatcherRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectReportTotalRpcDTO.java",
+    "class_name": "CollaborateInspectReportTotalRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectDetailRpcDTO.java",
+    "class_name": "CollaborateInspectDetailRpcDTO",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inspect/CollaborateInspectReportDetailPageRpcDTO.java",
+    "class_name": "CollaborateInspectReportDetailPageRpcDTO",
+    "fields": [
+      "totalInspectNum",
+      "totalPassedNum",
+      "totalPassedRate",
+      "totalTaskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/OutSendMaterialStagingAreaPickingInfo.java",
+    "class_name": "OutSendMaterialStagingAreaPickingInfo",
+    "fields": [
+      "pickNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemContractReturnEvent.java",
+    "class_name": "CollaborateScheduleItemContractReturnEvent",
+    "fields": [
+      "scheduleNumNeedDecrease",
+      "collaborateOperationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemInboundEvent.java",
+    "class_name": "CollaborateScheduleItemInboundEvent",
+    "fields": [
+      "inboundNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemContractCancelEvent.java",
+    "class_name": "CollaborateScheduleItemContractCancelEvent",
+    "fields": [
+      "scheduleNumNeedDecrease",
+      "collaborateOperationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemContractWithDrawEvent.java",
+    "class_name": "CollaborateScheduleItemContractWithDrawEvent",
+    "fields": [
+      "scheduleNumNeedDecrease",
+      "collaborateOperationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemContractSignEvent.java",
+    "class_name": "CollaborateScheduleItemContractSignEvent",
+    "fields": [
+      "scheduleNumNeedAdd",
+      "collaborateOperationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemPurchaseEnquiryDeleteEvent.java",
+    "class_name": "CollaborateScheduleItemPurchaseEnquiryDeleteEvent",
+    "fields": [
+      "enquiryDeleteNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/lacktask/base/CollaborateScheduleItemReceivingEvent.java",
+    "class_name": "CollaborateScheduleItemReceivingEvent",
+    "fields": [
+      "receiveNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inbound/ContractCollaborateInboundMaterial.java",
+    "class_name": "ContractCollaborateInboundMaterial",
+    "fields": [
+      "batchNum",
+      "orderQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inbound/CollaborateInboundDetailReportRpcDTO.java",
+    "class_name": "CollaborateInboundDetailReportRpcDTO",
+    "fields": [
+      "allInboundQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/inbound/ContractCollaborateInStockParam.java",
+    "class_name": "ContractCollaborateInStockParam",
+    "fields": [
+      "inStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/outbound/CollaborateOutboundDetailReportRpcDTO.java",
+    "class_name": "CollaborateOutboundDetailReportRpcDTO",
+    "fields": [
+      "allOutNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/outbound/ContractCollaborateOutStockParam.java",
+    "class_name": "ContractCollaborateOutStockParam",
+    "fields": [
+      "outStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/base/ProductSimpleInfo.java",
+    "class_name": "ProductSimpleInfo",
+    "fields": [
+      "orderQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/base/MaterialSimpleInfo.java",
+    "class_name": "MaterialSimpleInfo",
+    "fields": [
+      "factor",
+      "demandQuantity",
+      "canUseStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateDistributeRequest.java",
+    "class_name": "CollaborateDistributeRequest",
+    "fields": [
+      "pickDataNum",
+      "complementNum",
+      "scrapNum",
+      "num"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateBatchProduceMaterialDTO.java",
+    "class_name": "CollaborateBatchProduceMaterialDTO",
+    "fields": [
+      "stockNum",
+      "needNum",
+      "areaNum",
+      "pickNum",
+      "extendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProducePick.java",
+    "class_name": "CollaborateProducePick",
+    "fields": [
+      "pickNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProduceDistributeDTO.java",
+    "class_name": "CollaborateProduceDistributeDTO",
+    "fields": [
+      "taskNum",
+      "finishNum",
+      "orderNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProduceExtend.java",
+    "class_name": "CollaborateProduceExtend",
+    "fields": [
+      "applyNum",
+      "scrapNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateScheduleItemDTO.java",
+    "class_name": "CollaborateScheduleItemDTO",
+    "fields": [
+      "orderQuantity",
+      "awaitQuantity",
+      "outboundQuantity",
+      "scheduleQuantity",
+      "stockNum",
+      "orderNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProduceDistribute.java",
+    "class_name": "CollaborateProduceDistribute",
+    "fields": [
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProduceRecord.java",
+    "class_name": "CollaborateProduceRecord",
+    "fields": [
+      "totalWorkTime",
+      "workNum",
+      "workSumNum",
+      "totalSumWorkTime"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateReportRequest.java",
+    "class_name": "CollaborateReportRequest",
+    "fields": [
+      "testNum",
+      "num",
+      "orderNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/produce/CollaborateProduceHandle.java",
+    "class_name": "CollaborateProduceHandle",
+    "fields": [
+      "finishNum",
+      "taskNum",
+      "checkNum",
+      "stockOver",
+      "orderQuantity",
+      "scheduleQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/collaborate/process/CollaborateProcessRecordRpcDTO.java",
+    "class_name": "CollaborateProcessRecordRpcDTO",
+    "fields": [
+      "quantity",
+      "scheduleQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/part/base/StockDTO.java",
+    "class_name": "StockDTO",
+    "fields": [
+      "totalInventory",
+      "lockInInventor",
+      "safeInventory",
+      "unqualifiedInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/WarehouseInboundApplyCreateRpcRequest.java",
+    "class_name": "WarehouseInboundApplyCreateRpcRequest",
+    "fields": [
+      "applyNum",
+      "qualified",
+      "unQualified"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/ProcessStocktakingDetailRpcDTO.java",
+    "class_name": "ProcessStocktakingDetailRpcDTO",
+    "fields": [
+      "intactQty",
+      "damagedQty"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/PositionInventoryRpcDTO.java",
+    "class_name": "PositionInventoryRpcDTO",
+    "fields": [
+      "inventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/StockBingPositionRpcRequest.java",
+    "class_name": "StockBingPositionRpcRequest",
+    "fields": [
+      "positionStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/InboundOrderDetailReportRpcDRO.java",
+    "class_name": "InboundOrderDetailReportRpcDRO",
+    "fields": [
+      "allInQualified"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/InboundOrderDetailRpcDRO.java",
+    "class_name": "InboundOrderDetailRpcDRO",
+    "fields": [
+      "storedNum",
+      "awaitQualified",
+      "awaitUnQualified",
+      "inQualified",
+      "inUnQualified",
+      "accrualAwaitQualified",
+      "accrualAwaitUnQualified"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/WarehouseOutboundProductTreeRpcDTO.java",
+    "class_name": "WarehouseOutboundProductTreeRpcDTO",
+    "fields": [
+      "accrualOutTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/OutboundOrderDetailReportRpcDRO.java",
+    "class_name": "OutboundOrderDetailReportRpcDRO",
+    "fields": [
+      "allOutNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/WarehouseInboundDetailCreateOrUpdateRpcRequest.java",
+    "class_name": "WarehouseInboundDetailCreateOrUpdateRpcRequest",
+    "fields": [
+      "storedNum",
+      "awaitUnQualified",
+      "awaitQualified"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/StockCheckCommitChildrenRpcRequest.java",
+    "class_name": "StockCheckCommitChildrenRpcRequest",
+    "fields": [
+      "positionBatchNum",
+      "positionBatchIntactNum",
+      "positionBatchDamageNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/OutboundAddRpcRequest.java",
+    "class_name": "OutboundAddRpcRequest",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/StocktakingRpcDTO.java",
+    "class_name": "StocktakingRpcDTO",
+    "fields": [
+      "totalInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/ProducePickingMaterialRpcDTO.java",
+    "class_name": "ProducePickingMaterialRpcDTO",
+    "fields": [
+      "pickingSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/WarehouseInboundAddRpcRequest.java",
+    "class_name": "WarehouseInboundAddRpcRequest",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingTaskPageDetailDTO.java",
+    "class_name": "AwaitingTaskPageDetailDTO",
+    "fields": [
+      "totalRequestAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingGoodsOverview.java",
+    "class_name": "AwaitingGoodsOverview",
+    "fields": [
+      "quantityTotal",
+      "deliverTotal",
+      "todayTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingTaskDTO.java",
+    "class_name": "AwaitingTaskDTO",
+    "fields": [
+      "awaitingGoodCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingDetailsOverviewDTO.java",
+    "class_name": "AwaitingDetailsOverviewDTO",
+    "fields": [
+      "productQuantity",
+      "shippedCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingDetailsAddOrUpdateRequest.java",
+    "class_name": "AwaitingDetailsAddOrUpdateRequest",
+    "fields": [
+      "pendingCount",
+      "shippedCount",
+      "productQuantity",
+      "needSendCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingGoodsAddOrUpdateRequest.java",
+    "class_name": "AwaitingGoodsAddOrUpdateRequest",
+    "fields": [
+      "needSendCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingTaskDetailsDTO.java",
+    "class_name": "AwaitingTaskDetailsDTO",
+    "fields": [
+      "totalRequestAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingTaskAddOrUpdateRequest.java",
+    "class_name": "AwaitingTaskAddOrUpdateRequest",
+    "fields": [
+      "requestedCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/awaiting/AwaitingDetailsDTO.java",
+    "class_name": "AwaitingDetailsDTO",
+    "fields": [
+      "awaitingGoodCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/outbound/OutboundApplyCreateRpcRequest.java",
+    "class_name": "OutboundApplyCreateRpcRequest",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/warehouse/outbound/OutboundOrderDetailCreateOrUpdateRpcRequest.java",
+    "class_name": "OutboundOrderDetailCreateOrUpdateRpcRequest",
+    "fields": [
+      "outTotal",
+      "awaitNum",
+      "lockInInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/dispatch/product/TaskProductAddOrUpdateRequest.java",
+    "class_name": "TaskProductAddOrUpdateRequest",
+    "fields": [
+      "productQuantity",
+      "totalSum",
+      "remainQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/dispatch/product/DispatchTaskProductRpcDTO.java",
+    "class_name": "DispatchTaskProductRpcDTO",
+    "fields": [
+      "productQuantity",
+      "remainQuantity",
+      "availableQuantity",
+      "totalSum",
+      "checkQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/dispatch/product/DispatchTaskProductRpcRequest.java",
+    "class_name": "DispatchTaskProductRpcRequest",
+    "fields": [
+      "needNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/dispatch/part/TaskPartAddOrUpdateRequest.java",
+    "class_name": "TaskPartAddOrUpdateRequest",
+    "fields": [
+      "totalSum",
+      "remainQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/dispatch/part/DispatchTaskPartRpcDTO.java",
+    "class_name": "DispatchTaskPartRpcDTO",
+    "fields": [
+      "totalSum",
+      "remainQuantity",
+      "availableQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceSubOperatorRpcDTO.java",
+    "class_name": "ProduceSubOperatorRpcDTO",
+    "fields": [
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProcedurePartDTO.java",
+    "class_name": "ProcedurePartDTO",
+    "fields": [
+      "availableQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceReportCheckRequest.java",
+    "class_name": "ProduceReportCheckRequest",
+    "fields": [
+      "planReportNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceReportRpcDTO.java",
+    "class_name": "ProduceReportRpcDTO",
+    "fields": [
+      "finishNum",
+      "receiveNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceDispatcherDraftRpcDTO.java",
+    "class_name": "ProduceDispatcherDraftRpcDTO",
+    "fields": [
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceReportCheckResult.java",
+    "class_name": "ProduceReportCheckResult",
+    "fields": [
+      "maxReportNum",
+      "bomRequiredQty",
+      "pickedQty",
+      "availableQty",
+      "maxReportQtyByThisMaterial"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/PickMaterial.java",
+    "class_name": "PickMaterial",
+    "fields": [
+      "materialQty"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/procedure/ProduceSubDispatcherRpcDTO.java",
+    "class_name": "ProduceSubDispatcherRpcDTO",
+    "fields": [
+      "taskNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/productpart/PartAllRelationship.java",
+    "class_name": "PartAllRelationship",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/productpart/ProductPartRpcRequest.java",
+    "class_name": "ProductPartRpcRequest",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/productpart/ProductAppendDTO.java",
+    "class_name": "ProductAppendDTO",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/productpart/ProductPartRpcDTO.java",
+    "class_name": "ProductPartRpcDTO",
+    "fields": [
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/productpart/PartAllRelationshipSnapshot.java",
+    "class_name": "PartAllRelationshipSnapshot",
+    "fields": [
+      "quantity",
+      "taskNum",
+      "finishNum",
+      "processFinishNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/ProducePartInfoRpcDTO.java",
+    "class_name": "ProducePartInfoRpcDTO",
+    "fields": [
+      "matchingNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/ProduceQueryDetailRpcDTO.java",
+    "class_name": "ProduceQueryDetailRpcDTO",
+    "fields": [
+      "taskNum",
+      "allocationNum",
+      "finishNum",
+      "discardNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/ProduceSubReportRpcDTO.java",
+    "class_name": "ProduceSubReportRpcDTO",
+    "fields": [
+      "finishNum",
+      "discardNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/DispatchLogCountRpc.java",
+    "class_name": "DispatchLogCountRpc",
+    "fields": [
+      "purchaseNum",
+      "purchaseProduceNum",
+      "stockNum",
+      "produceNum",
+      "total"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/ProduceSubDistributeDetailDTO.java",
+    "class_name": "ProduceSubDistributeDetailDTO",
+    "fields": [
+      "distributeNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairDispatcherRpcDTO.java",
+    "class_name": "InspectRepairDispatcherRpcDTO",
+    "fields": [
+      "awaitNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairReportRpcDTO.java",
+    "class_name": "InspectRepairReportRpcDTO",
+    "fields": [
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairRpcDTO.java",
+    "class_name": "InspectRepairRpcDTO",
+    "fields": [
+      "repairNum",
+      "awaitInspectNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairReportResultRpcDTO.java",
+    "class_name": "InspectRepairReportResultRpcDTO",
+    "fields": [
+      "submitNum",
+      "scrapNum",
+      "submitTotalNum",
+      "inspectNum",
+      "passedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/RepairOperatorRpcDTO.java",
+    "class_name": "RepairOperatorRpcDTO",
+    "fields": [
+      "assignNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairReportResultGroupRpcDTO.java",
+    "class_name": "InspectRepairReportResultGroupRpcDTO",
+    "fields": [
+      "submitNum",
+      "scrapNum",
+      "submitTotalNum",
+      "inspectNum",
+      "passedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/technical/produce/repair/InspectRepairSubmitRpcDTO.java",
+    "class_name": "InspectRepairSubmitRpcDTO",
+    "fields": [
+      "awaitInspectNum",
+      "submitNum",
+      "scrapNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/base/ProduceStagingAreaRecordRpc.java",
+    "class_name": "ProduceStagingAreaRecordRpc",
+    "fields": [
+      "operationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/reimbursement/ReimbursementAddRpcDTO.java",
+    "class_name": "ReimbursementAddRpcDTO",
+    "fields": [
+      "totalAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/domain/reimbursement/ExpenseAccountAddRpcDTO.java",
+    "class_name": "ExpenseAccountAddRpcDTO",
+    "fields": [
+      "amount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-api/src/main/java/com/futurecraftsmen/pms/technical/api/packageinfo/base/PackageInfo.java",
+    "class_name": "PackageInfo",
+    "fields": [
+      "weight",
+      "quantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/impl/technical/dis/MaterialProcessProvideService.java",
+    "class_name": "MaterialProcessProvideService",
+    "fields": [
+      "needNum",
+      "produceNeedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/core/dataquery/SimpleProductDetail.java",
+    "class_name": "SimpleProductDetail",
+    "fields": [
+      "productAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/core/dataquery/SimpleProductElement.java",
+    "class_name": "SimpleProductElement",
+    "fields": [
+      "quantity",
+      "unitPrice",
+      "totalPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/core/purchase/PurchaseReceivingDetailInfo.java",
+    "class_name": "PurchaseReceivingDetailInfo",
+    "fields": [
+      "receivedQuantity",
+      "qualifiedQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/core/purchase/ShippingInfo.java",
+    "class_name": "ShippingInfo",
+    "fields": [
+      "sendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/inner/feedback/FeedBackBase.java",
+    "class_name": "FeedBackBase",
+    "fields": [
+      "receive",
+      "inspection",
+      "feedbackNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/LackMaterialTaskModel.java",
+    "class_name": "LackMaterialTaskModel",
+    "fields": [
+      "demand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/sellorder/SellOrderProductModel.java",
+    "class_name": "SellOrderProductModel",
+    "fields": [
+      "productQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/InspectReportPrintModel.java",
+    "class_name": "InspectReportPrintModel",
+    "fields": [
+      "taskNum",
+      "inspectNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/ReportDetailModel.java",
+    "class_name": "ReportDetailModel",
+    "fields": [
+      "taskNum",
+      "orderNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/finish/InspectFinishDispatcherModel.java",
+    "class_name": "InspectFinishDispatcherModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/finish/InspectFinishTotalModel.java",
+    "class_name": "InspectFinishTotalModel",
+    "fields": [
+      "taskNum",
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/finish/InspectFinishReportModel.java",
+    "class_name": "InspectFinishReportModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/finish/InspectFinishModel.java",
+    "class_name": "InspectFinishModel",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/finish/InspectFinishDispatcherDetailModel.java",
+    "class_name": "InspectFinishDispatcherDetailModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/into/InspectIntoDispatcherModel.java",
+    "class_name": "InspectIntoDispatcherModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/into/InspectIntoModel.java",
+    "class_name": "InspectIntoModel",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum",
+      "contractQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/into/InspectIntoReportModel.java",
+    "class_name": "InspectIntoReportModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/into/InspectIntoDispatcherDetailModel.java",
+    "class_name": "InspectIntoDispatcherDetailModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/into/InspectIntoTotalModel.java",
+    "class_name": "InspectIntoTotalModel",
+    "fields": [
+      "taskNum",
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/process/InspectProcessDispatcherDetailModel.java",
+    "class_name": "InspectProcessDispatcherDetailModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/process/InspectProcessTotalModel.java",
+    "class_name": "InspectProcessTotalModel",
+    "fields": [
+      "taskNum",
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/process/InspectProcessReportModel.java",
+    "class_name": "InspectProcessReportModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/process/InspectProcessDispatcherModel.java",
+    "class_name": "InspectProcessDispatcherModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/inspect/process/InspectProcessModel.java",
+    "class_name": "InspectProcessModel",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/unqualified/InspectUnqualifiedModel.java",
+    "class_name": "InspectUnqualifiedModel",
+    "fields": [
+      "inspectNum",
+      "unPassNum",
+      "submitTotalNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/unqualified/InspectUnqualifiedReportModel.java",
+    "class_name": "InspectUnqualifiedReportModel",
+    "fields": [
+      "inspectRatio"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/quality/approve/InspectApproveModel.java",
+    "class_name": "InspectApproveModel",
+    "fields": [
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchsheet/DispatchSheetItemModel.java",
+    "class_name": "DispatchSheetItemModel",
+    "fields": [
+      "productQuantity",
+      "bodyQuantity",
+      "remainQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/productgrade/ProductGradeModel.java",
+    "class_name": "ProductGradeModel",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/product/InspectRepairReportResultModel.java",
+    "class_name": "InspectRepairReportResultModel",
+    "fields": [
+      "submitNum",
+      "scrapNum",
+      "submitTotalNum",
+      "inspectNum",
+      "passedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/product/InspectRepairModel.java",
+    "class_name": "InspectRepairModel",
+    "fields": [
+      "repairNum",
+      "awaitInspectNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/product/InspectRepairDispatcherModel.java",
+    "class_name": "InspectRepairDispatcherModel",
+    "fields": [
+      "assignNum",
+      "awaitNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/product/InspectRepairSubmitModel.java",
+    "class_name": "InspectRepairSubmitModel",
+    "fields": [
+      "submitNum",
+      "scrapNum",
+      "submitTotalNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/product/InspectRepairReportModel.java",
+    "class_name": "InspectRepairReportModel",
+    "fields": [
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/feedback/FeedBackDetailModel.java",
+    "class_name": "FeedBackDetailModel",
+    "fields": [
+      "receive",
+      "inspection",
+      "feedbackNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateInboundBatchModel.java",
+    "class_name": "CollaborateInboundBatchModel",
+    "fields": [
+      "batchNum",
+      "batchInNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateOutSendMaterialModel.java",
+    "class_name": "CollaborateOutSendMaterialModel",
+    "fields": [
+      "historyOutSendQuantity",
+      "demandQuantityLastSend"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateProcessModel.java",
+    "class_name": "CollaborateProcessModel",
+    "fields": [
+      "quantity",
+      "scheduleItem"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateInboundOrderQuantityUpdate.java",
+    "class_name": "CollaborateInboundOrderQuantityUpdate",
+    "fields": [
+      "orderQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateInboundItemModel.java",
+    "class_name": "CollaborateInboundItemModel",
+    "fields": [
+      "orderQuantity",
+      "inboundQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateScheduleItemModel.java",
+    "class_name": "CollaborateScheduleItemModel",
+    "fields": [
+      "orderQuantity",
+      "scheduleQuantity",
+      "materialProduceQuantity",
+      "outboundQuantity",
+      "accrualLockInInventory",
+      "ingredientOutQuantity",
+      "materialDemandInfoDemandQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/CollaborateOutSendMaterialSendDetailModel.java",
+    "class_name": "CollaborateOutSendMaterialSendDetailModel",
+    "fields": [
+      "sendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/inspect/CollaborateInspectDispatcherDetailModel.java",
+    "class_name": "CollaborateInspectDispatcherDetailModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "awaitNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/inspect/CollaborateInspectReportModel.java",
+    "class_name": "CollaborateInspectReportModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/inspect/CollaborateInspectTotalModel.java",
+    "class_name": "CollaborateInspectTotalModel",
+    "fields": [
+      "taskNum",
+      "inspectRatio",
+      "shouldInspectNum",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "passRate"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/inspect/CollaborateInspectDispatcherModel.java",
+    "class_name": "CollaborateInspectDispatcherModel",
+    "fields": [
+      "inspectRatio",
+      "shouldInspectNum",
+      "selfShouldInspectNum",
+      "awaitNum",
+      "alreadyNum",
+      "allocationNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/inspect/CollaborateInspectModel.java",
+    "class_name": "CollaborateInspectModel",
+    "fields": [
+      "taskNum",
+      "shouldInspectNum",
+      "passedRate",
+      "inspectNum",
+      "passedNum",
+      "unPassedNum",
+      "receiveNum",
+      "contractQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateScheduleItemScheduleQuantityDecreaseUpdate.java",
+    "class_name": "CollaborateScheduleItemScheduleQuantityDecreaseUpdate",
+    "fields": [
+      "scheduleQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateScheduleItemMaterialPurchaseUpdate.java",
+    "class_name": "CollaborateScheduleItemMaterialPurchaseUpdate",
+    "fields": [
+      "materialPurchaseQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateOutSendMaterialStagingAreaUpdater.java",
+    "class_name": "CollaborateOutSendMaterialStagingAreaUpdater",
+    "fields": [
+      "pickNumNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateScheduleItemOrderInfoUpdate.java",
+    "class_name": "CollaborateScheduleItemOrderInfoUpdate",
+    "fields": [
+      "orderQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateOutSendMaterialAfterSendUpdater.java",
+    "class_name": "CollaborateOutSendMaterialAfterSendUpdater",
+    "fields": [
+      "sendSumNeedAdd",
+      "demandQuantityLastSend"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/collaborate/update/CollaborateScheduleItemScheduleQuantityUpdate.java",
+    "class_name": "CollaborateScheduleItemScheduleQuantityUpdate",
+    "fields": [
+      "scheduleQuantity",
+      "scheduleQuantityNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/baseModule/HistoryPriceModel.java",
+    "class_name": "HistoryPriceModel",
+    "fields": [
+      "exchangeRate",
+      "taxRatePercent",
+      "productQuantity",
+      "productUnitPrice",
+      "productTotalPrice",
+      "productRmbUnitPrice",
+      "productRmbTotalPrice"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/inventory/WarehouseInventoryModel.java",
+    "class_name": "WarehouseInventoryModel",
+    "fields": [
+      "totalInventory",
+      "lockInInventor",
+      "safeStock"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/production/ProduceReceiveMaterialModel.java",
+    "class_name": "ProduceReceiveMaterialModel",
+    "fields": [
+      "dynamicSort"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/production/ScrapDataModel.java",
+    "class_name": "ScrapDataModel",
+    "fields": [
+      "dynamicSort"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/production/ProductionTaskMergeDetailModel.java",
+    "class_name": "ProductionTaskMergeDetailModel",
+    "fields": [
+      "totalDelivery"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/production/ProductionTaskOrderModel.java",
+    "class_name": "ProductionTaskOrderModel",
+    "fields": [
+      "productionNum",
+      "quantityOrdered",
+      "completedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/production/pretask/ProductionPreTaskModel.java",
+    "class_name": "ProductionPreTaskModel",
+    "fields": [
+      "partNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/shippingSpace/ShippingSpaceTableModel.java",
+    "class_name": "ShippingSpaceTableModel",
+    "fields": [
+      "inventoryQuantity",
+      "balanceQuantity",
+      "outboundQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/purchase/PurchaseTaskMergeDetailModel.java",
+    "class_name": "PurchaseTaskMergeDetailModel",
+    "fields": [
+      "totalDemand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/purchase/PurchaseTaskModel.java",
+    "class_name": "PurchaseTaskModel",
+    "fields": [
+      "requiredNum",
+      "minedNum",
+      "applieInNum",
+      "passeNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/purchase/ReceivingDetailUpdateModel.java",
+    "class_name": "ReceivingDetailUpdateModel",
+    "fields": [
+      "sellerSendQuantityNeedAdd"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/purchase/ShippingRecordFromSellModel.java",
+    "class_name": "ShippingRecordFromSellModel",
+    "fields": [
+      "sendNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/purchase/pretask/OutPurchasePreTaskModel.java",
+    "class_name": "OutPurchasePreTaskModel",
+    "fields": [
+      "partNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/outbound/WarehouseOutboundOrderModel.java",
+    "class_name": "WarehouseOutboundOrderModel",
+    "fields": [
+      "required",
+      "shippedOut"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/outbound/OutboundOrderMergeDetailModel.java",
+    "class_name": "OutboundOrderMergeDetailModel",
+    "fields": [
+      "outCount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/InOrderDetailsModel.java",
+    "class_name": "InOrderDetailsModel",
+    "fields": [
+      "assignNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/PositionStockBatchModel.java",
+    "class_name": "PositionStockBatchModel",
+    "fields": [
+      "positionStockBatchNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/OutboundOrderApplyDetailModel.java",
+    "class_name": "OutboundOrderApplyDetailModel",
+    "fields": [
+      "applyNum",
+      "outApplyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/StockModel.java",
+    "class_name": "StockModel",
+    "fields": [
+      "totalInventory",
+      "lockInInventor",
+      "safeInventory",
+      "unqualifiedInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/InboundOrderApplyDetailsModel.java",
+    "class_name": "InboundOrderApplyDetailsModel",
+    "fields": [
+      "applyNum",
+      "qualified",
+      "unQualified",
+      "inApplyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/InboundOrderDetailModel.java",
+    "class_name": "InboundOrderDetailModel",
+    "fields": [
+      "storedNum",
+      "awaitQualified",
+      "awaitUnQualified",
+      "inQualified",
+      "inUnQualified",
+      "accrualAwaitQualified",
+      "accrualAwaitUnQualified"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/PositionOperationModel.java",
+    "class_name": "PositionOperationModel",
+    "fields": [
+      "operationNum",
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/InOrOutOperationDetailRecordModel.java",
+    "class_name": "InOrOutOperationDetailRecordModel",
+    "fields": [
+      "accrualAwaitUnQualified",
+      "accrualAwaitQualified",
+      "actInQualified",
+      "actInUnQualified",
+      "accrualOutTotal",
+      "actOutNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/PositionStockModel.java",
+    "class_name": "PositionStockModel",
+    "fields": [
+      "positionStockNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/StocktakingModel.java",
+    "class_name": "StocktakingModel",
+    "fields": [
+      "intactQty",
+      "damagedQty",
+      "stockSnapQty",
+      "bookTotCntQty",
+      "physCntSnapQty"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/OutboundOrderDetailModel.java",
+    "class_name": "OutboundOrderDetailModel",
+    "fields": [
+      "outTotal",
+      "awaitNum",
+      "outNum",
+      "accrualOutTotal",
+      "accrualLockInInventory"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/OutOrderDetailsModel.java",
+    "class_name": "OutOrderDetailsModel",
+    "fields": [
+      "assignNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/WarehouseOutboundStockDetailModel.java",
+    "class_name": "WarehouseOutboundStockDetailModel",
+    "fields": [
+      "stockQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/StockCheckPositionBatchRecordModel.java",
+    "class_name": "StockCheckPositionBatchRecordModel",
+    "fields": [
+      "positionBatchIntactNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/warehouse/awaiting/AwaitingOverviewModel.java",
+    "class_name": "AwaitingOverviewModel",
+    "fields": [
+      "quantityTotal",
+      "deliverTotal",
+      "todayTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchrecord/MaterialApplyModel.java",
+    "class_name": "MaterialApplyModel",
+    "fields": [
+      "applyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchrecord/DispatchTaskDetailScheduleModel.java",
+    "class_name": "DispatchTaskDetailScheduleModel",
+    "fields": [
+      "processedNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchrecord/DispatchTaskDetailModel.java",
+    "class_name": "DispatchTaskDetailModel",
+    "fields": [
+      "disTotal"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchrecord/DispatchRecordItemModel.java",
+    "class_name": "DispatchRecordItemModel",
+    "fields": [
+      "productQuantity",
+      "bodyQuantity",
+      "remainQuantity",
+      "dispatchQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/dispatchrecord/DispatchRecordStatisticModel.java",
+    "class_name": "DispatchRecordStatisticModel",
+    "fields": [
+      "productQuantity",
+      "bodyQuantity",
+      "remainQuantity",
+      "dispatchSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/record/RecordStatusAndNum.java",
+    "class_name": "RecordStatusAndNum",
+    "fields": [
+      "realNum",
+      "finishNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/DispatchLogCountModel.java",
+    "class_name": "DispatchLogCountModel",
+    "fields": [
+      "purchaseNum",
+      "purchaseProduceNum",
+      "stockNum",
+      "produceNum",
+      "total",
+      "ratio"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/DispatchLogDetailModel.java",
+    "class_name": "DispatchLogDetailModel",
+    "fields": [
+      "handleNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/OutPartDetailModel.java",
+    "class_name": "OutPartDetailModel",
+    "fields": [
+      "outSum",
+      "sendSum",
+      "scheduleOutbound"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/DispatchTaskPartModel.java",
+    "class_name": "DispatchTaskPartModel",
+    "fields": [
+      "totalSum",
+      "remainQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/DispatchTaskProductModel.java",
+    "class_name": "DispatchTaskProductModel",
+    "fields": [
+      "productQuantity",
+      "totalSum",
+      "remainQuantity"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/LackMaterialTaskModel.java",
+    "class_name": "LackMaterialTaskModel",
+    "fields": [
+      "demand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/StockTransactional.java",
+    "class_name": "StockTransactional",
+    "fields": [
+      "needNum",
+      "computeNum",
+      "updateNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/PartTransactional.java",
+    "class_name": "PartTransactional",
+    "fields": [
+      "stockNum",
+      "produceNum",
+      "purchaseNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/PurchaseTransactional.java",
+    "class_name": "PurchaseTransactional",
+    "fields": [
+      "needNum",
+      "demand"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/ProduceTransactional.java",
+    "class_name": "ProduceTransactional",
+    "fields": [
+      "needNum",
+      "allocationNum",
+      "finishNum",
+      "taskNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/CountLogTransactional.java",
+    "class_name": "CountLogTransactional",
+    "fields": [
+      "ratio"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/dispatch/transactional/AwaitingDetailsTransactional.java",
+    "class_name": "AwaitingDetailsTransactional",
+    "fields": [
+      "useStockNum",
+      "stockAllNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/purchase/PurchaseMainModel.java",
+    "class_name": "PurchaseMainModel",
+    "fields": [
+      "needNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProduceSubDistributeModel.java",
+    "class_name": "ProduceSubDistributeModel",
+    "fields": [
+      "distributeNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProduceSubPartInfoModel.java",
+    "class_name": "ProduceSubPartInfoModel",
+    "fields": [
+      "matchingNum",
+      "applyNum",
+      "outApplyNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProduceMainModel.java",
+    "class_name": "ProduceMainModel",
+    "fields": [
+      "taskNum",
+      "allocationNum",
+      "finishNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProductionComponentModel.java",
+    "class_name": "ProductionComponentModel",
+    "fields": [
+      "quantity",
+      "sendSum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProduceSubDispatcherModel.java",
+    "class_name": "ProduceSubDispatcherModel",
+    "fields": [
+      "taskNum",
+      "allocationNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/technical/produce/ProduceSubReportModel.java",
+    "class_name": "ProduceSubReportModel",
+    "fields": [
+      "finishNum",
+      "discardNum",
+      "receiveNum",
+      "scrapNum"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/customer/CustomerModel.java",
+    "class_name": "CustomerModel",
+    "fields": [
+      "priceFactor"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/reimbursement/ReimbursementModel.java",
+    "class_name": "ReimbursementModel",
+    "fields": [
+      "totalAmount"
+    ]
+  },
+  {
+    "file_path": "/Users/ldz/store/zzgit/pms-customization/pms-technical/pms-technical-service/src/main/java/com/futurecraftsmen/pms/technical/service/domain/reimbursement/ExpenseAccountModel.java",
+    "class_name": "ExpenseAccountModel",
+    "fields": [
+      "amount"
+    ]
+  }
+]

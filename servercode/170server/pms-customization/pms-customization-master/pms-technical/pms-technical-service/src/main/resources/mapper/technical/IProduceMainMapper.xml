@@ -1,0 +1,1142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IProduceMainMapper">
+
+
+    <resultMap id="produceMainResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.produce.ProduceMainModel">
+        <id property="primaryKeyValue" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="batchNum" column="batch_num"/>
+        <result property="deliveryDate" column="delivery_date"/>
+        <result property="productOrPart" column="product_or_part"/>
+        <result property="productOrPartName" column="product_or_part_name"/>
+        <result property="pcsName" column="pcs_name"/>
+        <result property="pcsCode" column="pcs_code"/>
+        <result property="procedureCode" column="procedure_code"/>
+        <result property="procedureName" column="procedure_name"/>
+        <result property="taskNum" column="task_num"/>
+        <result property="allocationNum" column="allocation_num"/>
+        <result property="finishNum" column="finish_num"/>
+        <result property="status" column="status"/>
+        <result property="productFlag" column="product_flag"/>
+        <result property="procedureFlag" column="procedure_flag"/>
+        <result property="batchGlobalCode" column="batch_global_code"/>
+        <result property="routeCode" column="route_code"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="operator" column="operator"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="allocationNum" column="a_sum"/>
+        <result property="remark" column="remark"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="bussNumber" column="buss_number"/>
+        <result property="statusReal" column="status_real"/>
+        <result property="processPersonList" column="process_person_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+
+        <result property="activityId" column="activity_id"/>
+        <result property="copyFlag" column="copy_flag"/>
+        <result property="parentProductCode" column="parent_product_code"/>
+        <result property="queryKey" column="queryKey"/>
+        <result property="needType" column="need_Type"/>
+    </resultMap>
+
+
+    <!-- 插入新记录 -->
+    <insert id="insertProduceMain">
+        INSERT INTO ${tableName} (primary_key, enterprise_code, batch_num, delivery_date,
+                                  product_or_part, product_or_part_name, pcs_name, pcs_code,
+                                  procedure_code, procedure_name, task_num, allocation_num,
+                                  finish_num, status, business_belong, product_flag, procedure_flag, batch_Global_Code,
+                                  route_code, remark,
+                                  contract_Code, buss_Number, level, parent_product_code, process_person_list, activity_Id, copy_Flag,
+                                  produce_Unity_No, stock_type, need_Type, unity_No)
+        VALUES (#{data.primaryKeyValue}, #{data.enterpriseCode}, #{data.batchNum}, #{data.deliveryDate},
+                #{data.productOrPart}, #{data.productOrPartName}, #{data.pcsName}, #{data.pcsCode},
+                #{data.procedureCode}, #{data.procedureName}, #{data.taskNum}, #{data.allocationNum},
+                #{data.finishNum}, #{data.status}, #{data.businessBelong}, #{data.productFlag}, #{data.procedureFlag},
+                #{data.batchGlobalCode},
+                #{data.routeCode}, #{data.remark}, #{data.contractCode}, #{data.bussNumber}, #{data.level}, #{data.parentProductCode},
+                #{data.processPersonList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+                #{data.activityId}
+                   , #{data.copyFlag}, #{data.produceUnityNo}, #{data.stockType}, #{data.needType}, #{data.unityNo})
+    </insert>
+
+    <!-- 批量插入新记录 -->
+    <insert id="batchInsertProduceMain">
+        INSERT INTO ${tableName} (
+        primary_key, enterprise_code, batch_num, delivery_date,
+        product_or_part, product_or_part_name, pcs_name, pcs_code,
+        procedure_code, procedure_name, task_num, allocation_num,
+        finish_num, status,product_flag,procedure_flag,batch_Global_Code ,route_Code,remark,contract_Code,buss_Number
+        ,level ,parent_product_code,activity_Id
+        )
+        VALUES
+        <foreach collection="list" item="produceMain" separator=",">
+            (
+            #{produceMain.primaryKeyValue}, #{produceMain.enterpriseCode}, #{produceMain.batchNum},
+            #{produceMain.deliveryDate},
+            #{produceMain.productOrPart}, #{produceMain.productOrPartName}, #{produceMain.pcsName},
+            #{produceMain.pcsCode},
+            #{produceMain.procedureCode}, #{produceMain.procedureName}, #{produceMain.taskNum},
+            #{produceMain.allocationNum},
+            #{produceMain.finishNum},
+            #{produceMain.status},#{produceMain.productFlag},#{produceMain.procedureFlag},#{produceMain.batchGlobalCode},#{produceMain.routeCode},#{produceMain.remark}
+            ,#{produceMain.contractCode},#{produceMain.bussNumber},#{data.level},#{data.parentProductCode}, #{data.activityId}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryPageByCondition" resultMap="produceMainResultMap">
+        select
+        a.*,a.produce_Unity_No as batch
+        from ${tableName} a
+        where
+        a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = false
+        <if test="data.batchNum != null and data.batchNum != '' ">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+        <if test="data.productName != null and data.productName != '' ">
+            AND a.product_or_part_name like concat('%',#{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name like concat('%',#{data.gxName}, '%')
+        </if>
+
+        <if test="data.productFlag != null ">
+            AND a.product_Flag =#{data.productFlag}
+        </if>
+
+
+        <if test=" data.gxCondition != null  ">
+            AND a.Procedure_Flag = #{data.gxCondition}
+        </if>
+
+
+        <if test=" data.model != null  ">
+            AND exists( select * from ${productPart} b where a.product_or_part=b.primary_key and b.model like '%'||
+            #{data.model}|| '%' )
+        </if>
+
+        <if test="data.productPartCode != null">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key = #{data.productPartCode})
+        </if>
+
+        <if test="data.productPartCodeList != null and data.productPartCodeList.size() > 0">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key in
+            <foreach collection="data.productPartCodeList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+        <if test=" data.bussNumber != null  ">
+            AND (a.buss_Number like '%'|| #{data.bussNumber}|| '%'
+
+
+            <if test="data.operatorId != null ">
+
+                or exists( select 1 from ${dynamicTableNameProxy.produceSubDispatcher} dd where dd.main_id=a.primary_key and dd.produce_Unity_No like
+                concat('%',#{data.bussNumber}, '%') )
+
+            </if>
+
+            )
+        </if>
+
+
+
+        <if test="data.status != null   and  data.operatorId == null ">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.beginDate != null and data.operatorId==null ">
+            AND a.delivery_Date >= #{data.beginDate}
+        </if>
+
+        <if test="data.contractCode != null">
+            AND a.contract_code = #{data.contractCode}
+        </if>
+
+        <if test="data.mainId != null ">
+            AND a.primary_key = #{data.mainId}
+        </if>
+
+        <if test="data.endDate != null and data.operatorId==null ">
+            AND a.delivery_Date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.batchGlobalCode != null ">
+            AND a.batch_Global_Code = #{data.batchGlobalCode}
+        </if>
+
+
+        <if test="data.operatorId != null ">
+            AND exists (
+
+            select 1 from (
+            select * , ROW_NUMBER() OVER ( order by create_time desc NULLS last ) mid
+            from ${produceSubDispatcher} b
+            where b.operator=#{data.operatorId} and b.main_id=a.primary_key
+            ) b
+
+            <if test="data.status != null   and  data.operatorId != null ">
+                where b.mid=1 AND b.status = #{data.status}
+            </if>
+            )
+
+
+            <if test="data.beginDate != null  or   data.endDate != null  ">
+
+                AND exists (
+
+                select 1 from (
+                select * , ROW_NUMBER() OVER ( order by finish_date desc NULLS last ) mid
+                from ${produceSubDispatcher} b
+                where b.operator=#{data.operatorId} and b.main_id=a.primary_key
+                ) b
+
+                where b.mid=1
+                <if test="data.beginDate != null">
+                    AND b.finish_date &gt;= DATE(#{data.beginDate})
+                </if>
+
+                <if test="data.endDate != null">
+                    AND b.finish_date &lt;= DATE(#{data.endDate})
+                </if>
+
+                )
+
+            </if>
+
+        </if>
+
+
+        <if test="data.statusList != null and data.statusList.size>0 ">
+            AND a.status in
+            <foreach collection="data.statusList" item="status" separator="," open="(" close=")">
+                #{status}
+            </foreach>
+
+        </if>
+
+
+        <if test="data.operatorName != null and data.operatorName != '' ">
+            AND exists ( select 1 from ${produceSubDispatcher} b
+            ,${staff} c
+            where b.main_id=a.primary_key
+            and c.primary_key =b.operator and c.staff_sign like concat('%',#{data.operatorName}, '%')
+            )
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part","xihang",data.partUnityNo)}
+        </if>
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part",data.searchName)}
+
+        order by create_time desc ,id desc
+    </select>
+
+    <select id="queryPageByConditionAll" resultMap="produceMainResultMap">
+        select
+        a.*,a.produce_Unity_No as batch
+        from ${tableName} a
+        where
+        a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = false
+        <if test="data.batchNum != null and data.batchNum != '' ">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+        <if test="data.productName != null and data.productName != '' ">
+            AND a.product_or_part_name like concat('%',#{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name like concat('%',#{data.gxName}, '%')
+        </if>
+
+        <if test="data.productFlag != null ">
+            AND a.product_Flag =#{data.productFlag}
+        </if>
+
+
+        <if test=" data.gxCondition != null  ">
+            AND a.Procedure_Flag = #{data.gxCondition}
+        </if>
+
+
+        <if test=" data.model != null  ">
+            AND exists( select * from ${productPart} b where a.product_or_part=b.primary_key and b.model like '%'||
+            #{data.model}|| '%' )
+        </if>
+
+        <if test="data.productPartCode != null">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key = #{data.productPartCode})
+        </if>
+
+        <if test="data.productPartCodeList != null and data.productPartCodeList.size() > 0">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key in
+            <foreach collection="data.productPartCodeList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+        <if test=" data.bussNumber != null  ">
+            AND (a.buss_Number like '%'|| #{data.bussNumber}|| '%'
+
+
+            <if test="data.operatorId != null ">
+
+                or exists( select 1 from ${dynamicTableNameProxy.produceSubDispatcher} dd where dd.main_id=a.primary_key and
+                dd.produce_Unity_No like
+                concat('%',#{data.bussNumber}, '%') )
+
+            </if>
+
+            )
+        </if>
+
+
+        <if test="data.status != null   and  data.operatorId == null ">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.beginDate != null and data.operatorId==null ">
+            AND a.delivery_Date >= #{data.beginDate}
+        </if>
+
+        <if test="data.contractCode != null">
+            AND a.contract_code = #{data.contractCode}
+        </if>
+
+        <if test="data.mainId != null ">
+            AND a.primary_key = #{data.mainId}
+        </if>
+
+        <if test="data.endDate != null and data.operatorId==null ">
+            AND a.delivery_Date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.batchGlobalCode != null ">
+            AND a.batch_Global_Code = #{data.batchGlobalCode}
+        </if>
+
+
+        <if test="data.operatorId != null ">
+            AND exists (
+
+            select 1 from (
+            select * , ROW_NUMBER() OVER ( order by create_time desc NULLS last ) mid
+            from ${produceSubDispatcher} b
+            where b.operator=#{data.operatorId} and b.main_id=a.primary_key
+            ) b
+
+            <if test="data.status != null   and  data.operatorId != null ">
+                where b.mid=1 AND b.status = #{data.status}
+            </if>
+            )
+
+
+            <if test="data.beginDate != null  or   data.endDate != null  ">
+
+                AND exists (
+
+                select 1 from (
+                select * , ROW_NUMBER() OVER ( order by finish_date desc NULLS last ) mid
+                from ${produceSubDispatcher} b
+                where b.operator=#{data.operatorId} and b.main_id=a.primary_key
+                ) b
+
+                where b.mid=1
+                <if test="data.beginDate != null">
+                    AND b.finish_date &gt;= DATE(#{data.beginDate})
+                </if>
+
+                <if test="data.endDate != null">
+                    AND b.finish_date &lt;= DATE(#{data.endDate})
+                </if>
+
+                )
+
+            </if>
+
+        </if>
+
+
+        <if test="data.statusList != null and data.statusList.size>0 ">
+            AND a.status in
+            <foreach collection="data.statusList" item="status" separator="," open="(" close=")">
+                #{status}
+            </foreach>
+
+        </if>
+
+
+        <if test="data.operatorName != null and data.operatorName != '' ">
+            AND exists ( select 1 from ${produceSubDispatcher} b
+            ,${staff} c
+            where b.main_id=a.primary_key
+            and c.primary_key =b.operator and c.staff_sign like concat('%',#{data.operatorName}, '%')
+            )
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part","xihang",data.partUnityNo)}
+        </if>
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part",data.searchName)}
+
+        order by create_time desc ,id desc
+    </select>
+
+    <select id="queryPageByConditionDataScope" resultMap="produceMainResultMap">
+        select a.*,
+        a.produce_Unity_No as batch
+        from ${tableName} a
+        where a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = false
+        <if test="data.batchNum != null and data.batchNum != ''">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+        <if test="data.productName != null and data.productName != ''">
+            AND a.product_or_part_name like concat('%', #{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name ilike concat('%', #{data.gxName}, '%')
+        </if>
+
+
+        <if test="data.productFlag != null">
+            AND a.product_Flag = #{data.productFlag}
+        </if>
+
+
+        <if test="data.gxCondition != null">
+            AND a.Procedure_Flag = #{data.gxCondition}
+        </if>
+
+        <if test="data.model != null">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key and b.model like '%' ||
+            #{data.model} || '%')
+        </if>
+
+        <if test="data.productPartCode != null">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key = #{data.productPartCode})
+        </if>
+
+        <if test="data.productPartCodeList != null and data.productPartCodeList.size() > 0">
+            AND exists(select *
+            from ${productPart} b
+            where a.product_or_part = b.primary_key
+            and b.primary_key in
+            <foreach collection="data.productPartCodeList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+        <if test="data.bussNumber != null">
+            AND (a.buss_Number like '%' || #{data.bussNumber} || '%'
+            <if test="data.operatorId != null">
+                or exists(select 1
+                from ${dynamicTableNameProxy.produceSubDispatcher} dd
+                where dd.main_id = a.primary_key
+                and dd.produce_Unity_No like
+                concat('%', #{data.bussNumber}, '%'))
+            </if>
+            )
+        </if>
+
+
+        <if test="data.status != null   and data.operatorId == null">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.beginDate != null">
+            AND a.delivery_Date >= #{data.beginDate}
+        </if>
+
+        <if test="data.contractCode != null">
+            AND a.contract_code = #{data.contractCode}
+        </if>
+
+        <if test="data.mainId != null">
+            AND a.primary_key = #{data.mainId}
+        </if>
+
+        <if test="data.endDate != null">
+            AND a.delivery_Date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.batchGlobalCode != null">
+            AND a.batch_Global_Code = #{data.batchGlobalCode}
+        </if>
+
+        <if test="data.operatorId != null">
+            AND exists ( select 1
+            from ${produceSubDispatcher} b
+            where b.operator = #{data.operatorId}
+            and b.main_id = a.primary_key
+            <if test="data.status != null   and data.operatorId != null">
+                AND b.status = #{data.status}
+            </if>
+            )
+        </if>
+
+
+        <if test="data.statusList != null and data.statusList.size > 0">
+            AND a.status in
+            <foreach collection="data.statusList" item="status" separator="," open="(" close=")">
+                #{status}
+            </foreach>
+        </if>
+
+
+        <if test="data.operatorName != null and data.operatorName != ''">
+            AND exists (select 1
+            from ${produceSubDispatcher} b
+            , ${staff} c
+            where b.main_id = a.primary_key
+            and c.primary_key = b.operator
+            and c.staff_sign like concat('%', #{data.operatorName}, '%'))
+        </if>
+
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+
+
+        <if test="data.partUnityNo != null and data.partUnityNo != ''">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part",data.searchName)}
+
+
+        order by create_time desc, id desc
+    </select>
+
+
+    <select id="queryByCodesDataScope" resultMap="produceMainResultMap">
+        select *
+        from ${tableName}
+        WHERE
+        enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        AND primary_key IN
+        <foreach collection="codes" index="index" item="code" separator="," open="(" close=")">
+            #{code}
+        </foreach>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+    <update id="updateHalfMainStatus">
+        update ${dynamicTableNameProxy.produceMain}
+        set status = #{status}
+        where primary_key in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        and status &lt; #{status}
+    </update>
+
+    <update id="updateStatus">
+        update ${tableName}
+        set status = #{status}
+        where primary_key in
+        <foreach collection="mainIdList" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+        and delete_flag = false
+        <if test="status == 30">
+            and status not in (40,50)
+        </if>
+        <if test="status == 40">
+            and status != 50
+        </if>
+    </update>
+
+    <select id="getAllByPrimaryKeyValueList" resultMap="produceMainResultMap">
+        select *
+        from ${tableName}
+        where primary_key in
+        <foreach collection="mainIdList" index="index" item="primaryKeyValue" open="(" separator="," close=")">
+            #{primaryKeyValue}
+        </foreach>
+        and enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        order by create_time desc
+    </select>
+
+    <select id="getAllByPrimaryKey" resultMap="produceMainResultMap">
+        select *
+        from ${tableName}
+        where primary_key = #{mainId}
+          and enterprise_code = #{enterpriseCode}
+          and delete_flag = false
+    </select>
+
+
+    <select id="queryListByBatchGlobalCode" resultMap="produceMainResultMap">
+        select *
+        from ${tableName}
+        where batch_global_Code = #{batchGlobalCode}
+          and enterprise_code = #{enterpriseCode}
+          and delete_flag = false
+    </select>
+
+
+    <select id="queryPageFloatMapByCondition" resultMap="produceMainResultMap">
+        with source as (
+        select b.main_id ,b."operator" ,sum( b.allocation_Num ) a_sum ,max(b.finish_date) finishDate ,max(c.staff_sign)
+        operator_name
+        ,max(b.remark) remark
+        from ${produceSubDispatcher} b ,${staff} c
+        where b."operator" is not null and c.primary_key =b.operator
+        <if test="data.operatorName != null and data.operatorName != '' ">
+            and c.staff_sign like concat('%',#{data.operatorName}, '%')
+        </if>
+
+        AND b.delete_flag = false
+        and b.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+
+        <if test="data.operatorId != null ">
+            and b.operator=#{data.operatorId}
+            <if test="data.status != null   and  data.operatorId != null ">
+                AND b.status = #{data.status}
+            </if>
+        </if>
+
+
+        <if test="   data.beginDate != null  or   data.endDate != null  ">
+
+            AND exists (
+
+            select 1 from (
+            select * , ROW_NUMBER() OVER ( order by finish_date desc NULLS last ) mid
+            from ${produceSubDispatcher} s
+            where s.operator=b."operator" and s.main_id=b.main_id
+            ) s
+
+            where s.mid=1
+            <if test="data.beginDate != null">
+                AND s.finish_date &gt;= DATE(#{data.beginDate})
+            </if>
+
+            <if test="data.endDate != null">
+                AND s.finish_date &lt;= DATE(#{data.endDate})
+            </if>
+
+            )
+
+        </if>
+
+
+
+        group by b.main_id ,b."operator"
+        ),
+        ostatus as (
+
+        select * from ${produceSubDispatcher} aa where (main_id , "operator" , id ) in (
+
+        select * from (select a.main_id ,a."operator" , max(id) max_id from ${produceSubDispatcher} a , source b where
+        b.main_id=a.main_id and b."operator"=a."operator"
+        group by a.main_id ,a."operator"
+        ) as a )
+
+        AND aa.delete_flag = false
+        and aa.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+        <if test="data.status != null   and  data.operatorId != null ">
+            AND aa.status = #{data.status}
+        </if>
+        )
+
+        select b.* ,a.*, a.produce_Unity_No as batch,c.status ,c.status status_real ,c.main_id || '-' ||c."operator" as queryKey from source b ,${tableName} a ,
+        ostatus c where
+        b.main_id=a.primary_key
+
+        AND a.delete_flag = false
+        and a.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+
+        and b.main_id=c.main_id and b."operator"=c."operator"
+
+        <if test="data.batchNum != null and data.batchNum != '' ">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+
+
+        <if test=" data.bussNumber != null  ">
+            AND (a.buss_Number like '%'|| #{data.bussNumber}|| '%'
+
+            <if test="data.operatorId != null ">
+
+                or exists( select 1 from ${dynamicTableNameProxy.produceSubDispatcher} dd where dd.main_id=a.primary_key and dd.produce_Unity_No like
+                concat('%',#{data.bussNumber}, '%') )
+
+            </if>
+            )
+        </if>
+
+
+
+
+
+        <if test="data.productFlag != null ">
+            AND a.product_Flag =#{data.productFlag}
+        </if>
+
+
+        <if test="data.productName != null and data.productName != '' ">
+            AND a.product_or_part_name like concat('%',#{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name like concat('%',#{data.gxName}, '%')
+        </if>
+
+        <if test="data.status != null   and  data.operatorId == null ">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.contractCode != null">
+            AND a.contract_code = #{data.contractCode}
+        </if>
+
+        <if test="data.days != null ">
+            and DATE_TRUNC('day', now()) &lt;= b.finishDate + interval ' 1 days'*#{data.days} and DATE_TRUNC('day',
+            now()) >= b.finishDate
+            and a_sum > (
+            select sum(finish_num) from ${reportTableName} d
+            where b.operator=d.creator and b.main_id=d.main_id
+            )
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part",data.searchName)}
+        order by a.create_time desc , id desc
+    </select>
+
+    <select id="queryPageFloatMapByConditionExport" resultMap="produceMainResultMap">
+        with source as (
+        select b.main_id ,b."operator" ,sum( b.allocation_Num ) a_sum ,max(b.finish_date) finishDate ,max(c.staff_sign)
+        operator_name
+        ,max(b.remark) remark
+        from ${produceSubDispatcher} b ,${staff} c
+        where b."operator" is not null and c.primary_key =b.operator
+        <if test="data.operatorName != null and data.operatorName != '' ">
+            and c.staff_sign like concat('%',#{data.operatorName}, '%')
+        </if>
+
+        AND b.delete_flag = false
+        and b.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+        <if test="data.operatorId != null ">
+            and b.operator=#{data.operatorId}
+            <if test="data.status != null   and  data.operatorId != null ">
+                AND b.status = #{data.status}
+            </if>
+        </if>
+
+        <!--        <if test="data.beginDate != null ">-->
+        <!--            AND exists ( select 1 from ${reportTableName} d-->
+        <!--            where b.operator=d.creator and b.main_id=d.main_id-->
+        <!--            AND d.report_date >= #{data.beginDate}-->
+        <!--            )-->
+        <!--        </if>-->
+
+        <!--        <if test="data.endDate != null ">-->
+        <!--            AND exists ( select 1 from ${reportTableName} d-->
+        <!--            where b.operator=d.creator and b.main_id=d.main_id-->
+        <!--            AND d.report_date &lt;= #{data.endDate}-->
+        <!--            )-->
+        <!--        </if>-->
+        <if test="   data.beginDate != null  or   data.endDate != null  ">
+
+            AND exists (
+
+            select 1 from (
+            select * , ROW_NUMBER() OVER ( order by finish_date desc NULLS last ) mid
+            from ${produceSubDispatcher} s
+            where s.operator=b."operator" and s.main_id=b.main_id
+            ) s
+
+            where s.mid=1
+            <if test="data.beginDate != null">
+                AND s.finish_date &gt;= DATE(#{data.beginDate})
+            </if>
+
+            <if test="data.endDate != null">
+                AND s.finish_date &lt;= DATE(#{data.endDate})
+            </if>
+
+            )
+        </if>
+
+        group by b.main_id ,b."operator"
+        ),
+        ostatus as (
+
+        select * from ${produceSubDispatcher} aa where (main_id , "operator" , id ) in (
+
+        select * from (select a.main_id ,a."operator" , max(id) max_id from ${produceSubDispatcher} a , source b where
+        b.main_id=a.main_id  and  b."operator"=a."operator"
+        group by a.main_id ,a."operator"
+        ) as a )
+
+        AND aa.delete_flag = false
+        and aa.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+
+        <if test="data.status != null   and  data.operatorId != null ">
+            AND aa.status = #{data.status}
+        </if>
+        )
+
+        select b.* ,a.* ,a.produce_Unity_No as batch,c.status ,c.status status_real ,c.main_id || '-' ||c."operator" as queryKey from source
+        b ,${tableName} a ,
+        ostatus c where
+        b.main_id=a.primary_key
+        AND a.delete_flag = false
+        and a.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+
+        and  b.main_id=c.main_id  and  b."operator"=c."operator"
+
+        <if test="data.batchNum != null and data.batchNum != '' ">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+        <if test=" data.bussNumber != null  ">
+            AND (a.buss_Number like '%'|| #{data.bussNumber}|| '%'
+
+            <if test="data.operatorId != null ">
+
+                or exists( select 1 from ${dynamicTableNameProxy.produceSubDispatcher} dd where dd.main_id=a.primary_key and
+                dd.produce_Unity_No like
+                concat('%',#{data.bussNumber}, '%') )
+
+            </if>
+            )
+        </if>
+
+        <if test="data.productFlag != null ">
+            AND a.product_Flag =#{data.productFlag}
+        </if>
+
+        <if test="data.productName != null and data.productName != '' ">
+            AND a.product_or_part_name like concat('%',#{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name like concat('%',#{data.gxName}, '%')
+        </if>
+
+        <if test="data.status != null   and  data.operatorId == null ">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.contractCode != null">
+            AND a.contract_code = #{data.contractCode}
+        </if>
+
+        <if test="data.days != null ">
+            and DATE_TRUNC('day', now()) &lt;= b.finishDate + interval ' 1 days'*#{data.days} and DATE_TRUNC('day',
+            now()) >= b.finishDate
+            and a_sum > (
+            select sum(finish_num) from ${reportTableName} d
+            where b.operator=d.creator and b.main_id=d.main_id
+            )
+        </if>
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.product_or_part","xihang",data.partUnityNo)}
+        </if>
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.product_or_part",data.searchName)}
+        <if test="data.codes !=null and data.codes.size() > 0">
+            and c.main_id || '-' ||c."operator" IN
+            <foreach collection="data.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        order by a.create_time desc , id desc
+        <if test="data.pageSize != null and data.offset != null
+              and data.pageSize > 0 and data.offset >=0">
+            LIMIT #{data.pageSize} OFFSET #{data.offset}
+        </if>
+    </select>
+
+
+    <select id="queryListByGlobalAndMainIds" resultMap="produceMainResultMap">
+
+        select * from ${tableName} where batch_Global_Code in (
+        select batch_Global_Code from ${tableName} where primary_key in
+        <foreach collection="ids" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+
+        )
+
+        AND delete_flag = false
+        and enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+    </select>
+
+
+    <select id="queryListByBatchNo" resultMap="produceMainResultMap">
+
+        select * from ${tableName} where batch_num in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+
+    </select>
+
+
+    <select id="queryListByBussNumber" resultMap="produceMainResultMap">
+
+        select *
+        from ${dynamicTableNameProxy.produceMain}
+        where buss_number = #{bussNumber}
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          AND delete_flag = false
+        order by create_time, id desc
+    </select>
+
+
+    <update id="updateMainReadyingStatus">
+        update ${dynamicTableNameProxy.produceMain}
+        set status = 10
+        where batch_global_code in
+        <foreach collection="gid" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+        and status=0
+    </update>
+
+
+    <update id="updatePreparedStatus">
+        update ${dynamicTableNameProxy.produceMain}
+        set status = 20
+        where batch_global_code = #{gid}
+          and status = 10
+    </update>
+
+
+    <select id="queryCountByCondition" resultMap="produceMainResultMap">
+        select
+        a.status ,count(1) count from (
+        select b.status
+        from ${tableName} a ,${produceSubDispatcher} b
+        where
+        a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = false
+
+        and b.operator=#{data.operatorId} and b.main_id=a.primary_key
+        <if test="data.batchNum != null and data.batchNum != '' ">
+            AND a.batch_num like concat('%', #{data.batchNum}, '%')
+        </if>
+        <if test="data.productName != null and data.productName != '' ">
+            AND a.product_or_part_name like concat('%',#{data.productName}, '%')
+        </if>
+        <if test="data.gxName != null and data.gxName != ''">
+            AND a.procedure_name like concat('%',#{data.gxName}, '%')
+        </if>
+
+
+        <if test=" data.gxCondition != null  ">
+            AND a.Procedure_Flag = #{data.gxCondition}
+        </if>
+
+
+        <if test="data.status != null   and  data.operatorId == null ">
+            AND a.status = #{data.status}
+        </if>
+
+        <if test="data.beginDate != null ">
+            AND a.delivery_Date >= #{data.beginDate}
+        </if>
+
+        <if test="data.mainId != null ">
+            AND a.primary_key = #{data.mainId}
+        </if>
+
+        <if test="data.endDate != null ">
+            AND a.delivery_Date &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.batchGlobalCode != null ">
+            AND a.batch_Global_Code = #{data.batchGlobalCode}
+        </if>
+
+        <if test="data.status != null   and  data.operatorId != null ">
+            AND b.status = #{data.status}
+        </if>
+
+        <if test="data.statusList != null and data.statusList.size>0 ">
+            AND a.status in
+            <foreach collection="data.statusList" item="status" separator="," open="(" close=")">
+                #{status}
+            </foreach>
+
+        </if>
+
+
+        <if test="data.operatorName != null and data.operatorName != '' ">
+            AND exists ( select 1 from ${produceSubDispatcher} b
+            ,${staff} c
+            where b.main_id=a.primary_key
+            and c.primary_key =b.operator and c.staff_sign like concat('%',#{data.operatorName}, '%')
+            )
+        </if>
+        group by b.status ,b.main_id ) as a group by a.status
+    </select>
+
+    <update id="updateTaskNum">
+        <foreach collection="dataList" item="data" separator=";">
+            update ${tableName}
+            set task_num = #{data.taskNum}
+            where primary_key = #{data.primaryKeyValue}
+            and enterprise_code = #{enterpriseCode}
+            and delete_flag = false
+        </foreach>
+    </update>
+
+
+    <resultMap id="dev"
+               type="com.futurecraftsmen.pms.technical.api.domain.technical.produce.DevTypeAndDescListRpcDTO">
+        <result property="devName" column="dev_Name"/>
+        <result property="devSpec" column="dev_Spec"/>
+        <result property="devNo" column="dev_No"/>
+        <result property="devId" column="dev_id"/>
+        <result property="devStatus" column="dev_Status"/>
+        <result property="typeName" column="type_Name"/>
+        <result property="typeId" column="type_Id"/>
+        <result property="procedureCode" column="procedure_Code"/>
+        <result property="mainId" column="main_id"/>
+    </resultMap>
+
+    <select id="queryDevListByMainId" resultMap="dev">
+
+        select c.devicename dev_Name,c.specification_and_model dev_Spec,c.tooling_equipment_sign
+        dev_No,
+        c.primary_key dev_id,
+        c.quality_inspection_equipment_status dev_Status,
+        b.primary_key type_Id,b.tool_equip_type_sign type_Name,d.procedure_code procedure_Code ,d.primary_key main_id
+
+        from ${produceMain} d
+        join ${productPartProcedure} a on d.procedure_code =a.primary_key
+        join ${toolEquipmentType} b on b.primary_key = any(a.equipments)
+        left join ${toolingEquipmentDesc} c on b.primary_key=c.devictype
+        where d.primary_key in
+        <foreach collection="ids" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+
+        and c.quality_inspection_equipment_status= 322883994612924416
+
+        and d.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+        and a.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+        and b.enterprise_code=${dynamicTableNameProxy.enterpriseCode}
+
+        AND d.delete_flag = false
+        AND a.delete_flag = false
+        AND b.delete_flag = false
+
+
+    </select>
+
+
+    <select id="queryAllDevList" resultMap="dev">
+
+        select c.devicename                          dev_Name,
+               c.specification_and_model             dev_Spec,
+               c.tooling_equipment_sign              dev_No,
+               c.primary_key                         dev_id,
+               c.quality_inspection_equipment_status dev_Status,
+               b.primary_key                         type_Id,
+               b.tool_equip_type_sign                type_Name
+        from ${dynamicTableNameProxy.toolingEquipmentDesc} c
+                 left join ${dynamicTableNameProxy.toolEquipmentType} b on b.primary_key = c.devictype
+        where c.quality_inspection_equipment_status = 322883994612924416
+
+          and c.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and c.delete_flag = false
+          and b.delete_flag = false
+
+    </select>
+
+    <update id="distribute">
+        UPDATE ${tableName}
+        SET process_person_list =
+        #{processPersonList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler}
+        WHERE
+        enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="codes" index="index" item="code" separator="," open="(" close=")">
+            #{code}
+        </foreach>
+    </update>
+
+    <select id="getOneByPrimaryKey">
+        select *
+        from ${tableName} aa
+        where aa.primary_key = (select main_id
+                                from ${inspectTableName} a
+                                where a.primary_key = #{mainId})
+    </select>
+
+
+    <select id="queryChildMain" resultMap="produceMainResultMap">
+        select *
+        from ${dynamicTableNameProxy.produceMain}
+        where batch_global_Code = #{batchGlobalCode}
+          and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and level = #{level}
+          and delete_flag = false
+    </select>
+
+
+    <select id="queryFinishNum" resultMap="produceMainResultMap">
+        select COALESCE(sum(num),0) finish_num
+        from ${dynamicTableNameProxy.produceStagingAreaRecord}
+        where produce_Main_Code in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+        and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and delete_flag = false
+    </select>
+
+
+    <select id="mainStatusCount" resultMap="produceMainResultMap">
+        select status status, count(1) task_Num
+        from ${dynamicTableNameProxy.produceMain}
+        where enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          and delete_flag = false
+          and create_time between #{start} and #{end}
+        <if test="gxCondition != null">
+            AND procedure_flag = #{gxCondition}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        group by status
+    </select>
+
+</mapper>

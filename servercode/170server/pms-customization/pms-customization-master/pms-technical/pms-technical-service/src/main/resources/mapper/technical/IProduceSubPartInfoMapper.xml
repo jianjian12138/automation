@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IProduceSubPartInfoMapper">
+
+
+    <resultMap id="ProduceSubPartInfoModelResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.produce.ProduceSubPartInfoModel">
+        <id property="primaryKeyValue" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="mainId" column="main_id"/>
+        <result property="routeCode" column="route_code"/>
+        <result property="matchingNum" column="matching_num"/>
+        <result property="stockCode" column="stock_code"/>
+        <result property="purchaseCode" column="purchase_code"/>
+        <result property="partCode" column="part_code"/>
+        <result property="productCode" column="product_code"/>
+        <result property="procedureCode" column="procedure_code"/>
+        <result property="partName" column="part_Name"/>
+        <result property="status" column="status"/>
+        <result property="applyNum" column="apply_num"/>
+        <result property="outApplyNum" column="out_apply_num"/>
+    </resultMap>
+
+
+    <!-- 插入新记录 -->
+    <insert id="insertProduceSubPart">
+        INSERT INTO ${tableName} (
+        primary_key,
+        enterprise_code,
+        main_id,
+        route_code,
+        matching_num,
+        stock_code,
+        purchase_code,
+        part_code,
+        product_code,procedure_code ,part_name,status
+        ) VALUES
+        <foreach collection="datas" item="item" separator=",">
+            (
+            #{item.primaryKeyValue},
+            #{item.enterpriseCode},
+            #{item.mainId},
+            #{item.routeCode},
+            #{item.matchingNum},
+            #{item.stockCode},
+            #{item.purchaseCode},
+            #{item.partCode},
+            #{item.productCode},#{item.procedureCode},#{item.partName},#{item.status}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryListByMainIdIn" resultMap="ProduceSubPartInfoModelResultMap">
+
+        select * from ${tableName}
+        where main_id in
+        <foreach collection="mainIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateHalfSubPartStatus">
+        update ${tableName}
+        set status = #{status}
+        where primary_key = #{id}
+    </update>
+
+
+    <update id="updateReadyingStatus">
+        update ${dynamicTableNameProxy.produceSubPartInfo}
+        set status = 10
+        where main_id in
+        <foreach collection="mid" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+        and part_code=#{partCode}
+        and status=0
+    </update>
+
+
+    <update id="updatePreparedStatus">
+        update ${dynamicTableNameProxy.produceSubPartInfo}
+        set status = 20
+        where main_id in
+        <foreach collection="mid" index="index" item="mainId" open="(" separator="," close=")">
+            #{mainId}
+        </foreach>
+        and part_code=#{partCode}
+        and status in (10 ,0)
+    </update>
+
+
+    <update id="updateStatusProduceing">
+        update ${dynamicTableNameProxy.produceSubPartInfo}
+        set status = 40
+        where main_id = #{parentMainId}
+          AND enterprise_code = #{enterpriseCode}
+          AND part_code = #{mainIdProduceMaterial}
+          AND delete_flag = false
+          AND status = 0
+    </update>
+
+
+    <select id="queryFinishNumByBatchGlobalCode" resultMap="ProduceSubPartInfoModelResultMap">
+        select COALESCE(sum(a.apply_num), 0) apply_num, COALESCE(sum(a.out_apply_num), 0) out_apply_num
+        from ${dynamicTableNameProxy.outboundApplyDetail} a
+        where batch_global_code = #{batchGlobalCode}
+          and exists(select 1
+                     from ${dynamicTableNameProxy.outboundOrder} b,
+                          ${dynamicTableNameProxy.outboundOrderDetail} c
+                     where c.outbound_order = b.primary_key
+                       and b.outbound_type = 323909030715064320
+                       and a.primary_key = any (c.apply_details))
+    </select>
+
+</mapper>

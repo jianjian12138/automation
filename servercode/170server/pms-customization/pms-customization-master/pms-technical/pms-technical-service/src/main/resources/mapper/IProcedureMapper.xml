@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IProcedureMapper">
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.procedure.ProcedureModel">
+        <id column="primary_key" property="procedureCode"/>
+        <result column="procedure_sign" property="name"/>
+        <result column="nature" property="nature"/>
+        <result column="equipments" property="equipments" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="contact_person" property="contactPerson"/>
+        <result column="state" property="state"/>
+        <result column="principal_person" property="principalPerson"/>
+        <result column="creator" property="creator"/>
+        <result column="enter_time" property="enterTime"/>
+        <result column="remark" property="remark"/>
+        <result column="files" property="files" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="enterprise_code" property="ownedEnterpriseCode"/>
+    </resultMap>
+
+    <sql id="columns">
+        primary_key, procedure_sign, nature, equipments::BIGINT[], contact_person, state,
+        principal_person, creator, enter_time,remark, files::BIGINT[], enterprise_code
+    </sql>
+
+
+    <select id="procedurePage" resultMap="resultMap">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE delete_flag= 'f'
+        AND enterprise_code = #{enterpriseCode}
+        <if test="name !=null and name != '' ">
+            AND procedure_sign LIKE '%'|| #{name} ||'%'
+        </if>
+        <if test="nature !=null  ">
+            AND nature = #{nature}
+        </if>
+        <if test="state !=null  ">
+            AND state = #{state}
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+    <select id="queryByProcedureCode" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where primary_key = #{procedureCode}
+        and delete_flag = false
+    </select>
+
+    <insert id="addProcedure">
+        INSERT INTO ${tableName} (primary_key, procedure_sign, nature, equipments, contact_person, state,
+                                  principal_person, creator, enter_time, remark, files, enterprise_code)
+        VALUES (#{model.procedureCode}, #{model.name}, #{model.nature}, #{model.equipments}, #{model.contactPerson},
+                #{model.state},
+                #{model.principalPerson}, #{model.creator}, #{model.enterTime}, #{model.remark}, #{model.files},
+                #{model.ownedEnterpriseCode})
+    </insert>
+
+    <select id="queryByNames" resultMap="resultMap">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="pendingNames != null and pendingNames.size() > 0">
+            AND procedure_sign IN
+            <foreach collection="pendingNames" index="index" item="pendingName" open="(" separator="," close=")">
+                #{pendingName}
+            </foreach>
+        </if>
+        <if test="pendingNames == null or pendingNames.isEmpty()">
+            AND procedure_sign IS NULL
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+
+    <select id="enableProcedurePage" resultMap="resultMap">
+        SELECT primary_key, procedure_sign
+        FROM ${tableName}
+        WHERE delete_flag= 'f'
+        AND enterprise_code = #{enterpriseCode}
+        <if test="name !=null and name != '' ">
+            AND procedure_sign LIKE '%'|| #{name} ||'%'
+        </if>
+        AND state = 't'
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+
+    <select id="queryByProcedureCodes" resultMap="resultMap">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="procedureCodes != null and procedureCodes.size() > 0">
+            AND primary_key IN
+            <foreach collection="procedureCodes" index="index" item="procedureCode" open="(" separator="," close=")">
+                #{procedureCode}
+            </foreach>
+        </if>
+        <if test="procedureCodes == null or procedureCodes.isEmpty()">
+            AND primary_key IS NULL
+        </if>
+        ORDER BY create_time DESC,id DESC
+    </select>
+
+    <insert id="batchInsert">
+        INSERT INTO ${tableName} (primary_key, enterprise_code, procedure_sign, nature, state, remark, contact_person,
+        principal_person, creator, enter_time)
+        VALUES
+        <foreach collection="models" item="item" separator=",">
+            (#{item.procedureCode}, #{item.ownedEnterpriseCode}, #{item.name}, #{item.nature}, #{item.state},
+            #{item.remark}, #{item.contactPerson}, #{item.principalPerson}, #{item.creator}, #{item.enterTime})
+        </foreach>
+    </insert>
+</mapper>

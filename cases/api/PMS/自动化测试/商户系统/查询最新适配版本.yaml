@@ -1,0 +1,66 @@
+case_name: 查询最新适配版本
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: app/get/latestversion
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    versionNum: 1.0.10
+    enterpriseCode: '190787210592256000'
+    adaptPhoneSystem: '0'
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: app/get/latestversion
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    versionNum: test
+    enterpriseCode: test
+    adaptPhoneSystem: test
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: app/get/latestversion
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    versionNum: 999999999
+    enterpriseCode: 999999999
+    adaptPhoneSystem: 999999999
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: app/get/latestversion
+  headers: $generate_token(pms_host)
+  method: GET
+  data:
+    versionNum: '!@#$%^&*()'
+    enterpriseCode: '!@#$%^&*()'
+    adaptPhoneSystem: '!@#$%^&*()'
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: app/get/latestversion
+  headers: {}
+  method: GET
+  data:
+    versionNum: 1.0.10
+    enterpriseCode: '190787210592256000'
+    adaptPhoneSystem: '0'
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

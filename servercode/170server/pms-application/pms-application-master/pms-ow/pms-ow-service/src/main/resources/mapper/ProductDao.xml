@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.ow.service.dao.ProductDao">
+    <resultMap id="productModel" type="com.futurecraftsmen.pms.ow.service.model.base.ProductBaseModel">
+        <result property="productCode" column="product_code"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="productTypeCode" column="product_type_code"/>
+        <result property="productTypeCodePreset" column="product_type_code_preset"/>
+        <result property="productNamePms" column="product_name_pms"/>
+        <result property="productNamePmsPreset" column="product_name_pms_preset"/>
+        <result property="model" column="model"/>
+        <result property="modelPreset" column="model_preset"/>
+        <result property="productNameList" column="product_name_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="productNameListPreset" column="product_name_list_preset" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="modelList" column="external_model_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="modelListPreset" column="external_model_list_preset" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="fileList" column="file_list" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="fileListPreset" column="file_list_preset" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="price" column="price"/>
+        <result property="pricePreset" column="price_preset"/>
+        <result property="inventory" column="inventory"/>
+        <result property="inventoryPreset" column="inventory_preset"/>
+        <result property="showFlag" column="show_flag"/>
+        <result property="showFlagPreset" column="show_flag_preset"/>
+        <result property="releaseFlag" column="release_flag"/>
+        <result property="releasedFlag" column="released_flag"/>
+        <result property="changeCount" column="change_count"/>
+        <result property="owAddFlag" column="ow_add_flag"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <insert id="syncData" parameterType="java.util.List">
+        insert into ${tableName}
+        (product_code, enterprise_code, product_type_code_preset, product_name_pms_preset, model_preset,
+        show_flag_preset, release_flag, released_flag, price, change_count, ow_add_flag) values
+        <foreach collection="productModelList" index="index" item="product" separator=",">
+            (#{product.productCode}, #{product.enterpriseCode}, #{product.productTypeCodePreset},
+            #{product.productNamePmsPreset}, #{product.modelPreset}, #{product.showFlagPreset}, #{product.releaseFlag},
+            #{product.releasedFlag}, #{product.price}, #{product.changeCount}, false)
+        </foreach>
+        ON CONFLICT (product_code) DO UPDATE SET product_name_pms_preset = EXCLUDED.product_name_pms_preset,
+        model_preset = EXCLUDED.model_preset,
+        show_flag_preset = EXCLUDED.show_flag_preset,
+        release_flag = EXCLUDED.release_flag,
+        released_flag = EXCLUDED.released_flag,
+        change_count = EXCLUDED.change_count
+    </insert>
+
+    <update id="updateProduct">
+        UPDATE ${tableName}
+        SET external_model_list_preset = #{product.modelListPreset},
+            external_model_list        = #{product.modelList},
+            product_name_list_preset   = #{product.productNameListPreset},
+            product_name_list          = #{product.productNameList},
+            file_list_preset           = #{product.fileListPreset},
+            file_list                  = #{product.fileList},
+            product_name_pms_preset    = #{product.productNamePmsPreset},
+            product_name_pms           = #{product.productNamePms},
+            model_preset               = #{product.modelPreset},
+            model                      = #{product.model},
+            product_type_code_preset   = #{product.productTypeCodePreset},
+            product_type_code          = #{product.productTypeCode},
+            show_flag_preset           = #{product.showFlagPreset},
+            show_flag                  = #{product.showFlag},
+            release_flag               = #{product.releaseFlag},
+            released_flag              = #{product.releasedFlag},
+            change_count               = #{product.changeCount}
+        WHERE product_code = #{product.productCode}
+    </update>
+
+    <insert id="addProduct">
+        insert into ${tableName} (product_code, enterprise_code, product_type_code_preset, product_name_pms_preset,
+                                  model_preset, file_list_preset, show_flag_preset, release_flag, released_flag,
+                                  price_preset, inventory_preset, change_count, ow_add_flag)
+        values (#{product.productCode}, #{product.enterpriseCode}, #{product.productTypeCodePreset},
+                #{product.productNamePmsPreset}, #{product.modelPreset}, #{product.fileListPreset},
+                #{product.showFlagPreset}, #{product.releaseFlag}, #{product.releasedFlag}, #{product.pricePreset},
+                #{product.inventoryPreset}, 0, true)
+    </insert>
+
+    <update id="batchUpdateProduct" parameterType="list">
+        <foreach collection="modelList" item="product" separator=";">
+            UPDATE ${tableName}
+            SET external_model_list_preset =
+            #{product.modelListPreset, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            external_model_list =
+            #{product.modelList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            product_name_list_preset =
+            #{product.productNameListPreset, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            product_name_list =
+            #{product.productNameList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            file_list_preset =
+            #{product.fileListPreset, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            file_list =
+            #{product.fileList, jdbcType=ARRAY, typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            product_name_pms_preset = #{product.productNamePmsPreset},
+            product_name_pms = #{product.productNamePms},
+            model_preset = #{product.modelPreset},
+            model = #{product.model},
+            product_type_code_preset = #{product.productTypeCodePreset},
+            product_type_code = #{product.productTypeCode},
+            show_flag_preset = #{product.showFlagPreset},
+            show_flag = #{product.showFlag},
+            release_flag = #{product.releaseFlag},
+            released_flag = #{product.releasedFlag},
+            change_count = #{product.changeCount}
+            WHERE product_code = #{product.productCode}
+        </foreach>
+    </update>
+
+    <update id="batchUpdateProductShowFlag">
+        UPDATE ${tableName}
+        SET show_flag_preset = #{showFlag},
+        release_flag = false
+        WHERE delete_flag = false
+        AND product_code IN
+        <foreach collection="codeList" index="index" item="productCode" open="(" separator="," close=")">
+            #{productCode}
+        </foreach>
+    </update>
+
+    <update id="batchCloseProductReleaseFlag">
+        UPDATE ${tableName}
+        SET release_flag = false
+        WHERE delete_flag = false
+        AND product_code IN
+        <foreach collection="codeList" index="index" item="productCode" open="(" separator="," close=")">
+            #{productCode}
+        </foreach>
+    </update>
+
+    <select id="getAllProduct" resultMap="productModel">
+        SELECT product_code,
+               enterprise_code,
+               product_type_code,
+               product_type_code_preset,
+               product_name_pms,
+               product_name_pms_preset,
+               model,
+               model_preset,
+               product_name_list::VARCHAR[],
+               product_name_list_preset::VARCHAR[],
+               external_model_list::VARCHAR[],
+               external_model_list_preset::VARCHAR[],
+               file_list::BIGINT[],
+               file_list_preset::BIGINT[],
+               price,
+               price_preset,
+               inventory,
+               inventory_preset,
+               show_flag,
+               show_flag_preset,
+               release_flag,
+               released_flag,
+               change_count,
+               ow_add_flag,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="getProductsByCodes" resultMap="productModel">
+        SELECT product_code,
+        enterprise_code,
+        product_type_code,
+        product_type_code_preset,
+        product_name_pms,
+        product_name_pms_preset,
+        model,
+        model_preset,
+        product_name_list::VARCHAR[],
+        product_name_list_preset::VARCHAR[],
+        external_model_list::VARCHAR[],
+        external_model_list_preset::VARCHAR[],
+        file_list::BIGINT[],
+        file_list_preset::BIGINT[],
+        price,
+        price_preset,
+        inventory,
+        inventory_preset,
+        show_flag,
+        show_flag_preset,
+        release_flag,
+        released_flag,
+        change_count,
+        ow_add_flag,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND product_code IN
+        <foreach collection="productCodes" index="index" item="productCode" open="(" separator="," close=")">
+            #{productCode}
+        </foreach>
+    </select>
+
+    <update id="batchUpdateInventory" parameterType="java.util.List">
+        <foreach collection="inventoryList" item="inventory" separator=";">
+            UPDATE ${tableName}
+            SET inventory = #{inventory.inventory}
+            WHERE product_code = #{inventory.productCode}
+        </foreach>
+    </update>
+</mapper>

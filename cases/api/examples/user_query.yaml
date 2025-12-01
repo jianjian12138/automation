@@ -1,0 +1,76 @@
+# API测试示例 - 用户查询接口
+# 由Cursor AI生成
+
+case_name: 用户查询接口测试
+case_code: UserQueryTest
+priority: 1
+steps:
+  - step_name: 正常查询-有效参数
+    method: GET
+    url: /users
+    host: https://jsonplaceholder.typicode.com
+    headers:
+      Content-Type: application/json
+    params:
+      _limit: 5
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $[0].id != null
+        - $[0].name != null
+        - $[0].email != null
+
+  - step_name: 单个用户查询
+    method: GET
+    url: /users/1
+    host: https://jsonplaceholder.typicode.com
+    headers:
+      Content-Type: application/json
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $.id == 1
+        - $.name != null
+        - $.email != null
+        - $.username != null
+
+  - step_name: 异常查询-不存在的用户
+    method: GET
+    url: /users/99999
+    host: https://jsonplaceholder.typicode.com
+    headers:
+      Content-Type: application/json
+    response_assert:
+      status_code_assert: 404
+
+  - step_name: 创建用户-正常场景
+    method: POST
+    url: /users
+    host: https://jsonplaceholder.typicode.com
+    headers:
+      Content-Type: application/json
+    data:
+      name: "AI Test User"
+      username: "aitest"
+      email: "aitest@example.com"
+    response_assert:
+      status_code_assert: 201
+      jsonpath_assert:
+        - $.id != null
+        - $.name == "AI Test User"
+
+  - step_name: 更新用户-正常场景
+    method: PUT
+    url: /users/1
+    host: https://jsonplaceholder.typicode.com
+    headers:
+      Content-Type: application/json
+    data:
+      name: "Updated User"
+      username: "updated"
+      email: "updated@example.com"
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $.name == "Updated User"
+

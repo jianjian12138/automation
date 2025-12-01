@@ -1,0 +1,14 @@
+case_code: PurchaseVenderController
+case_name: PurchaseVenderController接口测试
+priority: 2
+steps:
+- data:
+    VenderFilterCondition: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /vender/page
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: page

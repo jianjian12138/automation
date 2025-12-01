@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.SellContractDao">
+
+
+    <resultMap id="SellContractModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        <result column="primary_key" property="contractCode"/>
+        <result column="source" property="source"/>
+        <result column="contract_name" property="contractName"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="unity_no_config" property="unityNoConfig"/>
+        <result column="display_contract_number" property="displayContractNumber"/>
+        <result column="contract_type" property="contractType"/>
+        <result column="buyer" property="buyer"/>
+        <result column="buyer_name" property="buyerName"/>
+        <result column="seller" property="seller"/>
+        <result column="customer_code" property="customerCode"/>
+        <result column="enterprise_code" property="ownedEnterpriseCode"/>
+        <result column="user_code" property="userCode"/>
+        <result column="user_name" property="userName"/>
+        <result column="language" property="language"/>
+        <result column="payment_strategy" property="paymentStrategy"/>
+        <result column="product_grade" property="productGrade"/>
+        <result column="column_titles" property="columnTitles"/>
+        <result column="amount_title" property="amountTitle"/>
+        <result column="state" property="state"/>
+        <result column="clauses_chs" property="clausesChs"/>
+        <result column="clauses_en" property="clausesEn"/>
+        <result column="product_detail" property="productDetail"/>
+        <result column="contract_time" property="contractTime"/>
+        <result column="data_version" property="dataVersion"/>
+        <result column="sign_areas" property="signAreas"/>
+        <result column="purchase_contract" property="purchaseContract"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="sell_quotation" property="sellQuotation"/>
+        <result column="buyer_quotation" property="buyerQuotation"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="sell_order" property="sellOrder"/>
+        <result column="attachments" property="attachments" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="temp_data" property="tempData"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+        <result column="business_belong" property="businessBelong"/>
+        <result column="qrcode_generated_flag" property="qrcodeGeneratedFlag"/>
+        <result column="money_apply_returned" property="moneyApplyReturned"/>
+        <result column="invoice_apply_returned" property="invoiceApplyReturned"/>
+        <result column="pre_ordered" property="preOrdered"/>
+        <result column="order_return_reason" property="orderReturnReason"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="addVisibleData">
+        INSERT INTO ${tableName} (primary_key, source, contract_name, contract_number, unity_no_config, display_contract_number,
+                                  contract_type,
+                                  buyer, buyer_name, seller, customer_code, enterprise_code,
+                                  user_code, user_name, language, payment_strategy, product_grade, column_titles,
+                                  amount_title, state, clauses_chs, clauses_en, product_detail,
+                                  contract_time, data_version,
+                                  sign_areas, purchase_contract, sell_quotation, buyer_quotation, temp_data,
+                                  signed_contract, sell_order, attachments, son_enterprise_code, money_apply_returned,
+                                  invoice_apply_returned, delete_flag, business_belong, pre_ordered, order_return_reason)
+        VALUES (#{model.contractCode}, #{model.source}, #{model.contractName}, #{model.contractNumber}, #{model.unityNoConfig},
+                #{model.displayContractNumber},
+                #{model.contractType},
+                #{model.buyer}, #{model.buyerName}, #{model.seller}, #{model.customerCode},
+                #{model.ownedEnterpriseCode}, #{model.userCode}, #{model.userName}, #{model.language},
+                #{model.paymentStrategy}, #{model.productGrade}, #{model.columnTitles}, #{model.amountTitle},
+                #{model.state},
+                #{model.clausesChs}, #{model.clausesEn},
+                #{model.productDetail}, #{model.contractTime}, #{model.dataVersion},
+                #{model.signAreas}, #{model.purchaseContract}, #{model.sellQuotation}, #{model.buyerQuotation}, null,
+                #{model.signedContract}, #{model.sellOrder}, #{model.attachments}, #{model.sonEnterpriseCode}, 'f', 'f', 'f',
+                #{model.businessBelong}, #{model.preOrdered}, #{model.orderReturnReason})
+    </insert>
+
+
+    <insert id="addVisibleDataList">
+        INSERT INTO ${tableName} (primary_key, source, contract_name, contract_number,unity_no_config,display_contract_number,
+        contract_type,
+                                  buyer, buyer_name, seller, customer_code, enterprise_code,
+                                  user_code, user_name, language, payment_strategy, product_grade, column_titles,
+                                  amount_title, state, clauses_chs, clauses_en, product_detail,
+                                  contract_time, data_version,
+                                  sign_areas, purchase_contract, sell_quotation, buyer_quotation, temp_data,
+        signed_contract, sell_order,son_enterprise_code,money_apply_returned,invoice_apply_returned,delete_flag,
+        business_belong,pre_ordered,order_return_reason)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            (#{model.contractCode}, #{model.source}, #{model.contractName}, #{model.contractNumber},#{model.unityNoConfig},
+            #{model.displayContractNumber},
+                #{model.contractType},
+                #{model.buyer}, #{model.buyerName}, #{model.seller}, #{model.customerCode},
+                #{model.ownedEnterpriseCode}, #{model.userCode}, #{model.userName}, #{model.language},
+                #{model.paymentStrategy}, #{model.productGrade}, #{model.columnTitles}, #{model.amountTitle},
+                #{model.state},
+                #{model.clausesChs}, #{model.clausesEn},
+                #{model.productDetail}, #{model.contractTime}, #{model.dataVersion},
+                #{model.signAreas}, #{model.purchaseContract}, #{model.sellQuotation}, #{model.buyerQuotation}, null,
+            #{model.signedContract},#{model.sellOrder},#{model.sonEnterpriseCode}, 'f','f','f',
+            #{model.businessBelong},#{model.preOrdered},#{model.orderReturnReason})
+        </foreach>
+    </insert>
+
+    <insert id="addInVisibleData">
+        INSERT INTO ${tableName} (primary_key, source, contract_name, display_contract_number, contract_type,
+                                  buyer, buyer_name, seller, customer_code, enterprise_code,
+                                  user_code, user_name, language, payment_strategy, product_grade, column_titles,
+                                  amount_title, product_detail, clauses_chs, clauses_en,
+                                  state, contract_time, data_version,
+                                  sign_areas, purchase_contract, sell_quotation, buyer_quotation, temp_data,
+                                  signed_contract, sell_order, attachments, business_belong, son_enterprise_code, money_apply_returned,
+                                  invoice_apply_returned, pre_ordered, order_return_reason, delete_flag)
+        VALUES (#{model.contractCode}, #{model.source}, #{model.contractName}, #{model.displayContractNumber},
+                #{model.contractType},
+                #{model.buyer}, #{model.buyerName}, #{model.seller}, #{model.customerCode},
+                #{model.ownedEnterpriseCode}, #{model.userCode}, #{model.userName}, #{model.language},
+                #{model.paymentStrategy}, #{model.productGrade}, #{model.columnTitles}, #{model.amountTitle},
+                #{model.productDetail},
+                #{model.clausesChs}, #{model.clausesEn}, #{model.state}, #{model.contractTime}, #{model.dataVersion},
+                #{model.signAreas}, #{model.purchaseContract}, #{model.sellQuotation}, #{model.buyerQuotation}, #{model.tempData},
+                #{model.signedContract}, #{model.sellOrder}, #{model.attachments}, #{model.businessBelong}, #{model.sonEnterpriseCode}, 'f',
+                'f', #{model.preOrdered}, #{model.orderReturnReason}, 't')
+    </insert>
+
+    <select id="page" resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key as contractCode, source, contract_name, contract_number,unity_no_config,display_contract_number,contract_type,
+        buyer, buyer_name,seller, customer_code, enterprise_code as ownedEnterpriseCode,
+        user_code, user_name, language, payment_strategy,product_grade, column_titles,
+        amount_title, product_detail,
+        state,contract_time,
+        data_version,purchase_contract,sell_quotation,buyer_quotation,signed_contract,cancel_reason,sell_order,order_return_reason,son_enterprise_code,
+        money_apply_returned,invoice_apply_returned,pre_ordered,
+        delete_flag,business_belong, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="states != null and states.size()!=0">
+            AND state IN
+            <foreach collection="states" index="index" item="state" open="(" separator="," close=")">
+                #{state}
+            </foreach>
+        </if>
+        <if test="userCodes != null and userCodes.size()!=0">
+            AND user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND (contract_number LIKE '%'|| #{contractNumber}||'%' or display_contract_number LIKE '%'||
+            #{contractNumber}||'%')
+        </if>
+        <if test="buyerName != null and buyerName !=''">
+            AND buyer_name LIKE '%'|| #{buyerName} ||'%'
+        </if>
+        <if test="contractTimePreDate != null">
+            AND contract_time &gt;= #{contractTimePreDate}
+        </if>
+        <if test="contractTimePostDate != null">
+            AND contract_time &lt;= #{contractTimePostDate}
+        </if>
+        <if test="applyReturned != null and applyReturned == true">
+            AND (money_apply_returned = true OR invoice_apply_returned = true)
+        </if>
+        <if test="applyReturned != null and applyReturned == false">
+            AND COALESCE(money_apply_returned, false) = false AND COALESCE(invoice_apply_returned, false) = false
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        ORDER BY
+        id DESC
+    </select>
+
+    <select id="getByContractCodeList"
+            resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key as contractCode, source, contract_name, contract_number,unity_no_config,contract_type,
+        buyer, buyer_name,seller, customer_code, enterprise_code as ownedEnterpriseCode,
+        user_code, user_name, language, payment_strategy,product_grade, column_titles,
+        amount_title, product_detail,
+        state,contract_time, data_version,
+        sign_areas,purchase_contract,sell_quotation,buyer_quotation,signed_contract,cancel_reason,sell_order,son_enterprise_code,
+        money_apply_returned,invoice_apply_returned,
+        delete_flag,business_belong, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="contractCodes" index="index" item="contractCode" open="(" separator="," close=")">
+            #{contractCode}
+        </foreach>
+    </select>
+
+
+    <select id="similarContractPage" resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key as contractCode, source, contract_name, contract_number,unity_no_config,display_contract_number,contract_type,
+        buyer, buyer_name,seller, customer_code, enterprise_code as ownedEnterpriseCode,
+        user_code, user_name, language, payment_strategy,product_grade, column_titles,
+        amount_title, product_detail,
+        state,contract_time, data_version,purchase_contract,sell_quotation,buyer_quotation,
+        signed_contract,cancel_reason,sell_order,order_return_reason,son_enterprise_code,pre_ordered,
+        money_apply_returned,invoice_apply_returned,delete_flag, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key != #{excludeContractCode}
+        AND signed_contract IS NOT NULL
+        AND state != #{excludeState}
+        <if test="customerCode != null">
+            AND customer_code = #{customerCode}
+        </if>
+
+        <if test="customerCode == null">
+            AND buyer_name = #{buyerName}
+        </if>
+
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="sellContractDetail" resultMap="SellContractModel">
+        SELECT primary_key, source, contract_name, contract_number,unity_no_config,display_contract_number,contract_type,
+        buyer,buyer_name, seller, customer_code, enterprise_code,
+        user_code, user_name, language, payment_strategy,product_grade, column_titles,
+        amount_title, product_detail, clauses_chs, clauses_en,
+        state,contract_time, data_version,
+        sign_areas,purchase_contract,sell_quotation,buyer_quotation,temp_data,signed_contract,
+        cancel_reason,sell_order,order_return_reason,attachments,son_enterprise_code,money_apply_returned,invoice_apply_returned,delete_flag,business_belong,pre_ordered,
+        qrcode_generated_flag,create_time
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        <if test="visibleAll == false">
+            AND delete_flag= 'f'
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        AND primary_key= #{contractCode}
+    </select>
+
+    <select id="sellContractDetailNoDataScope" resultMap="SellContractModel">
+        SELECT primary_key,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               display_contract_number,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code,
+               user_code,
+               user_name,
+               language,
+               payment_strategy,
+               product_grade,
+               column_titles,
+               amount_title,
+               product_detail,
+               clauses_chs,
+               clauses_en,
+               state,
+               contract_time,
+               data_version,
+               sign_areas,
+               purchase_contract,
+               sell_quotation,
+               buyer_quotation,
+               temp_data,
+               signed_contract,
+               cancel_reason, sell_order, order_return_reason,
+               attachments,
+               delete_flag,
+               business_belong, pre_ordered,
+               qrcode_generated_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{contractCode}
+    </select>
+
+
+    <select id="querySimpleInfoByContractCodes">
+        SELECT primary_key as contractCode, state,sell_order,signed_contract,product_detail,payment_strategy,contract_number
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        <if test="visibleAll == false">
+            AND delete_flag= 'f'
+        </if>
+        AND primary_key IN
+        <foreach collection="contractCodes" index="index" item="contractCode" open="(" separator="," close=")">
+            #{contractCode}
+        </foreach>
+    </select>
+
+    <select id="querySimpleInfoBySignedContractCodes">
+        SELECT primary_key as contractCode, state,sell_order,signed_contract,product_detail,payment_strategy,contract_number
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        <if test="visibleAll == false">
+            AND delete_flag= 'f'
+        </if>
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator="," close=")">
+            #{signedContractCode}
+        </foreach>
+    </select>
+
+    <select id="sellContractDetailForInner" resultMap="SellContractModel">
+        SELECT primary_key,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               display_contract_number,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code,
+               user_code,
+               user_name,
+               language,
+               payment_strategy,
+               product_grade,
+               column_titles,
+               amount_title,
+               product_detail,
+               clauses_chs,
+               clauses_en,
+               state,
+               contract_time,
+               data_version,
+               sign_areas,
+               purchase_contract,
+               sell_quotation,
+               buyer_quotation,
+               temp_data,
+               signed_contract,
+               cancel_reason, sell_order, order_return_reason,
+               attachments,
+               business_belong,
+               son_enterprise_code,
+               money_apply_returned,
+               invoice_apply_returned,
+               delete_flag, pre_ordered,
+               qrcode_generated_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{contractCode}
+    </select>
+
+
+    <select id="sellContractDetailForInnerVisableAll" resultMap="SellContractModel">
+        SELECT primary_key,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               display_contract_number,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code,
+               user_code,
+               user_name, language, payment_strategy, product_grade, column_titles, amount_title, product_detail, clauses_chs, clauses_en, state, contract_time, data_version, sign_areas, purchase_contract, sell_quotation, buyer_quotation, temp_data, signed_contract, cancel_reason, sell_order, order_return_reason, attachments, business_belong, son_enterprise_code, money_apply_returned, invoice_apply_returned, delete_flag, pre_ordered, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+    </select>
+
+
+    <update id="clearTempData">
+        UPDATE ${tableName}
+        SET temp_data = NULL
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+          AND temp_data IS NOT NULL
+    </update>
+
+
+    <delete id="deleteSellContract">
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+    </delete>
+
+    <update id="updateTempDataAndNumber">
+        UPDATE ${tableName}
+        SET temp_data           = #{model.tempData},
+            contract_number = #{number},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+    <update id="updateTempData">
+        UPDATE ${tableName}
+        SET temp_data = #{model.tempData},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+    <select id="countByContractNumberAndCustomerCode" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        <if test="customerCode != null">
+            AND customer_code = #{customerCode}
+        </if>
+        AND primary_key != #{excludeContractCode}
+        AND contract_number = #{contractNumber}
+        AND delete_flag = 'f'
+    </select>
+
+    <select id="countByDisplayContractNumberAndCustomerCode" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        <if test="customerCode != null">
+            AND customer_code = #{customerCode}
+        </if>
+        AND primary_key != #{excludeContractCode}
+        AND display_contract_number = #{displayContractNumber}
+        AND delete_flag = 'f'
+    </select>
+
+    <select id="countByContractNumbers" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND contract_number IN
+        <foreach collection="contractNumbers" index="index" item="contractNumber" open="(" separator="," close=")">
+            #{contractNumber}
+        </foreach>
+        AND delete_flag = 'f'
+    </select>
+
+    <select id="queryContractNumbers" resultType="java.lang.String">
+        SELECT DISTINCT contract_number
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND contract_number IN
+        <foreach collection="contractNumbers" index="index" item="contractNumber" open="(" separator="," close=")">
+            #{contractNumber}
+        </foreach>
+        AND delete_flag = 'f'
+    </select>
+
+    <update id="compareDataVersionAndUpdate">
+        UPDATE ${tableName}
+        SET
+        contract_name = #{model.contractName},
+        contract_number = #{model.contractNumber},
+        unity_no_config = #{model.unityNoConfig},
+        display_contract_number = #{model.displayContractNumber},
+        buyer= #{model.buyer},
+        buyer_name= #{model.buyerName},
+        seller = #{model.seller},
+        customer_code = #{model.customerCode},
+        user_code = #{model.userCode},
+        user_name = #{model.userName},
+        language = #{model.language},
+        payment_strategy = #{model.paymentStrategy},
+        product_grade = #{model.productGrade},
+        column_titles = #{model.columnTitles},
+        amount_title= #{model.amountTitle},
+        clauses_chs = #{model.clausesChs},
+        clauses_en = #{model.clausesEn},
+        product_detail = #{model.productDetail},
+        contract_time = #{model.contractTime},
+        temp_data = null,
+        state= #{model.state},
+        sign_areas = #{model.signAreas},
+        purchase_contract = #{model.purchaseContract},
+        sell_quotation = #{model.sellQuotation},
+        buyer_quotation = #{model.buyerQuotation},
+        signed_contract = #{model.signedContract},
+        cancel_reason = #{model.cancelReason},
+        sell_order = #{model.sellOrder},
+        order_return_reason = #{model.orderReturnReason},
+        attachments = #{model.attachments},
+        data_version = #{model.dataVersion},
+        son_enterprise_code = #{model.sonEnterpriseCode},
+        money_apply_returned = #{model.moneyApplyReturned},
+        invoice_apply_returned = #{model.invoiceApplyReturned},
+        pre_ordered = #{model.preOrdered},
+        delete_flag = 'f'
+        WHERE
+        enterprise_code= #{model.ownedEnterpriseCode}
+        AND primary_key = #{model.contractCode}
+        AND data_version = #{clientDataVersion}
+    </update>
+
+
+    <update id="updateWhileProductQuantityChangedAfterSigned">
+        UPDATE ${tableName}
+        SET product_detail = #{model.productDetail}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+
+    <delete id="deleteWhileReturnContract">
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+          AND data_version = #{clientDataVersion}
+    </delete>
+
+    <select id="latestSignedContract" resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key     as contractCode,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               display_contract_number,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code as ownedEnterpriseCode,
+               user_code,
+               user_name,
+               language,
+               payment_strategy,
+               product_grade,
+               column_titles,
+               amount_title,
+               product_detail,
+               clauses_chs,
+               clauses_en,
+               state,
+               contract_time,
+               data_version,
+               sign_areas,
+               purchase_contract,
+               sell_quotation,
+               buyer_quotation,
+               temp_data,
+               signed_contract,
+               cancel_reason, sell_order, order_return_reason,
+               attachments,
+               business_belong,
+               son_enterprise_code,
+               money_apply_returned,
+               invoice_apply_returned,
+               delete_flag, pre_ordered,
+               qrcode_generated_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND customer_code = #{customerCode}
+          AND delete_flag = 'f'
+          AND (state = 'UNILATERAL_SIGN'
+           or state = 'MUTUAL_SIGN')
+        ORDER BY update_time DESC
+            LIMIT 1
+    </select>
+
+
+    <select id="sellContractDetailBySellOrder" resultMap="SellContractModel">
+        SELECT primary_key,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               display_contract_number,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code,
+               user_code,
+               user_name,
+               language,
+               payment_strategy,
+               product_grade,
+               column_titles,
+               amount_title,
+               product_detail,
+               clauses_chs,
+               clauses_en,
+               state,
+               contract_time,
+               data_version,
+               sign_areas,
+               purchase_contract,
+               sell_quotation,
+               buyer_quotation,
+               temp_data,
+               signed_contract,
+               cancel_reason, sell_order, order_return_reason,
+               attachments,
+               business_belong,
+               son_enterprise_code,
+               money_apply_returned,
+               invoice_apply_returned,
+               delete_flag, pre_ordered,
+               qrcode_generated_flag
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND sell_order = #{sellOrderCode}
+    </select>
+
+    <update id="updateAfterRejectSellOrder">
+        UPDATE ${tableName}
+        SET sell_order          = null,
+            order_return_reason = #{orderReturnReason}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND sell_order = #{sellOrderCode}
+    </update>
+
+    <update id="updateQrcodeGeneratedFlag">
+        UPDATE ${tableName}
+        SET qrcode_generated_flag = #{qrcodeGeneratedFlag}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+    </update>
+
+    <update id="updateMoneyApplyReturned">
+        UPDATE ${tableName}
+        SET money_apply_returned = #{moneyApplyReturned}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{contractCode}
+          AND (state = 'UNILATERAL_SIGN' or state = 'MUTUAL_SIGN')
+    </update>
+
+
+    <update id="batchUpdateMoneyApplyReturned">
+        UPDATE ${tableName}
+        SET money_apply_returned = #{moneyApplyReturned}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        AND primary_key IN
+        <foreach collection="contractCodes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND (state = 'UNILATERAL_SIGN' or state = 'MUTUAL_SIGN')
+    </update>
+
+    <update id="updateInvoiceApplyReturned">
+        UPDATE ${tableName}
+        SET invoice_apply_returned = #{invoiceApplyReturned}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{contractCode}
+          AND (state = 'UNILATERAL_SIGN' or state = 'MUTUAL_SIGN')
+    </update>
+
+    <update id="batchUpdateInvoiceApplyReturned">
+        UPDATE ${tableName}
+        SET invoice_apply_returned = #{invoiceApplyReturned}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        AND primary_key IN
+        <foreach collection="contractCodes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND (state = 'UNILATERAL_SIGN' or state = 'MUTUAL_SIGN')
+    </update>
+
+    <update id="directUpdateProductDetailAndTempData">
+        UPDATE ${tableName}
+        SET product_detail = #{model.productDetail},
+            delete_flag = 'f',
+            temp_data = #{tempData}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+
+    <delete id="deleteWhileNotSign">
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+          AND (state = 'NOT_SIGN' OR state = 'SEALED')
+    </delete>
+
+
+    <select id="canProductionContractPaging" resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key as contractCode, source, contract_name, contract_number,unity_no_config,display_contract_number,contract_type,
+        buyer, buyer_name,seller, customer_code, enterprise_code as ownedEnterpriseCode,
+        user_code, user_name, language, payment_strategy,product_grade, column_titles,
+        amount_title, product_detail,
+        state,contract_time, data_version,
+        sign_areas,purchase_contract,sell_quotation,buyer_quotation,signed_contract,cancel_reason,sell_order,order_return_reason,son_enterprise_code,
+        money_apply_returned,invoice_apply_returned,pre_ordered,
+        delete_flag,business_belong, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND (state = 'UNILATERAL_SIGN' OR state = 'MUTUAL_SIGN')
+        AND sell_order IS NULL
+        <if test="isSellOrder == false">
+            AND pre_ordered = 'false'
+        </if>
+        <if test="contractTimePreDate != null">
+            AND contract_time &gt;= #{contractTimePreDate}
+        </if>
+        <if test="contractTimePostDate != null">
+            AND contract_time &lt;= #{contractTimePostDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY id DESC
+    </select>
+
+
+    <select id="countCanProductionContract" resultType="java.lang.Long">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND (state = 'UNILATERAL_SIGN' OR state = 'MUTUAL_SIGN')
+        AND sell_order IS NULL
+        <if test="isSellOrder == false">
+            AND pre_ordered = 'false'
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <update id="updateProductDetailAndDataVersion">
+        UPDATE ${tableName}
+        SET product_detail = #{model.productDetail},
+            data_version   = #{model.dataVersion}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+
+    <select id="queryNonCanceledByCustomerCode"
+            resultType="com.futurecraftsmen.pms.pas.service.po.newContract.SellContractModel">
+        SELECT primary_key     as contractCode,
+               source,
+               contract_name,
+               contract_number,
+               unity_no_config,
+               contract_type,
+               buyer,
+               buyer_name,
+               seller,
+               customer_code,
+               enterprise_code as ownedEnterpriseCode,
+               user_code,
+               user_name, language, payment_strategy, product_grade, column_titles, amount_title, product_detail, clauses_chs, clauses_en, state, contract_time, data_version, sign_areas, purchase_contract, sell_quotation, buyer_quotation, signed_contract, cancel_reason, sell_order, son_enterprise_code, money_apply_returned, invoice_apply_returned, delete_flag, business_belong, qrcode_generated_flag
+        FROM ${tableName}
+        WHERE
+            enterprise_code= #{enterpriseCode}
+          AND delete_flag= 'f'
+          AND customer_code = #{customerCode}
+          AND state != 'CANCELED'
+    </select>
+
+</mapper>

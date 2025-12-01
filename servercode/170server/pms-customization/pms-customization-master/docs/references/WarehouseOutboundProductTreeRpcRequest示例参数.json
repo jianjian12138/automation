@@ -1,0 +1,143 @@
+{
+  "// 基础查询示例": {
+    "description": "最基本的出库任务产品树查询",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "outboundOrderCode": 2025091901,
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 按合同筛选示例": {
+    "description": "根据特定合同查询出库任务产品树",
+    "request": {
+      "current": 1,
+      "size": 50,
+      "contractCode": 202509001,
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 4,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 产品搜索示例": {
+    "description": "按产品名称/编号模糊搜索",
+    "request": {
+      "current": 1,
+      "size": 30,
+      "productSearch": "发动机",
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "name",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 零件搜索示例": {
+    "description": "按零件名称/编号模糊搜索",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "partSearch": "螺栓",
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 2,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 按出库状态筛选示例": {
+    "description": "筛选特定出库状态的任务",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "outboundStatus": 1,
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 按批次查询示例": {
+    "description": "查询特定批次的出库任务",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "batchNumber": "BATCH2025090101",
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 完全展开示例": {
+    "description": "展开所有层级，查看完整的产品树结构",
+    "request": {
+      "current": 1,
+      "size": 10,
+      "outboundOrderCode": 2025091901,
+      "onlyWithOutboundDemand": false,
+      "expandAll": true,
+      "maxLevel": 5,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  },
+
+  "// 复合条件查询示例": {
+    "description": "使用多个条件组合查询",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "outboundOrderCode": 2025091901,
+      "contractCode": 202509001,
+      "productSearch": "齿轮",
+      "outboundStatus": 2,
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "outTotal",
+      "sortDirection": "desc"
+    }
+  },
+
+  "// 按数量排序示例": {
+    "description": "按出库总量倒序排列",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "onlyWithOutboundDemand": true,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "outTotal",
+      "sortDirection": "desc"
+    }
+  },
+
+  "// 显示所有项目示例": {
+    "description": "显示所有项目，包括没有出库需求的",
+    "request": {
+      "current": 1,
+      "size": 20,
+      "outboundOrderCode": 2025091901,
+      "onlyWithOutboundDemand": false,
+      "expandAll": false,
+      "maxLevel": 3,
+      "sortField": "sequence",
+      "sortDirection": "asc"
+    }
+  }
+}

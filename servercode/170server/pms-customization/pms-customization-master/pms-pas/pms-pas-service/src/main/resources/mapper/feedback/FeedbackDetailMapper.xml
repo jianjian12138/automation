@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.feedback.FeedbackDetailDao">
+
+    <resultMap id="FeedBackDetailModel"
+               type="com.futurecraftsmen.pms.pas.service.po.feedback.FeedBackDetailModel">
+        <result column="primary_key" property="feedbackDetailCode"/>
+        <result column="feedback_code" property="feedbackCode"/>
+        <result column="purchase_contract" property="purchaseContract"/>
+        <result column="contract_product" property="contractProduct"/>
+        <result column="name" property="name"/>
+        <result column="model" property="model"/>
+        <result column="material_code" property="materialCode"/>
+        <result column="receive" property="receive"/>
+        <result column="inspection" property="inspection"/>
+        <result column="feedback_num" property="feedbackNum"/>
+        <result column="pcs_in_contract" property="pcsInContract"/>
+        <result column="conclusion" property="conclusion"/>
+        <result column="demand" property="demand"/>
+        <result column="feedback_time" property="feedbackTime"/>
+        <result column="result" property="result"/>
+        <result column="handle_time" property="handleTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="inspect_id" property="inspectId"/>
+    </resultMap>
+
+
+    <select id="detailPage" resultMap="FeedBackDetailModel">
+        SELECT primary_key,
+               feedback_code,
+               purchase_contract,
+               contract_product,
+               name,
+               model,
+               material_code,
+               receive,
+               inspection,
+               feedback_num,
+               pcs_in_contract,
+               conclusion,
+               demand,
+               feedback_time,
+               result,
+               handle_time,
+               create_time,
+               enterprise_code,
+               inspect_id
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND feedback_code = #{feedbackCode}
+        ORDER BY contract_product, id DESC
+    </select>
+
+
+    <update id="updateAfterCommit">
+        UPDATE ${tableName}
+        SET demand        = #{demand},
+            feedback_time = #{feedbackTime}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND feedback_code = #{feedbackCode}
+          AND demand IS NULL
+          AND feedback_time IS NULL
+    </update>
+
+
+    <update id="updateAfterFinish">
+        UPDATE ${tableName}
+        SET result      = #{result},
+            handle_time = #{handleTime}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND feedback_code = #{feedbackCode}
+          AND result IS NULL
+          AND handle_time IS NULL
+    </update>
+
+
+    <select id="queryUnCommitedData" resultMap="FeedBackDetailModel">
+        SELECT primary_key,
+               feedback_code,
+               purchase_contract,
+               contract_product,
+               name,
+               model,
+               material_code,
+               receive,
+               inspection,
+               feedback_num,
+               pcs_in_contract,
+               conclusion,
+               demand,
+               feedback_time,
+               result,
+               handle_time,
+               create_time,
+               enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND feedback_code = #{feedbackCode}
+          AND demand IS NULL
+          AND feedback_time IS NULL
+    </select>
+
+
+    <update id="updateAfterSellerHandle">
+        UPDATE ${tableName}
+        SET result = #{result},
+        handle_time = #{handleTime}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        AND result IS NULL
+        AND handle_time IS NULL
+        AND primary_key IN
+        <foreach collection="feedbackDetailCodes" index="index" item="feedbackDetailCode" open="(" separator="," close=")">
+            #{feedbackDetailCode}
+        </foreach>
+    </update>
+
+    <select id="getFeedbackDetail" resultMap="FeedBackDetailModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{feedbackCode}
+    </select>
+
+</mapper>

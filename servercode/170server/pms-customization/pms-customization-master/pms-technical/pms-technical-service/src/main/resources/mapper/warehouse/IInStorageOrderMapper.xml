@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.warehouse.IInStorageOrderMapper">
+    <resultMap id="inStorageOrderModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.warehouse.InStorageOrderModel">
+        <result property="inStorageOrderCode" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="productPartCode" column="product_part_code"/>
+        <result property="inStorageStatus" column="in_storage_status"/>
+        <result property="applicant" column="applicant"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <select id="getOrderByProductPartCode" resultMap="inStorageOrderModel">
+        SELECT primary_key,
+               enterprise_code,
+               product_part_code,
+               in_storage_status,
+               applicant,
+               update_time,
+               create_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND in_storage_status = #{inStorageStatus}
+          AND product_part_code = #{productPartCode}
+    </select>
+</mapper>

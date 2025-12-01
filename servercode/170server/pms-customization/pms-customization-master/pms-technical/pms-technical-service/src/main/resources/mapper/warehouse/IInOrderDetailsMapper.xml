@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.warehouse.IInOrderDetailsMapper">
+    <resultMap id="inOrderDetailsModel"
+               type="com.futurecraftsmen.pms.technical.service.domain.warehouse.InOrderDetailsModel">
+        <result property="orderDetailCode" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="ownTaskList" column="own_task_list"/>
+        <result property="operationPhone" column="operation_phone"/>
+        <result property="assignNum" column="assign_num"/>
+        <result property="processDetail" column="process_detail"/>
+        <result property="operator" column="operator"/>
+        <result property="status" column="status"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap id="InboundOrderDetailModelResultMap" type="com.futurecraftsmen.pms.technical.service.domain.warehouse.InboundOrderDetailModel">
+        <result property="isLockStock" column="is_lock_stock"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="inStorageStaff" column="in_storage_staff" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="storedNum" column="stored_num"/>
+        <result property="awaitUnQualified" column="await_un_qualified"/>
+        <result property="productOrPart" column="product_or_part"/>
+        <result property="awaitQualified" column="await_qualified"/>
+        <result property="inboundOrder" column="inbound_order"/>
+        <result property="inQualified" column="in_qualified"/>
+        <result property="inUnQualified" column="in_un_qualified"/>
+        <result property="stock" column="stock"/>
+        <result property="applyDetails" column="apply_details" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="state" column="state"/>
+        <result property="inboundOrderDetailCode" column="primary_key"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <select id="getDetailByOperator" resultMap="inOrderDetailsModel">
+        SELECT primary_key,
+        enterprise_code,
+        own_task_list,
+        operation_phone,
+        assign_num,
+        process_detail,
+        operator,
+        status,
+        update_time,
+        create_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND operator = #{operator}
+        AND own_task_list IN
+        <foreach collection="orderCodeList" item="orderCode" open="(" close=")" separator=",">
+            #{orderCode}
+        </foreach>
+    </select>
+
+    <update id="updateInboundOrderDetailState">
+        update ${tableName}
+        set state = #{state}
+        where enterprise_code = #{enterpriseCode} and primary_key = #{primaryKey}
+    </update>
+
+    <select id="getInboundOrderDetailByCode" resultMap="InboundOrderDetailModelResultMap">
+        select
+            is_lock_stock,
+            enterprise_code,
+            in_storage_staff::BIGINT[],
+            stored_num,
+            await_un_qualified,
+            product_or_part,
+            await_qualified,
+            inbound_order,
+            in_qualified,
+            in_un_qualified,
+            stock,
+            apply_details::BIGINT[],
+            state,
+            primary_key,
+            create_time,
+            update_time,
+            delete_flag
+        from
+            ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and primary_key = #{primaryKey}
+    </select>
+
+    <select id="getInboundOrderDetailListByCode" resultMap="InboundOrderDetailModelResultMap">
+        select
+            is_lock_stock,
+            enterprise_code,
+            in_storage_staff::BIGINT[],
+            stored_num,
+            await_un_qualified,
+            product_or_part,
+            await_qualified,
+            inbound_order,
+            in_qualified,
+            in_un_qualified,
+            stock,
+            apply_details::BIGINT[],
+            state,
+            primary_key,
+            create_time,
+            update_time,
+            delete_flag
+        from
+            ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and inbound_order = #{inboundOrderCode}
+    </select>
+
+    <select id="checkData" resultType="int">
+        select
+            count(1)
+        from
+            ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and primary_key = #{primaryKey}
+          and delete_flag = false
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+</mapper>

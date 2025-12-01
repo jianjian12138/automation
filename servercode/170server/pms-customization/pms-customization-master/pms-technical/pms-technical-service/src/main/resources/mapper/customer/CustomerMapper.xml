@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.customer.CustomerMapper">
+
+    <resultMap id="CustomerModel" type="com.futurecraftsmen.pms.technical.service.domain.customer.CustomerModel">
+        <result column="primary_key" property="customerPrimaryKey"/>
+        <result column="customers_sign" property="customerName"/>
+        <result column="customers_belong" property="customersBelong" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="tax_number" property="taxNumber"/>
+        <result column="location" property="location"/>
+        <result column="invoice_tel" property="invoiceTel"/>
+        <result column="price_factor" property="priceFactor"/>
+        <result column="opening_bank" property="openingBank"/>
+        <result column="account_number" property="accountNumber"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="customer_Grade" property="customerGrade"/>
+        <result column="country_Location" property="countryLocation"/>
+        <result column="country" property="country"/>
+        <result column="home_City" property="homeCity"/>
+        <result column="remark" property="remark"/>
+        <result column="contacts" property="contacts" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+    </resultMap>
+
+
+
+    <select id="customerByPrimaryKey" resultMap="CustomerModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE enterprise_code = #{ownedEnterpriseCode}
+        AND primary_key = #{customerPrimaryKey}
+        AND delete_flag = 'f'
+    </select>
+
+
+    <select id="contactPaging"
+            resultType="com.futurecraftsmen.pms.technical.service.domain.customer.CustomerContactModel">
+        SELECT
+        primary_key as contactPrimaryKey,
+        customer_contact_sign as contactName,
+        contact_phone as contactPhone,
+        contact_email as contactEmail,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{ownedEnterpriseCode}
+        AND delete_flag = 'f'
+        <if test="contactPrimaryKeyList!=null and !contactPrimaryKeyList.isEmpty()">
+            AND primary_key IN
+            <foreach collection="contactPrimaryKeyList" index="index" item="contactPrimaryKey" open="(" separator=","
+                     close=")">
+                #{contactPrimaryKey}
+            </foreach>
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+
+</mapper>

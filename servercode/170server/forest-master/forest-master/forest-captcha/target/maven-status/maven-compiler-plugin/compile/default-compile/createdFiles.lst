@@ -1,0 +1,17 @@
+org/aerie/forest/captcha/domain/transfer/AbstractCaptchaGeneratePack.class
+org/aerie/forest/captcha/domain/transfer/captcha/SlidingBlockPoint.class
+org/aerie/forest/captcha/domain/transfer/VerificationCodeConsistencyCache.class
+org/aerie/forest/captcha/domain/processor/AbstractSlidingBlockCaptchaProcessor.class
+org/aerie/forest/captcha/domain/transfer/AbstractVerificationSubject.class
+org/aerie/forest/captcha/domain/middleware/CaptchaRedisson.class
+org/aerie/forest/captcha/domain/transfer/captcha/SlidingBlockCaptcha.class
+org/aerie/forest/captcha/domain/AbstractCaptchaConsistencyMiddleware.class
+org/aerie/forest/captcha/domain/captcha/SlidingBlock.class
+org/aerie/forest/captcha/domain/strategy/CurrentLimitingStrategy.class
+org/aerie/forest/captcha/domain/transfer/AbstractCaptcha.class
+org/aerie/forest/captcha/domain/transfer/AbstractVerificationCodeWrapper.class
+org/aerie/forest/captcha/domain/strategy/VerificationStrategy.class
+org/aerie/forest/captcha/domain/transfer/AbstractUserLocatingInfo.class
+org/aerie/forest/captcha/domain/transfer/captcha/SlidingBlockGeneratePack.class
+org/aerie/forest/captcha/domain/AbstractCaptchaProcessor.class
+org/aerie/forest/captcha/domain/transfer/VerificationCodePack.class

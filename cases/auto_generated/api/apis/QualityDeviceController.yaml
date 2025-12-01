@@ -1,0 +1,22 @@
+case_code: QualityDeviceController
+case_name: QualityDeviceController接口测试
+priority: 2
+steps:
+- data: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /qualityDeviceAnalyzeExcel
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 质检设备 主系统菜单相关
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /getEquipmentStatusList
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 质检设备 主系统菜单相关

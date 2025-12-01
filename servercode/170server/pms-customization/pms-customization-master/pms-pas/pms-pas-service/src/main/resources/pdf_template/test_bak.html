@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>质检报告</title>
+    <style>
+        @page landscape {
+            size: landscape;
+        }
+
+        @page {
+            size: A4;
+            margin: 2cm;
+
+            @bottom-left {
+                content: "第" counter(page) "页";
+                font-size: 12pt; /* 确保页码可见 */
+                color: black;
+            }
+
+            @bottom-right {
+                content: "共" counter(pages) "页";
+                font-size: 12pt; /* 确保页码可见 */
+                color: black;
+            }
+        }
+
+        body {
+            counter-reset: page; /* 初始化计数器 */
+        }
+
+        .page-portrait:before {
+            content: "第" counter(page) "页";
+            counter-increment: page;
+        }
+
+        /* 新一页 */
+        .new-page {
+            page-break-after: always;
+        }
+
+        /*纵向尺寸*/
+        .page-portrait {
+            margin: 20mm 20mm 0 10mm;
+            width: 150mm;
+        }
+
+        /*横向尺寸*/
+        .page-landscape {
+            page: landscape;
+            margin: 20mm 20mm 20mm 10mm;
+            width: 240mm;
+        }
+
+        /*简宋必须有，否则转pdf没用*/
+        body {
+            margin: 0;
+            font-family: SimSun, sans-serif;
+            font-size: 14px;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .indent-two {
+            text-indent: 2em;
+        }
+
+        .tableBottom tr td {
+            border-bottom: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-top: 1px solid black;
+            height: 1px;
+            padding: 5px;
+            text-align: center;
+            word-break: break-all;
+            /*width: 44px*/
+        }
+
+        .tableBottom tr td > p {
+            word-break: break-word;
+        }
+
+        .tableTop tr td > p {
+            word-break: break-word;
+        }
+
+        .tableTop tr td {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-top: 1px solid black;
+            height: 1px;
+            padding: 4px;
+            text-align: center;
+            word-break: break-all;
+            /*width: 44px*/
+        }
+
+        /*/避免图片被截断*/
+        img {
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+        }
+
+        .Bodyborder {
+            border: 1px solid black;
+            padding: 10px;
+            page-break-after: always;
+            /* overflow: auto */
+        }
+
+        .QRcode {
+            width: 16mm;
+            height: 16mm;
+            vertical-align: bottom;
+        }
+
+        .bottomCheck {
+            padding: 10px;
+            border-bottom: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .stamp {
+            margin-top: 20px;
+            width: 50mm;
+            height: 50mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .stampTitle {
+            z-index: 10;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .stampTime {
+            z-index: 10;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            text-align: center;
+
+        }
+
+        .stampImg {
+            position: absolute;
+            width: 50mm;
+            height: 50mm;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-portrait">
+    <div class="Bodyborder">
+        <div>
+            <img src="https://bkimg.cdn.bcebos.com/pic/2934349b033b5bb571dc8c5133d3d539b600bc12?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536"
+                 alt="二维码" class="QRcode"/>
+            <span class="bold">合同号:88541211</span>
+        </div>
+        <br/>
+        <table style="border-collapse:collapse; width:100%">
+            <tbody class="tableTop">
+            <tr>
+                <td style="width:12%">
+                    <p><strong>批次号</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>NJ-221155--112132</p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>产品</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>J599/26FE265SN</p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>检验依据</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>产品规范</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:12%">
+                    <p><strong>检验日期</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>2024.12.26-2024.12.31</p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>送检数量</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>周期内合计值</p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>检验数量</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p>周期内合计值</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="border-collapse:collapse; width:100%">
+            <tbody class="tableBottom">
+            <tr>
+                <td style=" width:10%">
+                    <p><strong>序号</strong></p>
+                </td>
+                <td style=" width:15%">
+                    <p><strong>检验项</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p><strong>技术要求</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验结果</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验设备</strong></p>
+                </td>
+                <td style="width:15%">
+                    <p><strong>单项判定</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td style=" width:10%">
+                    <p><strong>序号</strong></p>
+                </td>
+                <td style=" width:15%">
+                    <p><strong>检验项</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p><strong>技术要求</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验结果</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验设备</strong></p>
+                </td>
+                <td style="width:15%">
+                    <p><strong>单项判定</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td style=" width:10%">
+                    <p><strong>序号</strong></p>
+                </td>
+                <td style=" width:15%">
+                    <p><strong>检验项</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p><strong>技术要求</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验结果</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验设备</strong></p>
+                </td>
+                <td style="width:15%">
+                    <p><strong>单项判定</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td style=" width:10%">
+                    <p><strong>序号</strong></p>
+                </td>
+                <td style=" width:15%">
+                    <p><strong>检验项</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p><strong>技术要求</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验结果11111111111111111111</strong></p>
+                </td>
+                <td style="width:20%">
+                    <p><strong>检验设备</strong></p>
+                </td>
+                <td style="width:15%">
+                    <p><strong>单项判定</strong></p>
+                </td>
+            </tr>
+
+            <tr th:each="one : ${orderList}">
+                <td>
+                    <p th:text="${one.index}"></p>
+                </td>
+                <td>
+                    <p th:text="${one.name}"></p>
+                </td>
+                <td>
+                    <p th:text="${one.idNo}"></p>
+                </td>
+                <td>
+                    <p th:utext="${one.accountBank}"></p>
+                </td>
+                <td>
+                    <p th:text="${one.money}"></p>
+                </td>
+                <td>
+                    <p th:text="${one.date}"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="bottomCheck">
+            <div class="left bold">
+                检验结果:合格
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <div class="right">检验员:检1</div>
+        </div>
+        <div class="stamp" style="page-break-inside: avoid;">
+            <!--                <img class="stampImg"-->
+            <!--                    src="https://img0.baidu.com/it/u=3115346808,4224621571&fm=253&fmt=auto&app=120&f=JPEG?w=400&h=400"-->
+            <!--                    alt="印章">-->
+            <img class="stampImg" th:src="${img}" alt="印章"/>
+            <span class="stampTitle bold">品质部</span>
+            <span class="stampTime bold">2024.12.31</span>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+
+
+</script>
+
+</html>

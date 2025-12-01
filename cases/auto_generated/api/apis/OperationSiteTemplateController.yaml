@@ -1,0 +1,23 @@
+case_code: OperationSiteTemplateController
+case_name: OperationSiteTemplateController接口测试
+priority: 2
+steps:
+- data:
+    TemplateTypeBff: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /type/set
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 运营端官网模板 bff
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /type/delete
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: 运营端官网模板 bff

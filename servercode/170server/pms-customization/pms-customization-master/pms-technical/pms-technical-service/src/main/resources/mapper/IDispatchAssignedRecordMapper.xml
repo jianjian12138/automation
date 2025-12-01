@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IDispatchAssignedRecordMapper">
+    <resultMap id="BaseResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchAssignedRecordModel">
+        <result column="primary_key" property="primaryKey"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="product_code" property="productCode"/>
+        <result column="part_code" property="partCode"/>
+        <result column="process_route" property="processRoute"/>
+        <result column="need_num" property="needNum"/>
+        <result column="assigned_number" property="assignedNumber"/>
+        <result column="write_source" property="writeSource"/>
+        <result column="assigned_num" property="assignedNum"/>
+        <result column="status" property="status"/>
+        <result column="write_source_table_name" property="writeSourceTableName"/>
+
+        <result column="process_code" property="processCode"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+</mapper>

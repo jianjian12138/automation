@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IDispatchLogCountMapper">
+
+
+    <!-- 定义resultMap -->
+    <resultMap id="DispatchLogCountResultMap"
+               type="com.futurecraftsmen.pms.technical.service.domain.technical.dispatch.DispatchLogCountModel">
+        <id property="primaryKey" column="primary_key"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="partCode" column="part_code"/>
+        <result property="purchaseNum" column="purchase_num"/>
+        <result property="purchaseProduceNum" column="purchase_produce_num"/>
+        <result property="stockNum" column="stock_num"/>
+        <result property="produceNum" column="produce_num"/>
+        <result property="procedureCode" column="procedure_code"/>
+        <result property="routeCode" column="route_code"/>
+        <result property="batchGlobalCode" column="batch_global_code"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="bussNumber" column="buss_number"/>
+        <result property="batchNum" column="batch_num"/>
+        <result property="businessId" column="business_Id"/>
+        <result property="total" column="total"/>
+
+        <result property="partName" column="part_Name"/>
+        <result property="partModel" column="part_Model"/>
+        <result property="pcs" column="pcs"/>
+        <result property="pcsName" column="pcs_Name"/>
+        <result property="productFlag" column="product_Flag"/>
+
+        <result property="personCode" column="person_Code"/>
+        <result property="productCode" column="product_Code"/>
+
+        <result property="remark" column="remark"/>
+
+        <result property="createTime" column="create_Time"/>
+
+        <result property="batchGlobalCodeIds" column="batch_global_code_id"/>
+
+        <result property="productCreateWay" column="product_Create_Way"/>
+        <result property="partNeedNum" column="part_Need_Num"/>
+
+        <result property="ratio" column="ratio"/>
+
+    </resultMap>
+
+    <select id="groupCountByPartIdAndBatchNum" resultMap="DispatchLogCountResultMap">
+
+
+        select batch_Global_Code ,part_code , sum(a.purchase_num+a.purchase_produce_num+a.stock_num+a.produce_num ) as
+        total
+
+        from ${tableName} a where
+        enterprise_code=#{enterpriseCode}
+        and (batch_Global_Code,part_code) in
+        <foreach collection="ids" item="item" separator="," close=")" open="(">
+            ( #{item.name}::BIGINT ,#{item.code})
+        </foreach>
+        AND delete_flag = false
+        group by batch_Global_Code ,part_code
+
+    </select>
+
+    <!-- 插入方法 -->
+    <insert id="saveOne">
+        INSERT INTO ${tableName} (primary_key,
+                                  enterprise_code,
+                                  part_code,
+                                  purchase_num,
+                                  purchase_produce_num,
+                                  stock_num,
+                                  produce_num,
+                                  procedure_code,
+                                  route_code,
+                                  batch_global_code,
+                                  contract_code,
+                                  buss_number,
+                                  business_Id,
+                                  batch_num)
+        VALUES (#{data.primaryKey},
+                #{data.enterpriseCode},
+                #{data.partCode},
+                #{data.purchaseNum},
+                #{data.purchaseProduceNum},
+                #{data.stockNum},
+                #{data.produceNum},
+                #{data.procedureCode},
+                #{data.routeCode},
+                #{data.batchGlobalCode},
+                #{data.contractCode},
+                #{data.bussNumber},
+                #{data.businessId},
+                #{data.batchNum})
+    </insert>
+
+
+    <!-- 插入方法 -->
+    <insert id="saveAll">
+        INSERT INTO ${tableName} (
+        primary_key,
+        enterprise_code,
+        part_code,
+        purchase_num,
+        purchase_produce_num,
+        stock_num,
+        produce_num,
+        procedure_code,
+        route_code,
+        batch_global_code,
+        contract_code,
+        buss_number,
+        business_Id,
+        batch_num,
+        part_Name,
+        part_Model,
+        pcs,
+        pcs_Name,
+        product_Flag,person_Code,remark ,product_Code,product_Create_Way,parent_Part_Code,part_Need_Num,ratio
+        )
+        VALUES
+        <foreach collection="data" item="item" separator=",">
+            (
+            #{item.primaryKey},
+            #{item.enterpriseCode},
+            #{item.partCode},
+            #{item.purchaseNum},
+            #{item.purchaseProduceNum},
+            #{item.stockNum},
+            #{item.produceNum},
+            #{item.procedureCode},
+            #{item.routeCode},
+            #{item.batchGlobalCode},
+            #{item.contractCode},
+            #{item.bussNumber},
+            #{item.businessId},
+            #{item.batchNum},
+            #{item.partName},
+            #{item.partModel},
+            #{item.pcs},
+            #{item.pcsName},
+            #{item.productFlag},
+            #{item.personCode}, #{item.remark}, #{item.productCode}, #{item.productCreateWay},#{item.parentPartCode}
+            ,#{item.partNeedNum},#{item.ratio}
+            )
+        </foreach>
+    </insert>
+
+
+    <select id="partRecordPageList" resultMap="DispatchLogCountResultMap">
+
+        WITH RankedLogs AS (
+
+        select buss_number, sum(part_need_num) part_need_num, part_code ,business_id ,sum(stock_num) stock_num, sum(purchase_num)
+        purchase_num,sum(purchase_produce_num)
+        purchase_produce_num,sum(produce_num) produce_num ,STRING_AGG(distinct batch_global_code::text ,',')
+        batch_global_code_id ,
+        ROW_NUMBER() OVER (
+        PARTITION BY part_code, business_id, buss_number
+        ORDER BY MAX(create_time) DESC ,MAX(id) DESC
+        ) AS rn,
+        max(id) id
+
+        from ${dispatchLogCount} a
+        where enterprise_code=#{enterpriseCode}
+        and product_flag=#{ data.productFlag }
+        AND a.delete_flag = false
+
+        <if test="data!=null and data.bussNumber!=null and data.bussNumber!=''">
+            and buss_Number like '%' || #{ data.bussNumber} || '%'
+        </if>
+
+
+        <if test="data!=null and data.productName!=null and data.productName!=''">
+            and part_name like '%' || #{ data.productName} || '%'
+        </if>
+
+
+        <if test="data!=null and data.productModel!=null and data.productModel!=''">
+            and part_model like '%' || #{ data.productModel} || '%'
+        </if>
+
+
+        <if test="data!=null and data.type==1 ">
+            and stock_num>0
+        </if>
+
+
+        <if test="data!=null and data.type==2 ">
+            and purchase_num>0
+        </if>
+
+
+        <if test="data!=null and data.type==3 ">
+            and purchase_produce_num>0
+        </if>
+
+
+        <if test="data!=null and data.type==4 ">
+            and produce_num>0
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and (
+            ${dynamicTableNameProxy.getXiHangPartQuery("a.part_code","xihang",data.partUnityNo)}
+            or
+            ${dynamicTableNameProxy.getXiHangPartQuery("a.product_code","xihang",data.partUnityNo)}
+            )
+        </if>
+
+        and (
+        ${dynamicTableNameProxy.getProductPartSearchObj("a.part_code",data.searchName)}
+        or
+        ${dynamicTableNameProxy.getProductPartSearchObj("a.product_code",data.searchName)}
+        )
+
+
+        group by part_code ,business_id ,buss_number
+
+        order by buss_number desc,max(create_time) desc
+
+        )
+
+        select * FROM
+        RankedLogs
+        WHERE
+        rn = 1
+        ORDER BY
+        buss_number DESC ,id desc
+
+    </select>
+
+
+    <select id="productPageList" resultMap="DispatchLogCountResultMap">
+
+        select
+        a.contract_number buss_number ,
+        b.product_part_sign part_Name,
+        b.model part_Model,
+        a.primary_key business_Id,
+        a.batch_number batch_num,
+        b.pcs,
+        a.product_code part_code
+
+        from ${dispatchTaskProduct} a ,${productPart} b
+
+        where a.product_code=b.primary_key
+        and a.enterprise_code=#{enterpriseCode}
+        and b.enterprise_code=#{enterpriseCode}
+        and a.product_code=b.primary_key
+        AND a.delete_flag = false
+        AND b.delete_flag = false
+
+        <if test="data!=null and data.bussNumber!=null and data.bussNumber!=''">
+            and a.contract_number like '%' || #{ data.bussNumber} || '%'
+        </if>
+
+
+        <if test="data!=null and data.productName!=null and data.productName!=''">
+            and b.product_part_sign like '%' || #{ data.productName} || '%'
+        </if>
+
+
+        <if test="data!=null and data.productModel!=null and data.productModel!=''">
+            and b.model like '%' || #{ data.productModel} || '%'
+        </if>
+
+        and exists (
+        select 1 from ${dynamicTableNameProxy.dispatchLogCount} c where
+        c.product_flag=true
+        and a.primary_key=c.business_id
+        <if test="data!=null and data.type!=null ">
+
+            <if test="data!=null and data.type==1 ">
+                and c.stock_num>0
+            </if>
+
+            <if test="data!=null and data.type==2 ">
+                and c.purchase_num>0
+            </if>
+
+            <if test="data!=null and data.type==3 ">
+                and c.purchase_produce_num>0
+            </if>
+
+            <if test="data!=null and data.type==4 ">
+                and c.produce_num>0
+            </if>
+
+        </if>
+        )
+
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("b.primary_key","xihang",data.partUnityNo)}
+        </if>
+
+        and ${dynamicTableNameProxy.getProductPartSearchObj("b.primary_key",data.searchName)}
+
+        order by a.create_time desc ,a.id desc
+    </select>
+
+
+    <select id="statDisProductNumByBusinessId" resultMap="DispatchLogCountResultMap">
+
+        select business_id ,sum (produce_num) produce_num ,sum(purchase_produce_num) purchase_produce_num ,
+        sum(purchase_num) purchase_num
+        ,sum(stock_num) stock_num
+        from ${dispatchLogCount}
+
+        where product_flag = true
+        and enterprise_code = #{enterpriseCode}
+        AND delete_flag = false
+        and business_id in
+        <foreach collection="ids" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        group by business_id
+
+
+    </select>
+
+
+    <select id="productDetail" resultMap="DispatchLogCountResultMap">
+
+        select *
+        from ${dispatchLogCount}
+        where product_flag = true
+          and enterprise_code = #{enterpriseCode}
+          and buss_Number = #{data.bussNumber}
+          and part_code = #{data.productCode}
+          AND delete_flag = false
+        order by create_time desc, id desc
+    </select>
+
+
+    <select id="partDetail" resultMap="DispatchLogCountResultMap">
+        select *
+        from ${dispatchLogCount}
+        where product_flag = false
+        and enterprise_code = #{enterpriseCode}
+        and part_code = #{data.productCode}
+        and batch_global_code in
+        <foreach collection="data.batchGlobalCodeIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        AND delete_flag = false
+        order by create_time desc ,id desc
+    </select>
+
+
+    <select id="partBussNumber" resultMap="DispatchLogCountResultMap">
+
+        select *
+        from ${dispatchLogCount}
+        where product_flag = false
+          and enterprise_code = #{enterpriseCode}
+          and part_code = #{data.productCode}
+          AND delete_flag = false
+    </select>
+
+
+    <select id="queryProductInfoByBusinessId" resultMap="DispatchLogCountResultMap">
+
+        select distinct a.product_part_sign part_Name,
+        a.model part_Model,
+        b.primary_key business_Id,
+        a.pcs,
+        b.product_code part_code
+        from ${productPart} a ,${dispatchTaskProduct} b
+        where b.product_code=a.primary_key
+        and b.enterprise_code = #{enterpriseCode}
+        and a.enterprise_code = #{enterpriseCode}
+        AND a.delete_flag = false
+        AND b.delete_flag = false
+        and b.primary_key in
+        <foreach collection="ids" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="queryProductRecordByBusinessIdAndPartCodeIn" resultMap="DispatchLogCountResultMap">
+
+        select *
+        from ${dispatchLogCount}
+        where
+        business_id=#{businessId}
+        and part_code in
+        <foreach collection="ids" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        AND delete_flag = false
+    </select>
+
+
+
+    <select id="queryRecordByPartCodeAndBatchGlobalCodeIdIn" resultMap="DispatchLogCountResultMap">
+
+        select *
+        from ${dispatchLogCount}
+        where
+        part_code=#{partId}
+        and batch_global_code in
+        <foreach collection="ids" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        AND delete_flag = false
+    </select>
+</mapper>

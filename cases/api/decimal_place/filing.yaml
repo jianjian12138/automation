@@ -1,0 +1,104 @@
+case_code: Filing
+case_name: filing
+priority: 2
+steps:
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 12345.12345678
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 1.0e-08
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 99999999.99999999
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 123.123456785
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 非法字符串
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: -100.5
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    paymentStrategy: paymentategy_value
+    quotationAmount: 0.0
+    quotationCode: $get_db_field(quotationcode)
+    quotationNumber: quotationnumber_value
+    remark: ''
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/sell/quotation/filing
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

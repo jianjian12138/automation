@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.purchase.IReceivingDetailMapper">
+
+
+    <resultMap id="PurchaseReceivingDetailInfo" type="com.futurecraftsmen.pms.technical.service.core.purchase.PurchaseReceivingDetailInfo">
+        <result column="primary_key" property="recordCode"/>
+        <result column="enterprise_code" property="purchaseEnterprise"/>
+        <result column="purchase_contract" property="purchaseContract"/>
+        <result column="purchase_contract_product" property="contractProduct"/>
+        <result column="received_quantity" property="receivedQuantity"/>
+        <result column="qualified_quantity" property="qualifiedQuantity"/>
+    </resultMap>
+
+    <update id="batchUpdateDetails">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="seller_send_quantity =case" suffix="end">
+            <foreach collection="updateModels" item="model" index="index">
+                when purchase_contract_product=#{model.purchaseContractProduct} then seller_send_quantity + #{model.sellerSendQuantityNeedAdd}
+            </foreach>
+        </trim>
+
+        WHERE purchase_contract_product in
+        <foreach collection="updateModels" index="index" item="model" separator="," open="(" close=")">
+            #{model.purchaseContractProduct}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+    </update>
+
+    <select id="queryByContractProductCodes" resultMap="PurchaseReceivingDetailInfo">
+        SELECT primary_key, purchase_contract,purchase_contract_product,
+        received_quantity, qualified_quantity,enterprise_code
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND purchase_contract_product IN
+        <foreach collection="contractProducts" index="index" item="contractProduct" open="(" separator="," close=")">
+            #{contractProduct}
+        </foreach>
+    </select>
+
+
+    <select id="countByMaterialCode">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND (material_code = #{materialCode} OR un_modifiable_material_code = #{materialCode})
+    </select>
+
+</mapper>

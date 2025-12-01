@@ -1,0 +1,23 @@
+case_code: InspectApproveController
+case_name: InspectApproveController接口测试
+priority: 2
+steps:
+- data:
+    InspectApprovePageConditionDTO: {}
+  headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: POST
+  path: /page/list
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: Zeusedulous
+- headers: $generate_token(api_host)
+  host: $get_host(ERP_TEST,api_host)
+  method: GET
+  params: {}
+  path: /count
+  response_assert:
+    response_assert_data: 接口调用成功
+    status_code_assert: 200
+  step_name: Zeusedulous

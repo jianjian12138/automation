@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.right.service.dao.RightMapEnterpriseDao">
+    <insert id="addRightMapEnterprise">
+        insert into right_base.t_right_base_right_map_enterprise (map_code, enterprise_code, right_code, in_date, remark)
+        VALUES (#{rightMapEnterpriseModel.mapCode}, #{rightMapEnterpriseModel.enterpriseCode},
+                #{rightMapEnterpriseModel.rightCode}, #{inDate},
+                #{rightMapEnterpriseModel.remark})
+    </insert>
+    <update id="rollOverRightMapEnterprise">
+        UPDATE right_base.t_right_base_right_map_enterprise
+        SET in_date = #{inDate}
+        WHERE map_code = #{rightMapEnterpriseCode}
+          AND delete_flag = false
+    </update>
+    <update id="deleteRightMapEnterprise">
+        UPDATE right_base.t_right_base_right_map_enterprise
+        SET delete_flag = true
+        WHERE map_code = #{rightMapEnterpriseCode}
+          AND delete_flag = false
+    </update>
+    <select id="getAllRightMapEnterpriseModels" resultType="com.futurecraftsmen.pms.right.service.po.RightMapEnterpriseModel">
+        SELECT id,
+               map_code,
+               enterprise_code,
+               right_code,
+               in_date,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM right_base.t_right_base_right_map_enterprise
+        WHERE delete_flag = false
+    </select>
+    <select id="getRightMapEnterprisesByCodes" resultType="com.futurecraftsmen.pms.right.service.po.RightMapEnterpriseModel">
+        SELECT id,
+        map_code,
+        enterprise_code,
+        right_code,
+        in_date,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM right_base.t_right_base_right_map_enterprise
+        WHERE delete_flag = false AND map_code IN
+        <foreach collection="rightMapEnterpriseCodes" item="rightMapEnterpriseCode" index="index" open="(" separator=","
+                 close=")">
+            #{rightMapEnterpriseCode}
+        </foreach>
+    </select>
+</mapper>

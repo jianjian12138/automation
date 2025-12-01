@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.EnterpriseParameterDao">
+    <select id="getEnterpriseParameterByCode"
+            resultType="com.futurecraftsmen.pms.dp.service.po.EnterpriseParameterModel">
+        SELECT enterprise_parameter_code,
+               enterprise_code,
+               process_code,
+               parameter_name,
+               value,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_parameter_code = #{enterpriseParameterCode}
+    </select>
+    <select id="getEnterpriseParameterList"
+            resultType="com.futurecraftsmen.pms.dp.service.po.EnterpriseParameterModel">
+        SELECT enterprise_parameter_code,
+        enterprise_code,
+        process_code,
+        parameter_name,
+        value,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="processCode != null">
+            AND process_code = #{processCode}
+        </if>
+        <if test="parameterName != null and  parameterName != ''">
+            AND parameter_name = #{parameterName}
+        </if>
+        ORDER BY id ASC
+    </select>
+
+    <select id="getEnterpriseParameter"
+            resultType="com.futurecraftsmen.pms.dp.service.po.EnterpriseParameterModel">
+        SELECT enterprise_parameter_code,
+               enterprise_code,
+               process_code,
+               parameter_name,
+               value,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM ${tableName}
+        WHERE delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+          AND process_code = #{processCode}
+          AND parameter_name = #{parameterName}
+        limit 1
+    </select>
+
+    <insert id="saveEnterpriseParameter">
+        INSERT INTO ${tableName} (enterprise_parameter_code, enterprise_code, process_code, parameter_name, value,
+                                  remark)
+        VALUES (#{enterpriseParameterModel.enterpriseParameterCode}, #{enterpriseParameterModel.enterpriseCode},
+                #{enterpriseParameterModel.processCode}, #{enterpriseParameterModel.parameterName},
+                #{enterpriseParameterModel.value}, #{enterpriseParameterModel.remark})
+    </insert>
+
+    <update id="updateEnterpriseParameter">
+        UPDATE ${tableName}
+        SET remark = #{remark}
+        <if test="value != null and value != ''">
+            , value = #{value}
+        </if>
+        WHERE delete_flag = false
+          AND enterprise_parameter_code = #{enterpriseParameterCode}
+    </update>
+
+    <delete id="deleteEnterpriseParameter">
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_parameter_code = #{enterpriseParameterCode}
+          AND delete_flag = false
+    </delete>
+</mapper>

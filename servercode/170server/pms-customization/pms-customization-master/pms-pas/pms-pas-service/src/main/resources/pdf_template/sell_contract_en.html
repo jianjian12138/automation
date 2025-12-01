@@ -1,0 +1,211 @@
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<div>
+    <table class="" style="width: 100%;">
+        <tbody>
+        <tr>
+            <td colspan="2" style="width: 100%;vertical-align: middle;text-align: center;">
+                <h2 style="text-align: center;">
+            <span class="contractName" contenteditable="false"
+                  data-struct-type="text" style="border: 1px solid transparent; text-align: center; color:
+                        rgb(189,189, 190); font-size: 20px;  word-wrap: break-word;" th:text="${contractName}">
+            </span>
+                </h2>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div style="display:inline-block;">
+        <div style="display:inline-block; float: left; width: 50%;">
+            <table class="headPartyA" style="width: 100%; margin-top: 30px;">
+                <tr th:each="headParty : ${headPartyA}">
+                    <td contenteditable="false"
+                        style="width: 50%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                        th:text="${headParty}">数据1
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div style="display:inline-block; float: left; width: 100%;">
+            <table class="" style="width: 100%; margin-top: 30px;">
+                <tr>
+                    <td contenteditable="false"
+                        style="width: 50%; border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;">
+                        <div style="text-align: left; font-size: 12px;">Contract No.：
+                            <span class="contractNumber" contenteditable="false"
+                                  style="display: inline; border: 1px solid transparent; text-align: center; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                                  th:text="${contractNumber}"></span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div style="display:inline-block">
+    <div style="display:inline-block;float: left;width: 50%;">
+        <table class="headPartyB" style="width: 100%;">
+            <tr th:each="headParty : ${headPartyB}">
+                <td contenteditable="false"
+                    style="width: 50%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                    th:text="${headParty}">数据2
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+    <div style="display:inline-block;float: left;width: 100%;">
+        <table class="" style="width: 100%;">
+            <tr>
+                <td contenteditable="false"
+                    style="width: 50%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;">
+                    <div style="text-align: left; font-size: 12px;">Create Date：
+                        <span class="createDate" contenteditable="false"
+                              style="display: inline; border: 1px solid transparent; text-align: center; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                              th:text="${createDate}"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!--<div class="placeHolder"  th:style="${area2Style}">area</div>-->
+
+<!--<div style="display:inline-block">-->
+<!--    <div style="display:inline-block;float: left;width: 50%;" >-->
+
+<!--        <table class="headPartyA" style="width: 100%;">-->
+<!--            <tr th:each="headParty : ${headPartyA}">-->
+<!--                <td contenteditable="false"-->
+<!--                    style="width: 50%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"-->
+<!--                    th:text="${headParty}">数据1-->
+<!--                </td>-->
+<!--            </tr>-->
+
+<!--        </table>-->
+<!--    </div>-->
+
+<!--    <div style="display:inline-block;float: left;width: 100%;">-->
+<!--        <table class="headPartyB" style="width: 100%;">-->
+<!--            <tr th:each="headParty : ${headPartyB}">-->
+<!--                <td contenteditable="false"-->
+<!--                    style="width: 50%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"-->
+<!--                    th:text="${headParty}">数据2-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="placeHolder" th:style="${area3Style}">area</div>
+
+<div>
+    <table cellspacing="0" style="
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        text-align: center;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+        ">
+        <thead>
+        <tr style="background-color: #fafafa; border-bottom: 1px solid black;">
+            <th th:each="productColumnTitle : ${productColumnTitles}"
+                th:style="${productColumnTitleStyleMapping.get(productColumnTitle)}"
+                th:text="${productColumnTitle}"
+                style="text-align: center; border-right: 1px solid black; border-bottom: 1px solid black;">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="productElement : ${productElements}">
+            <td style="
+                font-weight:normal;
+                text-align: center;
+                border-right: 1px solid black;
+                border-bottom: 1px solid black;
+                height: 30px;"
+                th:each="productColumnTitle : ${productColumnTitles}"
+                th:text="${productElement.get(productColumnTitle)}">数据
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<!--<div class="placeHolder"  th:style="${area4Style}">area</div>-->
+
+<div style="text-align: right;display: flex;align-items: center;flex-direction: row">
+            <span contenteditable="false"
+                  data-struct-type="text"
+                  style="display:inline;border:1px solid transparent;text-align:center;color: #BDBDBE;font-size:10px;overflow:hidden;"
+                  th:text="${amount}"></span>
+</div>
+
+<table class="clauses" th:if="${hasClauses}" th:style="${clauseStyle}">
+    <tbody>
+    <tr th:each="clause,iter:${clauses}">
+        <td style="width: 100%;text-align: left;">
+            <div class="clause" contenteditable="false" data-struct-type="text" th:utext="${clause}">
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!--<div class="placeHolder"  th:style="${area5Style}">area</div>-->
+
+<div style="display:inline-block">
+    <div style="display:inline-block;float: left;width: 50%; position: relative;">
+        <!-- 买方印章钩子标签 - 调试用 -->
+        <!--        <span class="buyerSealHook"-->
+        <!--              style="position: absolute; top: 0; left: 20px; width: 120px; height: 20px; overflow: hidden; color: red; font-size: 12px; font-weight: bold; background-color: yellow; border: 1px solid red; padding: 2px; z-index: 1000; display: inline-block;">BUYER_SEAL_HOOK</span>-->
+        <!-- 买方印章钩子标签 - 隐藏但可定位 -->
+        <span class="buyerSealHook"
+              style="position: absolute; top: 0; left: 20px; width: 120px; height: 20px; overflow: hidden; color: white; font-size: 0.1px; background-color: white; border: none; padding: 0; z-index: -1; display: inline-block;">BUYER_SEAL_HOOK</span>
+        <table class="BuyerInfos" style="width: 100%;">
+            <tr th:each="buyerInfo, iterStat : ${buyerInfos}">
+                <!-- 买方合同印章 - 调试用 -->
+                <!--                <td contenteditable="false"-->
+                <!--                    style="width: 70%;  border: 1px solid red; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"-->
+                <!--                    th:text="${buyerInfo}">数据1-->
+                <!--                </td>-->
+                <td contenteditable="false"
+                    style="width: 70%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                    th:text="${buyerInfo}">数据1
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="display:inline-block;float: left;width: 90%; position: relative;">
+        <!-- 卖方印章钩子标签 - 调试用 -->
+        <!--        <span class="sellerSealHook"-->
+        <!--              style="position: absolute; top: 0; left: 20px; width: 120px; height: 20px; overflow: hidden; color: blue; font-size: 12px; font-weight: bold; background-color: lightgreen; border: 1px solid blue; padding: 2px; z-index: 1000; display: inline-block;">SELLER_SEAL_HOOK</span>-->
+        <!-- 卖方印章钩子标签 - 隐藏但可定位 -->
+        <span class="sellerSealHook"
+              style="position: absolute; top: 0; left: 20px; width: 120px; height: 20px; overflow: hidden; color: white; font-size: 0.1px; background-color: white; border: none; padding: 0; z-index: -1; display: inline-block;">SELLER_SEAL_HOOK</span>
+        <table class="SellerInfos" style="width: 100%;">
+            <tr th:each="sellerInfo, iterStat : ${sellerInfos}">
+                <!-- 卖方合同印章 - 调试用 -->
+                <!--                <td contenteditable="false"-->
+                <!--                    style="width: 70%;  border: 1px solid red; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"-->
+                <!--                    th:text="${sellerInfo}">数据2-->
+                <!--                </td>-->
+                <td contenteditable="false"
+                    style="width: 70%;  border: 1px solid transparent; text-align: left; color: rgb(189, 189, 190); font-size: 12px; word-wrap: break-word;"
+                    th:text="${sellerInfo}">数据2
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

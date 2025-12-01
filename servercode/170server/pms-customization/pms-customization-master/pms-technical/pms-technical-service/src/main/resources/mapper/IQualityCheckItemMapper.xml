@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IQualityCheckItemMapper">
+
+
+    <insert id="batchAdd">
+        INSERT INTO ${tableName} (primary_key, check_name,test_method,use_device,
+        check_require,policy_paper,other_requirement,enterprise_code)
+        VALUES
+        <foreach collection="qualityCheckItemModels" index="index" item="model" separator=",">
+            ( #{model.qualityCheckItemCode}, #{model.checkName}, #{model.testMethod},
+            #{model.useDevice},#{model.checkRequire},#{model.policyPaper,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+             #{model.otherRequirement},#{model.enterpriseCode} )
+        </foreach>
+    </insert>
+
+
+</mapper>

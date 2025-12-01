@@ -1,0 +1,73 @@
+# Mobile测试示例 - 订单流程
+# Maestro声明式测试
+
+appId: com.example.shop
+---
+# 1. 启动应用
+- launchApp
+
+# 2. 浏览商品
+- assertVisible: "商品列表"
+
+# 3. 点击第一个商品
+- tapOn:
+    index: 0
+    text: "商品"
+
+# 4. 查看商品详情
+- assertVisible: "商品详情"
+- assertVisible: "价格"
+- assertVisible: "库存"
+
+# 5. 添加到购物车
+- tapOn: "加入购物车"
+
+# 6. 验证添加成功提示
+- assertVisible: "添加成功"
+
+# 7. 进入购物车
+- tapOn:
+    id: "cart_icon"
+
+# 8. 验证购物车商品
+- assertVisible: "购物车"
+- assertVisible:
+    id: "cart_item_0"
+
+# 9. 修改数量
+- tapOn:
+    id: "increase_quantity"
+- tapOn:
+    id: "increase_quantity"
+
+# 10. 结算
+- tapOn: "去结算"
+
+# 11. 填写收货地址
+- assertVisible: "确认订单"
+- tapOn:
+    id: "address_input"
+- inputText: "北京市朝阳区XXX路XXX号"
+
+# 12. 填写手机号
+- tapOn:
+    id: "phone_input"
+- inputText: "13800138000"
+
+# 13. 提交订单
+- tapOn: "提交订单"
+
+# 14. 验证订单创建成功
+- assertVisible: "订单创建成功"
+- assertVisible: "订单号"
+
+# 15. 截图保存
+- takeScreenshot: reports/screenshots/mobile_order_success.png
+
+# 16. 查看订单详情
+- tapOn: "查看详情"
+
+# 17. 验证订单信息
+- assertVisible: "订单详情"
+- assertVisible: "待付款"
+

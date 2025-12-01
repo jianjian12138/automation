@@ -1,0 +1,43 @@
+# WebSocket 测试示例
+case_name: WebSocket测试示例
+case_code: WebSocketExample
+priority: 1
+steps:
+  - step_name: WebSocket连接和消息发送
+    protocol: websocket
+    ws_url: wss://echo.websocket.org
+    message:
+      type: test
+      data: Hello WebSocket
+    wait_response: true
+    wait_timeout: 5
+    close_after: true
+    response_assert:
+      status_code_assert: 200
+      message_assert: Hello WebSocket
+
+  - step_name: WebSocket持续连接
+    protocol: ws
+    ws_url: ws://localhost:8080/websocket
+    connection_id: test_conn
+    message: "ping"
+    wait_response: true
+    wait_timeout: 3
+    close_after: false
+    response_assert:
+      status_code_assert: 200
+
+  - step_name: 发送JSON消息
+    protocol: websocket
+    ws_url: wss://echo.websocket.org
+    connection_id: test_conn
+    message:
+      action: get_data
+      params:
+        id: 123
+    wait_response: true
+    wait_timeout: 5
+    response_assert:
+      status_code_assert: 200
+      jsonpath_assert:
+        - $.action == "get_data"

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.enterprise.service.dao.EnterpriseRegionDao">
+    <select id="getAllEnterpriseRegion"
+            resultType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseRegionModel">
+        SELECT region_code,
+               region_num,
+               region_name,
+               up_level_num,
+               remark,
+               create_time,
+               update_time,
+               delete_flag
+        FROM enterprise_base.t_enterprise_base_region
+        WHERE delete_flag = false
+    </select>
+    <select id="getEnterpriseRegionsByCodes"
+            resultType="com.futurecraftsmen.pms.enterprise.service.po.EnterpriseRegionModel">
+        SELECT region_code,
+        region_num,
+        region_name,
+        up_level_num,
+        remark,
+        create_time,
+        update_time,
+        delete_flag
+        FROM enterprise_base.t_enterprise_base_region
+        WHERE delete_flag = false
+        AND region_code IN
+        <foreach collection="codes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </select>
+</mapper>

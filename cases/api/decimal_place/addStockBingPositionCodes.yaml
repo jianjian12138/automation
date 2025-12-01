@@ -1,0 +1,74 @@
+# 库存中添加仓位场景
+# 使用的数据库表：
+# 1. dm_m9.warehouse_t_dm_m9_stock_9 - 库存表（主要表）
+# 2. dm_m9.warehouse_t_dm_m9_position_stock_batch_9 - 仓位库存批次表（仓位库存信息）
+# 3. dm_m9.base_module_t_dm_m9_position_9 - 仓位表（仓位信息）
+# 注意：此接口无小数位验证，只需要正常场景测试用例
+
+case_code: Addstockbingpositioncodes
+case_name: addStockBingPositionCodes
+priority: 2
+steps:
+- step_name: 前置步骤-查询现有仓位代码
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/getStockBingPositionNumByStockCode
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    stockCode: "1984098091523760130"
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+  extract:
+    - extract: $set_variable(positionCodeList,$get_response_data($.data[].positionCode))
+
+- step_name: 前置步骤-清空已存在的仓位代码（如果存在则清空）
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/clearStockBingPositionCodes
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    stockCode: "1984098091523760130"
+    toBeDeletePositionCodes:
+    - "471053556092895232"
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+  # 条件判断：如果 positionCodeList 为空、为 None 或不包含目标仓位码，则跳过此步骤
+  # 格式1（推荐）：字典格式，更清晰易读
+  skip_when:
+    var: positionCodeList
+    operator: not_contains
+    value: "471053556092895232"
+  # 格式2（向后兼容）：表达式字符串格式
+  # skip_when: '"471053556092895232" not in positionCodeList'
+  # 格式3（组合条件示例）：支持 AND/OR 逻辑
+  # skip_when:
+  #   logic: or
+  #   conditions:
+  #     - var: positionCodeList
+  #       operator: is_none
+  #     - var: positionCodeList
+  #       operator: empty
+  #     - var: positionCodeList
+  #       operator: not_contains
+  #       value: "471053556092895232"
+
+- step_name: 正常场景-添加仓位代码
+  host: $get_host(ERP_TEST,pms_host)
+  path: /technology/inventory/addStockBingPositionCodes
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    stockCode: "1984098091523760130"
+    toBeAddPositionCodes:
+    - "471053556092895232"
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202

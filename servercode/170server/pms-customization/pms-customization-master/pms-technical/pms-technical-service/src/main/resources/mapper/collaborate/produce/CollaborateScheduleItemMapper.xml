@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.CollaborateScheduleItemMapper">
+
+    <resultMap id="collaborateOutboundPageRpcDTOResultMap" type="com.futurecraftsmen.pms.technical.api.domain.collaborate.outbound.CollaborateOutboundPageRpcDTO">
+        <result column="unityNo" property="unityNo"/>
+        <result column="name" property="name"/>
+        <result column="model" property="model"/>
+        <result column="order_quantity" property="orderQuantity"/>
+        <result column="pcsChn" property="pcsChn"/>
+        <result column="applyNum" property="applyNum"/>
+        <result column="scblApplyNumSum" property="scblApplyNumSum"/>
+        <result column="outbound_quantity" property="outboundQuantity" />
+        <result column="shippingSpaces" property="shippingSpaces" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="total_inventory" property="totalInventory" />
+        <result column="lock_in_inventor" property="lockInInventor"/>
+        <result column="stockCode" property="stockCode"/>
+        <result column="stock_init_state" property="stockInitState"/>
+        <result column="primary_key" property="primaryKey"/>
+        <result column="accrual_lock_in_inventory" property="accrualLockInInventory"/>
+        <result column="collaborate_material" property="collaborateMaterial"/>
+        <result column="schedule_quantity" property="scheduleQuantity"/>
+        <result column="ingredient_out_quantity" property="ingredientOutQuantity"/>
+        <result column="contract_number" property="contractNumber"/>
+    </resultMap>
+
+
+    <update id="deductionAwaitQuantity">
+        update ${dynamicTableNameProxy.collaborateScheduleItem}
+        set schedule_Quantity = COALESCE(schedule_Quantity) + #{num},
+            schedule_Flag= true
+        where primary_key = #{id}
+          and COALESCE(schedule_Quantity) + #{num} &lt;= order_quantity
+    </update>
+
+    <select id="getProductListByContractCode" resultMap="collaborateOutboundPageRpcDTOResultMap">
+        WITH apply_summary AS (
+            SELECT
+                data_key,
+                COALESCE(SUM(apply_num), 0) AS apply_num_sum,
+                COALESCE(SUM(CASE WHEN type = 'SCBL' THEN apply_num ELSE 0 END), 0) AS scbl_apply_num_sum
+            FROM
+                ${dynamicTableNameProxy.outStockApply}
+            WHERE
+                delete_flag = false
+              AND contract_code = #{requestData.contractCode}
+            GROUP BY
+                data_key
+        )
+        SELECT
+            t2.unity_no AS unityNo,
+            t2.product_part_sign name,
+            t2.model,
+            case when #{type} = 0 then t.order_quantity else
+                GREATEST((COALESCE(t.order_quantity,0) -  COALESCE(t.schedule_quantity,0) + COALESCE(a.scbl_apply_num_sum,0)), 0)  end as order_quantity,
+            t3.pieces_sign AS pcsChn,
+            COALESCE(a.apply_num_sum, 0) AS applyNum,
+            COALESCE(a.scbl_apply_num_sum, 0) AS scblApplyNumSum,
+            t.outbound_quantity,
+            t4.shipping_space::BIGINT[] AS shippingSpaces,
+            COALESCE(t4.total_inventory,0) AS total_inventory,
+            COALESCE(t4.lock_in_inventor,0) AS lock_in_inventor,
+            t4.primary_key AS stockCode,
+            t4.stock_init_state AS stock_init_state,
+            t.primary_key,
+            COALESCE(t.accrual_lock_in_inventory,0) AS accrual_lock_in_inventory,
+            t.collaborate_material,
+            t.schedule_quantity,
+            COALESCE(t.ingredient_out_quantity,0) as ingredient_out_quantity,
+            t.contract_number
+        FROM
+            ${dynamicTableNameProxy.collaborateScheduleItem} t
+                LEFT JOIN apply_summary a
+                          ON t.primary_key = a.data_key
+                LEFT JOIN ${dynamicTableNameProxy.productPart} t2
+                          ON t.collaborate_material = t2.primary_key
+                LEFT JOIN ${dynamicTableNameProxy.productPiece} t3
+                          ON t2.pcs = t3.primary_key
+                LEFT JOIN ${dynamicTableNameProxy.stock} t4
+                          ON t2.primary_key = t4.product_part_code
+        WHERE
+            t.delete_flag = false
+          AND t.enterprise_code = #{enterpriseCode}
+          and t.contract_code = #{requestData.contractCode}
+          <if test="type == 0">
+              and GREATEST(t.order_quantity, 0) > 0
+              AND t.material_nature is null and t.collaborate_type = 0
+          </if>
+          <if test="type == 1">
+              and GREATEST(t.order_quantity -  t.schedule_quantity, 0) > 0
+              AND t.material_nature = 'PRODUCE' and t.collaborate_type = 1 and t.schedule_quantity &lt; t.order_quantity
+          </if>
+          <if test="type == 2">
+              and GREATEST(t.order_quantity -  t.schedule_quantity, 0) > 0
+              AND t.material_nature = 'OUT_SEND' and t.collaborate_type = 1 and t.schedule_quantity &lt; t.order_quantity
+          </if>
+        ORDER BY
+            t.create_time DESC,t.id desc
+    </select>
+
+
+    <select id="selectBatchList" resultType="com.futurecraftsmen.pms.technical.service.domain.collaborate.CollaborateScheduleItemModel">
+
+        select contract_code, sell_order_code, contract_number, max(create_time) , min(display_delivery) display_delivery
+        from ${dynamicTableNameProxy.collaborateScheduleItem} a
+        where collaborate_type = 0
+        and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+        and delete_flag = false
+        and can_produce = true
+        <if test="data.contractCode!=null">
+            and contract_code = #{data.contractCode}
+        </if>
+
+
+        <if test="data.contractNumber!=null and  data.contractNumber!='' ">
+            and contract_number like '%'|| #{data.contractNumber} ||'%'
+        </if>
+
+
+        <if test="data.startTime!=null">
+            and delivery &gt;= #{data.startTime}
+        </if>
+
+        <if test="data.endTime!=null">
+            and delivery &lt;= #{data.endTime}
+        </if>
+
+        <if test="data.process!=null and data.process!=''">
+            and exists(
+            select 1 from ${dynamicTableNameProxy.sellOrder} b
+            where b.primary_key=a.sell_order_code
+            and b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+            and b.delete_flag = false
+            and b.collaborate_latest_process=#{data.process}
+            )
+
+        </if>
+
+
+        <if test="!data.disRight">
+
+            and exists( select 1 from ${dynamicTableNameProxy.collaborateProduceDistribute} b
+            where b.Bind_Code=a.primary_key
+            and b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+            and b.delete_flag = false
+            and b.Manage_User_Code= ${dynamicTableNameProxy.currentCode}
+            )
+
+
+        </if>
+
+
+        <if test="data.dataProcess!=null and  data.dataProcess.size()  &gt; 0">
+            and exists(
+            select 1 from ${dynamicTableNameProxy.sellOrder} b where
+            a.sell_order_code = b.primary_key
+            and b.enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+            and b.delete_flag = false
+            and b.collaborate_latest_process in
+            <foreach collection="data.dataProcess" open="(" close=")" separator="," item="pro">
+                #{pro}
+            </foreach>
+            )
+        </if>
+
+
+        group by contract_code, sell_order_code, contract_number
+        order by max(create_time) desc
+
+    </select>
+
+
+    <update id="updateItemOrderInfo">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="order_quantity =case" suffix="end">
+            <foreach collection="updates" item="update" index="index">
+                when collaborate_material=#{update.collaborateMaterial} then #{update.orderQuantity}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="delivery =case" suffix="end">
+            <foreach collection="updates" item="update" index="index">
+                when collaborate_material=#{update.collaborateMaterial} then #{update.delivery}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="display_delivery =case" suffix="end">
+            <foreach collection="updates" item="update" index="index">
+                when collaborate_material=#{update.collaborateMaterial} then #{update.displayDelivery}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="material_demand_info =case" suffix="end">
+            <foreach collection="updates" item="update" index="index">
+                when collaborate_material=#{update.collaborateMaterial} then #{update.materialDemandInfo}::varchar
+            </foreach>
+        </trim>
+        WHERE enterprise_code = #{enterpriseCode}
+        AND contract_code = #{contractCode}
+        <if test="materialNature!=null">
+            AND material_nature = #{materialNature}
+        </if>
+        AND collaborate_material IN
+        <foreach collection="updates" index="index" item="update" separator="," open="(" close=")">
+            #{update.collaborateMaterial}
+        </foreach>
+    </update>
+
+    <select id="getPageList" resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.outbound.CollaborateOutboundPageRpcDTO">
+        WITH mainInfo AS (
+        SELECT
+        contract_number,
+        contract_code,
+        sell_order_code,
+        SUM(outbound_quantity) AS total_outbound,
+        SUM(order_quantity) AS total_order,
+        (SUM(outbound_quantity) &lt; SUM(order_quantity)) AS canOut,
+        MIN(display_Delivery) AS display_Delivery,
+        NOT BOOL_OR(COALESCE(schedule_flag, FALSE)) AS canReturn,
+        MAX(create_time) AS latest_create_time
+        FROM
+        ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE
+        delete_flag = false
+        and enterprise_code = #{enterpriseCode}
+        and material_nature is null and collaborate_type = 0
+        <if test="requestData.contractNumber != null and requestData.contractNumber != '' ">
+            and contract_number ilike '%'|| #{requestData.contractNumber} ||'%'
+        </if>
+        <if test="requestData.startTime != null ">
+            and delivery &gt;= #{requestData.startTime}
+        </if>
+        <if test="requestData.endTime != null ">
+            and delivery &lt;= #{requestData.endTime}
+        </if>
+        GROUP BY
+        contract_number,
+        contract_code,
+        sell_order_code
+        )
+        select
+            m.*,
+            s.collaborate_latest_process
+        from mainInfo m
+        left join ${dynamicTableNameProxy.sellOrder} s on m.sell_order_code = s.primary_key
+        <where>
+            <if test="requestData.process != null and requestData.process.size() > 0 ">
+                and s.collaborate_latest_process in
+                <foreach collection="requestData.process" open="(" close=")" separator="," item="pro">
+                    #{pro}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        m.latest_create_time DESC
+    </select>
+
+    <select id="getProductPcsChnInfo" resultType="org.aerie.forest.core.brick.domain.view.CodeMapName">
+        select
+            t.primary_key code,
+            t2.pieces_sign AS name
+        from
+         ${dynamicTableNameProxy.productPart} t
+                 LEFT JOIN ${dynamicTableNameProxy.productPiece} t2  ON t.pcs = t2.primary_key
+        where
+            t.enterprise_code = #{enterpriseCode}
+        <if test="productPartCodes != null and productPartCodes.size() > 0">
+                  and t.primary_key in
+            <foreach collection="productPartCodes" item="item" separator="," open="(" close=")">
+                      #{item}
+                  </foreach>
+              </if>
+    </select>
+
+
+    <select id="lackTaskSellOrderBatchPaging"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.lacktask.LackTaskSellOrderBatchInfo">
+        WITH mainInfo AS (
+        SELECT
+        contract_code,
+        sell_order_code,
+        contract_number,
+        NOT BOOL_OR(COALESCE(schedule_flag, FALSE)) AS canReturn
+        FROM
+        ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE
+        delete_flag = false
+        and enterprise_code = #{enterpriseCode}
+        <if test="param.contractNumber != null and param.contractNumber != '' ">
+            and contract_number ilike '%'|| #{param.contractNumber} ||'%'
+        </if>
+        <if test="param.startTime != null ">
+            and delivery &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null ">
+            and delivery &lt;= #{param.endTime}
+        </if>
+        GROUP BY
+        contract_code,
+        sell_order_code,
+        contract_number
+        order by contract_code desc
+        )
+        select
+        m.*,
+        sellOrder.collaborate_latest_process,
+        sellOrder.contract_remark
+        FROM mainInfo m
+        LEFT JOIN ${dynamicTableNameProxy.sellOrder} sellOrder ON m.sell_order_code = sellOrder.primary_key
+        <where>
+            <if test="processConditions != null and processConditions.size()!=0">
+                AND sellOrder.collaborate_latest_process IN
+                <foreach collection="processConditions" index="index" item="processCondition" open="(" separator="," close=")">
+                    #{processCondition}
+                </foreach>
+            </if>
+        </where>
+        order by sell_order_code desc
+
+    </select>
+
+    <select id="lackTaskProductPaging"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.lacktask.LackTaskProductInfo">
+        SELECT
+        scheduleItem.collaborate_material,
+        SUM(scheduleItem.order_quantity) as orderQuantity,
+        SUM(scheduleItem.order_quantity - scheduleItem.schedule_quantity - COALESCE( scheduleItem.material_purchase_quantity, 0) - COALESCE(
+        scheduleItem.material_out_bound_quantity, 0) - COALESCE(scheduleItem.ingredient_out_quantity, 0)) as canEnquiryNum
+        FROM
+        ${collaborateScheduleItemTable} scheduleItem
+        LEFT JOIN ${productPartTableName} pp ON scheduleItem.collaborate_material = pp.primary_key
+        WHERE
+        scheduleItem.delete_flag = false
+        and scheduleItem.enterprise_code = #{enterpriseCode}
+        and scheduleItem.collaborate_type = 0
+        <if test="processConditions != null and processConditions.size()!=0">
+            AND scheduleItem.latest_progress IN
+            <foreach collection="processConditions" index="index" item="processCondition" open="(" separator="," close=")">
+                #{processCondition}
+            </foreach>
+        </if>
+        and (scheduleItem.order_quantity - COALESCE( scheduleItem.outbound_quantity, 0)) > 0
+        and (scheduleItem.order_quantity - scheduleItem.schedule_quantity - COALESCE( scheduleItem.material_purchase_quantity, 0) -
+        COALESCE( scheduleItem.material_out_bound_quantity, 0) - COALESCE(scheduleItem.ingredient_out_quantity, 0)) > 0
+        <if test="param.startTime != null ">
+            and scheduleItem.delivery &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null ">
+            and scheduleItem.delivery &lt;= #{param.endTime}
+        </if>
+        <if test="param.materialKeyWord != null and param.materialKeyWord != ''">
+            and (pp.model like '%'|| #{param.materialKeyWord} ||'%'
+            or pp.product_part_sign like '%'|| #{param.materialKeyWord} ||'%'
+            or pp.unity_no like '%'|| #{param.materialKeyWord} ||'%' )
+        </if>
+
+        GROUP BY
+        scheduleItem.collaborate_material
+
+    </select>
+
+
+    <select id="lackTaskMaterialPaging"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.lacktask.LackTaskMaterialInfo">
+        SELECT
+        scheduleItem.collaborate_material,
+        SUM(scheduleItem.order_quantity - scheduleItem.schedule_quantity) as demandQuantity,
+        SUM(scheduleItem.order_quantity - scheduleItem.schedule_quantity - COALESCE( scheduleItem.material_purchase_quantity, 0) - COALESCE(
+        scheduleItem.material_out_bound_quantity, 0) - COALESCE(scheduleItem.ingredient_out_quantity, 0)) as canEnquiryNum
+        FROM
+        ${collaborateScheduleItemTable} scheduleItem
+        LEFT JOIN ${productPartTableName} pp ON scheduleItem.collaborate_material = pp.primary_key
+        WHERE
+        scheduleItem.delete_flag = false
+        and scheduleItem.enterprise_code = #{enterpriseCode}
+        and scheduleItem.collaborate_type = 1
+        <if test="processConditions != null and processConditions.size()!=0">
+            AND scheduleItem.latest_progress IN
+            <foreach collection="processConditions" index="index" item="processCondition" open="(" separator="," close=")">
+                #{processCondition}
+            </foreach>
+        </if>
+        and (scheduleItem.product_out_finish IS NULL OR scheduleItem.product_out_finish = 'f')
+        and (scheduleItem.order_quantity - scheduleItem.schedule_quantity - COALESCE( scheduleItem.outbound_quantity, 0)) > 0
+        and (scheduleItem.order_quantity - scheduleItem.schedule_quantity - COALESCE( scheduleItem.material_purchase_quantity, 0) -
+        COALESCE( scheduleItem.material_out_bound_quantity, 0) - COALESCE(scheduleItem.ingredient_out_quantity, 0)) > 0
+        <if test="param.startTime != null ">
+            and scheduleItem.delivery &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null ">
+            and scheduleItem.delivery &lt;= #{param.endTime}
+        </if>
+        <if test="param.materialKeyWord != null and param.materialKeyWord != ''">
+            and (pp.model like '%'|| #{param.materialKeyWord} ||'%'
+            or pp.product_part_sign like '%'|| #{param.materialKeyWord} ||'%'
+            or pp.unity_no like '%'|| #{param.materialKeyWord} ||'%' )
+        </if>
+
+        GROUP BY
+        scheduleItem.collaborate_material
+
+    </select>
+
+
+    <select id="collaborateBatchProcessOverview"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.process.CollaborateSellOrderProcessOverviewRpcDTO">
+
+        SELECT contract_number,
+               contract_code,
+               sell_order_code,
+               SUM(order_quantity)    as totalProductOrderQuantity,
+               SUM(schedule_quantity) as totalProductScheduleQuantity
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE delete_flag = false
+          and enterprise_code = #{enterpriseCode}
+          and sell_order_code = #{sellOrderCode}
+          and collaborate_type = 0
+        GROUP BY contract_number,
+                 contract_code,
+                 sell_order_code
+    </select>
+
+    <select id="collaborateProductProcessOverview"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.process.CollaborateSellOrderProcessOverviewRpcDTO">
+
+        SELECT collaborate_material,
+               SUM(order_quantity)    as totalProductOrderQuantity,
+               SUM(schedule_quantity) as totalProductScheduleQuantity
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE delete_flag = false
+          and enterprise_code = #{enterpriseCode}
+          and collaborate_material = #{collaborateMaterial}
+          and collaborate_type = 0
+          and (outbound_quantity &lt; order_quantity)
+        GROUP BY collaborate_material
+    </select>
+
+
+    <select id="sellOrderProductProcessOverviewPaging"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.process.CollaborateMaterialProcessOverviewRpcDTO">
+        SELECT contract_number,
+               contract_code,
+               sell_order_code,
+               collaborate_material,
+               SUM(order_quantity)            as totalOrderQuantity,
+               SUM(schedule_quantity)         as totalScheduleQuantity,
+               SUM(material_produce_quantity)               as totalMaterialProduceQuantity,
+               SUM(COALESCE(material_purchase_quantity, 0)) as totalMaterialPurchaseQuantity,
+               SUM(COALESCE(material_out_bound_quantity, 0)) as totalMaterialOutBoundQuantity,
+               SUM(COALESCE(ingredient_out_quantity, 0))     as totalIngredientOutQuantity
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE delete_flag = false
+          and enterprise_code = #{enterpriseCode}
+          and sell_order_code = #{sellOrderCode}
+          and collaborate_type = 0
+        GROUP BY contract_number,
+                 contract_code,
+                 sell_order_code,
+                 collaborate_material
+    </select>
+
+    <select id="batchFinish" resultType="com.futurecraftsmen.pms.technical.service.domain.collaborate.CollaborateScheduleItemModel">
+
+        with a as (select product_part_code, sum(out_num) total
+                   from ${dynamicTableNameProxy.stagingArea} a
+                   where delete_flag = false
+                     and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                     and contract_code = #{contractCode}
+                   group by product_part_code)
+                ,
+             b as (select *
+                   from ${dynamicTableNameProxy.collaborateScheduleItem}
+                   WHERE delete_flag = false
+                     and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                     and contract_code = #{contractCode}
+                     and collaborate_type = 0
+                     and can_produce = true)
+
+        select b.*
+        from b
+                 left join a on b.collaborate_material = a.product_part_code
+        where order_quantity - coalesce(total, 0) > 0 limit 1
+
+    </select>
+
+    <select id="materialOutboundTaskPaging">
+        SELECT
+        pp.primary_key as collaborateMaterial,
+        pp.unity_no,
+        pp.product_part_sign as name,
+        pp.model,
+        SUM(COALESCE(scheduleItem.outbound_quantity, 0)) AS outboundQuantity,
+        SUM(COALESCE(scheduleItem.order_quantity, 0)) - SUM(COALESCE(scheduleItem.outbound_quantity, 0)) AS difference
+        FROM ${collaborateScheduleItemTableName} scheduleItem
+        LEFT JOIN ${productPartTableName} pp ON scheduleItem.collaborate_material = pp.primary_key
+        WHERE
+        scheduleItem.enterprise_code = #{enterpriseCode}
+        and scheduleItem.delete_flag = false
+        <if test="requestData.startTime != null">
+            AND scheduleItem.create_time &gt;= #{requestData.startTime}
+        </if>
+        <if test="requestData.endTime != null">
+            AND scheduleItem.create_time &lt;= #{requestData.endTime}
+        </if>
+        GROUP BY
+        pp.primary_key,
+        pp.unity_no,
+        pp.product_part_sign,
+        pp.model
+        order by difference desc
+    </select>
+
+
+    <select id="queryMaterialDisplayDelivery">
+        SELECT
+        collaborate_material as code,
+        MIN(display_Delivery) AS name
+        FROM ${tableName}
+        WHERE collaborate_material IN
+        <foreach item="collaborateMaterial" collection="collaborateMaterials" open="(" separator="," close=")">
+            #{collaborateMaterial}
+        </foreach>
+        AND collaborate_type = #{collaborateType}
+        AND display_delivery IS NOT NULL
+        AND enterprise_code = #{enterpriseCode}
+        AND (order_quantity - COALESCE(outbound_quantity, 0)) > 0
+        AND (order_quantity - schedule_quantity - COALESCE(material_purchase_quantity, 0) -
+        COALESCE(material_out_bound_quantity, 0) - COALESCE(ingredient_out_quantity, 0)) > 0
+        GROUP BY collaborate_material
+    </select>
+
+
+    <select id="canReturnInfo"
+            resultType="com.futurecraftsmen.pms.technical.api.domain.collaborate.base.CanReturnInfo">
+        SELECT contract_code,
+        NOT BOOL_OR(COALESCE(schedule_flag, FALSE)) AS canReturn
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE delete_flag = false
+        and enterprise_code = #{enterpriseCode}
+        AND contract_code IN
+        <foreach collection="contractCodes" index="index" item="contractCode" open="(" separator="," close=")">
+            #{contractCode}
+        </foreach>
+        GROUP BY contract_code
+
+    </select>
+
+
+    <select id="queryMaterialDemandQuantity"
+            resultType="com.futurecraftsmen.pms.technical.service.domain.collaborate.base.CollaborateMaterialDemandQuantity">
+        SELECT collaborate_material as collaborateMaterial,
+        contract_code as contractCode,
+        SUM(order_quantity - COALESCE(schedule_quantity, 0)) AS demandQuantity
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND (order_quantity - COALESCE(schedule_quantity, 0)) > 0
+        AND collaborate_material IN
+        <foreach collection="materialCodes" index="index" item="materialCode" open="(" separator="," close=")">
+            #{materialCode}
+        </foreach>
+        GROUP BY collaborate_material,contract_code
+
+    </select>
+
+
+    <select id="getCanOutDetailLimitOne" resultType="com.futurecraftsmen.pms.technical.api.domain.orderdetails.OrderDetailsRpcDTO">
+        WITH apply_summary AS (SELECT data_key,
+                                      COALESCE(SUM(apply_num), 0)                                         AS apply_num_sum,
+                                      COALESCE(SUM(CASE WHEN type = 'SCBL' THEN apply_num ELSE 0 END), 0) AS scbl_apply_num_sum
+                               FROM ${dynamicTableNameProxy.outStockApply}
+                               WHERE delete_flag = false
+                                 AND product_part_code = #{productPartCode}
+                                 AND enterprise_code = #{enterpriseCode}
+                               GROUP BY data_key)
+        SELECT t.contract_code   as contractCode,
+               t.contract_number as contractNumber,
+               t.enterprise_code       as enterpriseCode,
+               t.collaborate_material  as productOrPart,
+               COALESCE(a.apply_num_sum, 0)    AS collaborateOutApplyNum,
+               case
+                   when t.collaborate_type = 0 then t.order_quantity
+                   else
+                       GREATEST((COALESCE(t.order_quantity, 0) - COALESCE(t.schedule_quantity, 0) + COALESCE(a.scbl_apply_num_sum, 0)),
+                                0) end as outTotal,
+               t.outbound_quantity     as outNum,
+               t4.primary_key          AS collaborateStockCode,
+               COALESCE(t4.total_inventory, 0) AS totalInventory,
+               t.primary_key           AS collaborateDateKey,
+               t.schedule_quantity     AS collaborateScheduleQuantity
+        FROM ${dynamicTableNameProxy.collaborateScheduleItem} t
+                 LEFT JOIN apply_summary a
+                           ON t.primary_key = a.data_key
+                 LEFT JOIN ${dynamicTableNameProxy.stock} t4
+                           ON t.collaborate_material = t4.product_part_code
+        WHERE t.delete_flag = false
+          AND t.enterprise_code = #{enterpriseCode}
+          AND t4.enterprise_code = #{enterpriseCode}
+          AND t.collaborate_material = #{productPartCode}
+--           AND (t.product_out_finish IS NULL OR t.product_out_finish = 'f')
+          AND (
+            (t.collaborate_type = 0 AND COALESCE(t.order_quantity,0) > COALESCE(t.outbound_quantity,0)) OR
+            (t.collaborate_type != 0  AND GREATEST((COALESCE(t.order_quantity,0) - COALESCE(t.schedule_quantity,0) + COALESCE(a.scbl_apply_num_sum,0)), 0)  > COALESCE(t.outbound_quantity,0))
+            )
+          AND COALESCE(t4.total_inventory, 0) - COALESCE(t.accrual_lock_in_inventory, 0) > 0
+        ORDER BY t.create_time DESC LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.CollaborateOutSendMaterialSendDetailMapper">
+
+
+    <select id="paging">
+        SELECT out_send_code,
+               out_send_order,
+               sender,
+               send_time,
+               SUM(send_num) AS send_num
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+          AND out_send_code = #{outSendCode}
+        GROUP BY out_send_code, out_send_order, sender, send_time
+        ORDER BY send_time DESC
+    </select>
+
+
+</mapper>

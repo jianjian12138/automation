@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IDispatchRecordTaskDetailScheduleMapper">
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.dispatchrecord.DispatchTaskDetailScheduleModel">
+        <id property="primaryKey" column="primary_key" />
+        <result property="taskCode" column="task_code" />
+        <result property="processedNum" column="processed_num" />
+        <result property="processedDate" column="processed_date" />
+        <result property="status" column="status" />
+        <result property="predictDownDate" column="predict_down_date" />
+        <result property="remark" column="remark" />
+        <result property="enterpriseCode" column="enterprise_code" />
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, task_code,processed_num, processed_date, status,predict_down_date,remark,enterprise_code
+    </sql>
+
+
+    <select id="queryByCodes" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+
+        <if test="codes != null">
+            AND primary_key IN
+            <foreach collection="codes" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        ORDER BY processed_date DESC
+    </select>
+
+
+
+</mapper>

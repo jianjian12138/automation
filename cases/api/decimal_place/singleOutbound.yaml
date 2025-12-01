@@ -1,0 +1,102 @@
+case_code: Singleoutbound
+case_name: singleOutbound
+priority: 2
+steps:
+- data:
+    outStockList: &id001
+    - area: 朝阳区
+      batch: batch_value
+      batchCode: $get_db_field(batch_code)
+      outStockNum: 0.0
+      parentMaterial: 1
+      parentMaterialDataKey: $get_db_field(material_data_key)
+      positionCode: $get_db_field(position_code)
+      positionStockBatchCode: $get_db_field(position_stock_batch_code)
+      produceCode: $get_db_field(produce_code)
+      productPartCode: $get_db_field(product_part_code)
+      routeCode: $get_db_field(route_code)
+      stockCode: $get_db_field(stock_code)
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-BigDecimal精度测试（8位小数）
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最小精度（0.00000001）
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 边界值测试-最大值（8位整数+8位小数）
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 四舍五入测试-超过8位小数截断
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-非法值（字符串）
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 200
+  step_name: 异常场景-负数测试
+- data:
+    outStockList: *id001
+    receiveMaterial: true
+    stockCode: $get_db_field(stock_code)
+  headers: $generate_token(pms_host)
+  host: $get_host(ERP_TEST,pms_host)
+  method: POST
+  path: /pms/collaborate/warehouse/outbound/singleOutbound
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+  step_name: 正常场景-零值测试

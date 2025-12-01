@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IOutPurchasePreTaskDao">
+
+
+
+
+    <insert id="addOutPurchasePreTasks">
+        INSERT INTO ${tableName} (primary_key, part,part_num,
+        pre_product_task,pre_purchase_task,pre_outsource_task,pre_outbound_task,enterprise_code)
+        VALUES
+        <foreach collection="outPurchasePreTaskModels" index="index" item="model" separator=",">
+            ( #{model.outPurchasePreTaskRecordCode}, #{model.part},
+            #{model.partNum},
+             #{model.preProductTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.prePurchaseTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.preOutsourceTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+             #{model.preOutboundTask,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.enterpriseCode} )
+        </foreach>
+    </insert>
+
+    <update id="appendOutPurchasePreTask">
+        UPDATE ${tableName}
+        SET
+        <if test="outPurchasePreTaskUpdate.preProductTaskNeedAppend !=null">
+            pre_product_task = array_append(COALESCE(pre_product_task, '{}')::bigint[],
+            #{outPurchasePreTaskUpdate.preProductTaskNeedAppend}),
+        </if>
+        <if test="outPurchasePreTaskUpdate.prePurchaseTaskNeedAppend !=null">
+            pre_purchase_task = array_append(COALESCE(pre_purchase_task, '{}')::bigint[],
+            #{outPurchasePreTaskUpdate.prePurchaseTaskNeedAppend}),
+        </if>
+        <if test="outPurchasePreTaskUpdate.preOutsourceTaskNeedAppend !=null">
+            pre_outsource_task = array_append(COALESCE(pre_outsource_task, '{}')::bigint[],
+            #{outPurchasePreTaskUpdate.preOutsourceTaskNeedAppend}),
+        </if>
+        <if test="outPurchasePreTaskUpdate.preOutboundTaskNeedAppend !=null">
+            pre_outbound_task = array_append(COALESCE(pre_outbound_task, '{}')::bigint[],
+            #{outPurchasePreTaskUpdate.preOutboundTaskNeedAppend})
+        </if>
+        <if test="outPurchasePreTaskUpdate.preOutboundTaskNeedAppend == null">
+            update_time = now()
+        </if>
+        where primary_key = #{outPurchasePreTaskUpdate.outPurchasePreTaskRecordCode}
+        and enterprise_code = #{outPurchasePreTaskUpdate.enterpriseCode}
+    </update>
+
+
+</mapper>

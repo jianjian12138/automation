@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.TempInventoryDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.futurecraftsmen.pms.pas.service.po.TempInventoryModel">
+        <id column="primary_key" jdbcType="BIGINT" property="primaryKey"/>
+        <result column="part_code" jdbcType="BIGINT" property="partCode"/>
+        <result column="frontend_unique_id" jdbcType="VARCHAR" property="frontendUniqueId"/>
+        <result column="temp_stock" jdbcType="DECIMAL" property="tempStock"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+    </resultMap>
+
+    <!-- 基本字段 -->
+    <sql id="Base_Column_List">
+        primary_key, part_code, frontend_unique_id, temp_stock, creator
+    </sql>
+
+    <!-- 根据物料编号列表批量查询临时库存总值 -->
+    <select id="getTempStockSumByPartCodes" parameterType="list">
+        SELECT part_code, COALESCE(SUM(temp_stock), 0) as temp_stock
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode,jdbcType=BIGINT}
+          and delete_flag = false
+        and   part_code IN
+        <foreach collection="partCodes" item="partCode" open="(" separator="," close=")">
+            #{partCode,jdbcType=BIGINT}
+        </foreach>
+        GROUP BY part_code
+    </select>
+
+    <!-- 根据前端唯一ID查询记录 -->
+    <select id="selectByFrontendUniqueId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM ${tableName}
+        WHERE frontend_unique_id = #{frontendUniqueId,jdbcType=VARCHAR}
+        and enterprise_code = #{enterpriseCode,jdbcType=BIGINT}
+        and creator = #{creator,jdbcType=BIGINT}
+        LIMIT 1
+    </select>
+
+
+
+    <!-- 批量插入或更新 -->
+    <insert id="batchInsertOrUpdate" parameterType="list">
+        INSERT INTO ${tableName} (
+            primary_key, part_code, frontend_unique_id, temp_stock, creator, enterprise_code
+        )
+        VALUES
+        <foreach collection="models" item="item" separator=",">
+            (
+                #{item.primaryKey,jdbcType=BIGINT},
+                #{item.partCode,jdbcType=BIGINT},
+                #{item.frontendUniqueId,jdbcType=VARCHAR},
+                #{item.tempStock,jdbcType=DECIMAL},
+                #{item.creator,jdbcType=BIGINT},
+                #{item.enterpriseCode,jdbcType=BIGINT}
+            )
+        </foreach>
+        ON CONFLICT (primary_key) DO UPDATE SET
+            temp_stock = EXCLUDED.temp_stock
+    </insert>
+
+    <!-- 根据前端唯一ID删除记录 -->
+    <delete id="deleteByUserId" parameterType="Long">
+        DELETE FROM ${tableName}
+        WHERE creator = #{userId}
+        and enterprise_code = #{enterpriseCode}
+    </delete>
+
+    <!-- 根据前端生成的唯一ID批量删除记录 -->
+    <delete id="deleteByFrontendUniqueIds" parameterType="list">
+        DELETE FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode,jdbcType=BIGINT}
+        AND frontend_unique_id IN
+        <foreach collection="frontendUniqueIds" item="frontendUniqueId" open="(" separator="," close=")">
+            #{frontendUniqueId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+</mapper>
+

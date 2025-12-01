@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.IQualityDeviceMapper">
+
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.technical.service.domain.quality.QualityDeviceModel">
+        <id property="qualityDeviceCode" column="primary_key"/>
+        <result property="id" column="id"/>
+        <result property="equipmentCategory" column="equipment_category"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="meteringCycle" column="metering_cycle"/>
+        <result property="deviceKeeper" column="device_keeper"/>
+        <result property="brand" column="brand"/>
+        <result property="deviceState" column="device_state"/>
+        <result property="lifeCycle" column="life_cycle" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="maintainCycle" column="maintain_cycle"/>
+        <result property="specification" column="specification"/>
+        <result property="devicename" column="devicename"/>
+        <result property="qualityFacilitySign" column="quality_facility_sign"/>
+        <result property="dynamicSort" column="dynamic_sort"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.collaborate.CollaborateProcessMapper">
+
+
+    <select id="getLatestRecordsByMaterialCodes">
+        SELECT
+        *
+        FROM (
+        SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY collaborate_material ORDER BY create_time DESC) AS rn
+        FROM ${tableName}
+        WHERE collaborate_material IN
+        <foreach item="collaborateMaterial" collection="collaborateMaterials" open="(" separator="," close=")">
+            #{collaborateMaterial}
+        </foreach>
+        AND collaborate_type = #{collaborateType}
+        <if test="processConditions != null and processConditions.size()!=0">
+            AND process IN
+            <foreach collection="processConditions" index="index" item="processCondition" open="(" separator="," close=")">
+                #{processCondition}
+            </foreach>
+        </if>
+        AND enterprise_code = #{enterpriseCode}
+        ) t
+        WHERE rn = 1
+    </select>
+
+    <!-- 根据contractCode和sameMaterialMergeFlag分组查询，返回每组的最新记录 -->
+    <select id="selectGroupedByContractAndMergeFlag"
+            resultType="com.futurecraftsmen.pms.technical.service.domain.collaborate.CollaborateProcessModel">
+        SELECT *
+        FROM (SELECT *,
+        SUM(schedule_item) OVER (PARTITION BY same_material_merge_flag) AS scheduleItem,
+        ROW_NUMBER() OVER (
+        PARTITION BY same_material_merge_flag
+        ORDER BY create_time DESC
+        ) AS rn
+        FROM ${tableName}
+        WHERE delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        AND collaborate_material = #{collaborateMaterial}
+        AND collaborate_type = #{collaborateType}
+        <if test="processConditions != null and processConditions.size()!=0">
+            AND process IN
+            <foreach collection="processConditions" index="index" item="processCondition" open="(" separator=","
+                     close=")">
+                #{processCondition}
+            </foreach>
+        </if>
+        ) t
+        WHERE t.rn = 1
+        ORDER BY t.create_time DESC
+    </select>
+
+</mapper>

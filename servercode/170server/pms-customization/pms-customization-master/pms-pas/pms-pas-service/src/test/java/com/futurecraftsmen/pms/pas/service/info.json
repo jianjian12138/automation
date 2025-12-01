@@ -1,0 +1,1137 @@
+[
+  {
+    "table_name": "purchase_detail",
+    "column_name": "required_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_task_product",
+    "column_name": "product_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_task_product",
+    "column_name": "total_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_task_product",
+    "column_name": "remain_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_task_part",
+    "column_name": "remain_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_task_part",
+    "column_name": "total_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "purchase_main",
+    "column_name": "need_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_main",
+    "column_name": "allocation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_main",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_main",
+    "column_name": "finish_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_detail",
+    "column_name": "handle_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_part_info",
+    "column_name": "matching_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_dispatcher",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_dispatcher",
+    "column_name": "allocation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_report",
+    "column_name": "receive_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_report",
+    "column_name": "scrap_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_report",
+    "column_name": "finish_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "purchase_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "ratio",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "stock_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "purchase_produce_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "produce_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dispatch_log_count",
+    "column_name": "part_need_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_sub_distribute",
+    "column_name": "distribute_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "await_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "allocation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_dispatcher",
+    "column_name": "already_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish",
+    "column_name": "receive_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "await_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "already_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_dispatcher",
+    "column_name": "allocation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into",
+    "column_name": "contract_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into",
+    "column_name": "receive_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "already_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "allocation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "await_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_dispatcher",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_report",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_report",
+    "column_name": "un_passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_report",
+    "column_name": "passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_report",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_process_report",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_report",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_report",
+    "column_name": "un_passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_report",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_report",
+    "column_name": "passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_into_report",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_report",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_report",
+    "column_name": "un_passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_report",
+    "column_name": "passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_report",
+    "column_name": "should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_finish_report",
+    "column_name": "self_should_inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_unqualified",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_unqualified",
+    "column_name": "un_pass_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_approve",
+    "column_name": "passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_approve",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_approve",
+    "column_name": "un_passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_report_print",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_report_print",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "lack_material_task",
+    "column_name": "demand",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_detail",
+    "column_name": "schedule_outbound",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_detail",
+    "column_name": "send_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_detail",
+    "column_name": "out_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "task_purchase_detail",
+    "column_name": "contract_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "task_purchase_detail",
+    "column_name": "enquiry_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_task",
+    "column_name": "apply_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_task",
+    "column_name": "out_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_task_send_detail",
+    "column_name": "out_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_task_send_detail",
+    "column_name": "apply_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_part_task_send_detail",
+    "column_name": "send_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_detail",
+    "column_name": "seller_send_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_detail",
+    "column_name": "contract_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_detail",
+    "column_name": "qualified_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_detail",
+    "column_name": "received_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_record",
+    "column_name": "inspection",
+    "type": "数值"
+  },
+  {
+    "table_name": "self_receiving_record",
+    "column_name": "receive",
+    "type": "数值"
+  },
+  {
+    "table_name": "shipping_record_from_sell",
+    "column_name": "send_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "feedback_detail",
+    "column_name": "inspection",
+    "type": "数值"
+  },
+  {
+    "table_name": "feedback_detail",
+    "column_name": "feedback_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "feedback_detail",
+    "column_name": "receive",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_out_send_material",
+    "column_name": "out_send_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_out_send_material_send_de",
+    "column_name": "send_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock",
+    "column_name": "unqualified_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock",
+    "column_name": "safe_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock",
+    "column_name": "lock_in_inventor",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock",
+    "column_name": "total_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock",
+    "column_name": "stock_limit",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "in_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "await_un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "accrual_await_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "in_un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "accrual_await_un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "await_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_order_detail",
+    "column_name": "stored_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_apply_detail",
+    "column_name": "qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_apply_detail",
+    "column_name": "un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_apply_detail",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_apply_detail",
+    "column_name": "in_apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "position_stock",
+    "column_name": "position_stock_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "operation_record",
+    "column_name": "inbound_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "operation_record",
+    "column_name": "balance_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "operation_record",
+    "column_name": "outbound_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "position_operation",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "position_operation",
+    "column_name": "operation_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_order_detail",
+    "column_name": "accrual_out_total",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_order_detail",
+    "column_name": "out_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_order_detail",
+    "column_name": "await_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_order_detail",
+    "column_name": "out_total",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_order_detail",
+    "column_name": "accrual_lock_in_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_apply_detail",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "outbound_apply_detail",
+    "column_name": "out_apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "accrual_await_un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "act_out_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "accrual_out_total",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "act_in_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "accrual_await_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_or_out_operation_detail_record",
+    "column_name": "act_in_un_qualified",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_batch",
+    "column_name": "batch_in_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_batch",
+    "column_name": "batch_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "inbound_batch",
+    "column_name": "batch_out_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "position_stock_batch",
+    "column_name": "position_stock_batch_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock_check_record",
+    "column_name": "total_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock_check_record",
+    "column_name": "check_total_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock_check_position_batch_record",
+    "column_name": "position_batch_damage_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock_check_position_batch_record",
+    "column_name": "position_batch_intact_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "stock_check_position_batch_record",
+    "column_name": "position_batch_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "staging_area",
+    "column_name": "out_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "staging_area",
+    "column_name": "pick_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "in_stock_apply",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "out_stock_apply",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_inbound_item",
+    "column_name": "inbound_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_inbound_item",
+    "column_name": "order_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_inbound_batch",
+    "column_name": "batch_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_inbound_batch",
+    "column_name": "batch_in_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_details",
+    "column_name": "product_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_details",
+    "column_name": "shipped_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_details",
+    "column_name": "pending_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_details",
+    "column_name": "allocation_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_goods",
+    "column_name": "need_send_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_picking_material",
+    "column_name": "picking_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair",
+    "column_name": "repair_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_task",
+    "column_name": "shipped_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_task",
+    "column_name": "requested_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "awaiting_task_details",
+    "column_name": "this_count",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_dispatcher",
+    "column_name": "assign_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_dispatcher",
+    "column_name": "await_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_submit",
+    "column_name": "submit_total_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_submit",
+    "column_name": "submit_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_submit",
+    "column_name": "scrap_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_report",
+    "column_name": "un_passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_report",
+    "column_name": "inspect_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "inspect_repair_report",
+    "column_name": "passed_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "production_component",
+    "column_name": "send_sum",
+    "type": "数值"
+  },
+  {
+    "table_name": "production_component",
+    "column_name": "quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_receive_material",
+    "column_name": "scrap_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_receive_material",
+    "column_name": "receive_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "scrap_data",
+    "column_name": "scrap_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "material_apply",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "product_snapshot",
+    "column_name": "finish_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "product_snapshot",
+    "column_name": "quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "product_snapshot",
+    "column_name": "process_finish_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "product_snapshot",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "produce_staging_area_record",
+    "column_name": "num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dis_count_optimal",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dis_count_optimal",
+    "column_name": "ratio",
+    "type": "数值"
+  },
+  {
+    "table_name": "dis_count_optimal",
+    "column_name": "need_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dis_count_optimal",
+    "column_name": "order_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "dis_snapshot",
+    "column_name": "quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_process_report",
+    "column_name": "work_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_process_report",
+    "column_name": "total_work_time",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_distribute",
+    "column_name": "task_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_result",
+    "column_name": "finish_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_result",
+    "column_name": "stock_over",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_result",
+    "column_name": "check_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "order_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "ingredient_out_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "material_out_bound_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "material_purchase_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "material_produce_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "schedule_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "accrual_lock_in_inventory",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_schedule_item",
+    "column_name": "outbound_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_extend",
+    "column_name": "apply_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_extend",
+    "column_name": "scrap_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_produce_pick",
+    "column_name": "pick_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_process",
+    "column_name": "quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "collaborate_process",
+    "column_name": "schedule_item",
+    "type": "数值"
+  },
+  {
+    "table_name": "sell_order_product",
+    "column_name": "product_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "after_sale_detail",
+    "column_name": "feedback_num",
+    "type": "数值"
+  },
+  {
+    "table_name": "after_sale_detail",
+    "column_name": "contract_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "reimbursement",
+    "column_name": "total_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "expense_account",
+    "column_name": "amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "cost_produce_new",
+    "column_name": "test_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "cost_produce_new",
+    "column_name": "cost_manually",
+    "type": "金额"
+  },
+  {
+    "table_name": "cost_produce_new",
+    "column_name": "device_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "cost_produce_new",
+    "column_name": "assisted_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "products_price_new",
+    "column_name": "valuation_en",
+    "type": "金额"
+  },
+  {
+    "table_name": "products_price_new",
+    "column_name": "manage_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "product_price_follow",
+    "column_name": "manage_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "product_price_follow",
+    "column_name": "product_cost",
+    "type": "金额"
+  },
+  {
+    "table_name": "product_price_follow",
+    "column_name": "price",
+    "type": "金额"
+  },
+  {
+    "table_name": "product_price_follow",
+    "column_name": "price_en",
+    "type": "金额"
+  },
+  {
+    "table_name": "contract_financing_operate",
+    "column_name": "apply_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "history_price",
+    "column_name": "product_rmb_unit_price",
+    "type": "金额"
+  },
+  {
+    "table_name": "history_price",
+    "column_name": "product_total_price",
+    "type": "金额"
+  },
+  {
+    "table_name": "history_price",
+    "column_name": "product_rmb_total_price",
+    "type": "金额"
+  },
+  {
+    "table_name": "history_price",
+    "column_name": "product_quantity",
+    "type": "数值"
+  },
+  {
+    "table_name": "history_price",
+    "column_name": "product_unit_price",
+    "type": "金额"
+  },
+  {
+    "table_name": "signed_contract",
+    "column_name": "contract_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "money_records",
+    "column_name": "contract_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "money_records",
+    "column_name": "record_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "invoice_records",
+    "column_name": "contract_amount",
+    "type": "金额"
+  },
+  {
+    "table_name": "invoice_records",
+    "column_name": "invoice_amount",
+    "type": "金额"
+  }
+]

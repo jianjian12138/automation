@@ -1,0 +1,1467 @@
+{
+  "http://192.168.2.112:3356/?code=426089190049054721": {
+    "url": "http://192.168.2.112:3356/?code=426089190049054721",
+    "title": "pms",
+    "elements": {
+      "ids": [
+        {
+          "id": "vite-plugin-pwa:register-sw",
+          "tag": "script",
+          "text": ""
+        },
+        {
+          "id": "z-index-style",
+          "tag": "style",
+          "text": ":root{--dom-main-z-index:1000;--dom-sub-z-index:20"
+        },
+        {
+          "id": "app",
+          "tag": "div",
+          "text": ""
+        },
+        {
+          "id": "__svg__icons__dom__",
+          "tag": "svg",
+          "text": ""
+        },
+        {
+          "id": "icon-add-device",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-add-device_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-add-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-ai",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-ai_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-clear",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-down",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-no",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-send",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-top",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ai-use",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attachment",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-1",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-1_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-2",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-2_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-3",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-3_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-4",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-attribute-4_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-bacth-finish",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-baoxiao-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-basic-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-basic-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-basic-info",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-confirm",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-del",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-delivery",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-dispatching",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-distribution",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-disuser",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-price",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-return",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-set-rmb",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-batch-setting",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-box",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-box_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-bubble",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-bubble_a",
+          "tag": "clippath",
+          "text": ""
+        },
+        {
+          "id": "icon-buy-count",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-buy-count_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-cancel-set-all",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-canProductionSellContractData",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-canProductionSellContractData_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-change-record",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-check-no",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-check-yes",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-not",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-not_a",
+          "tag": "filter",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-not_b",
+          "tag": "mask",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-ok",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-ok_a",
+          "tag": "filter",
+          "text": ""
+        },
+        {
+          "id": "icon-checkbox-ok_b",
+          "tag": "mask",
+          "text": ""
+        },
+        {
+          "id": "icon-close-eye",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-clrea-data",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-clrea-data_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-comprehensive-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-comprehensive-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-connect-company",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-contract-number",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-contract-number_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-copy",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-del-data",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-del-data_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-deliver-address",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-deliver-address_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-delivery",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-delivery_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-deliveryProgress",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-deliveryProgress_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-dollar",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-download",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-drag_icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-duty-choose",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-duty-copy",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-edit-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-edit-width",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-edit",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-employee-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-employee-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-export-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-file-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-file-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-file-upload",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-file",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-file_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-finance-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-finance-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-foundation-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-foundation-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-gongyi",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-gongyi_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-gs",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-gs_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-gx",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-gx_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-header-set",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-heji",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-heji_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-hj-wait",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-hj-wait_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-home-nav-select",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-home-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-home-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-import-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-inboundTask",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-inboundTask_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-income",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-income_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-info",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-info_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-inventory_icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-inventory_icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-keeper-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-keeper-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-last",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-last_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-left-drag-close",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-left-drag",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-left-l",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-login-out",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-login-out_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-materials",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-materials_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-max",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-max_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-min",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-min_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-money",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-money_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-moneyAmount",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-moneyAmount_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-no-ai",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-no-ai_a",
+          "tag": "clippath",
+          "text": ""
+        },
+        {
+          "id": "icon-no",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-no_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-not-img",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-open-eye",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-order",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-order_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-ourSide",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-ourSide_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-outboundTask",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-outboundTask_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-outCat",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-outCat_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-part2",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-pass-num",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-pass-num_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-pass-ratio",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-pass-ratio_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-pici",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-pici_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-picking",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-plff",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-plfl",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-plxj",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-post-duty",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-post-duty_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-post-user",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-post-user_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-power",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-print",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-printer",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-process",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-process_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-procurement-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-procurement-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-produceDispatchState",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-produceDispatchState_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-product-grade",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-product-grade_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-product",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-product_a",
+          "tag": "clippath",
+          "text": ""
+        },
+        {
+          "id": "icon-production-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-production-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-purchase-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-purchase-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-purchaseDetailStatistics",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-purchaseDetailStatistics_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-purchaseDetailStatisticsRank",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-purchaseDetailStatisticsRank_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-QRcode",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-qualified",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-quality-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-quality-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-record",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-refresh-page",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-refresh",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-report",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-route-b",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-route-b_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-route-info",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-route-info_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-rule-num",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-rule-num_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-sales-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sales-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-seal-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-seal-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-search",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sellDetailStatistics",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sellDetailStatistics_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-sellDetailStatisticsRank",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sellDetailStatisticsRank_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-set-all",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-set-all_a",
+          "tag": "filter",
+          "text": ""
+        },
+        {
+          "id": "icon-set-all_b",
+          "tag": "mask",
+          "text": ""
+        },
+        {
+          "id": "icon-set-permission",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-settings",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-settings_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-sign-addr",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sign-addr_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-stock_can_use",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-stock_can_use_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-structure-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-structure-icon_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-structure",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-structure_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-sub-arrange",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-sub-arrange_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-summary",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-summary_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-supplier",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-supplier_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-task-detail",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-task-detail_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-task-num",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-task-num_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-task",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-task_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-technology-nav",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-technology-nav_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-this-out",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-this-out_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-this-out_b",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-this-put",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-this-put_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-tihuan",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-tip-head",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-tip-w",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-tip",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-tip_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-together-btn",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-together",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-unit-address",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-unit-address_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-unqualified",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-up-icon",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-use-ai",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-use-ai_a",
+          "tag": "clippath",
+          "text": ""
+        },
+        {
+          "id": "icon-use-help",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-user-charge",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-user-charge_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-user-setting",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-user-setting_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo-avg",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo-phone",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo-phone_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo-pro",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo-pro_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-userInfo_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-warning",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-weifu",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-weifu_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-weishou",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-weishou_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-wenhao",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-wenhao_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-wfbj",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-wfbj_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-wflj",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-wflj_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-workInfo",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-workInfo_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-yifu",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-yifu_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-yingfu",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-yingfu_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-yingshou",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-yingshou_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "icon-yishou",
+          "tag": "symbol",
+          "text": ""
+        },
+        {
+          "id": "icon-yishou_a",
+          "tag": "lineargradient",
+          "text": ""
+        },
+        {
+          "id": "z-index-manage",
+          "tag": "div",
+          "text": ""
+        }
+      ],
+      "classes": [
+        "website",
+        "iframe",
+        "icon"
+      ],
+      "tags": [],
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": [],
+      "selects": [],
+      "textareas": []
+    }
+  }
+}

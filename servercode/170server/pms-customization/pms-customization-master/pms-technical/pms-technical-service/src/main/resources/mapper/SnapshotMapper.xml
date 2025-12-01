@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.SnapshotMapper">
+
+    <select id="queryPage" resultType="com.futurecraftsmen.pms.technical.api.domain.technical.productpart.PartAllRelationshipSnapshot">
+        select buss_number ,part_code ,sum(COALESCE( a.quantity,1)) quantity,max(primary_key) primary_key,
+        sum(coalesce( a.quantity, 1)*coalesce( a.task_num, 0)) task_num,
+        sum(coalesce( a.finish_Num, 0)) finish_Num,
+        max(create_time) create_time
+        from ${dynamicTableNameProxy.productSnapshot} a
+        where a.enterprise_code = ${dynamicTableNameProxy.enterpriseCode} and a.delete_flag =false
+
+        <if test="data.contractNumber!=null and data.contractNumber != '' ">
+            and buss_number like '%'|| #{data.contractNumber} ||'%'
+        </if>
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.part_code","xihang",data.partUnityNo)}
+        </if>
+        and ${dynamicTableNameProxy.getProductPartSearchObj("a.part_code",data.searchName)}
+
+
+        and exists( select 1 from ${dynamicTableNameProxy.dispatchTaskProduct} b
+        where b.primary_key =a.business_id
+        and b.delete_flag=false
+
+        and coalesce(b.remain_quantity,0)>0
+
+
+        <if test="data.endDate != null ">
+            and b.Product_Deliver &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.startDate != null  ">
+            and b.Product_Deliver &gt;= #{data.startDate}
+        </if>
+
+        )
+        and delete_flag=false
+        and a.task_Num*a.quantity &gt; COALESCE( a.finish_Num,0)
+        and a.part_code is not null
+        group by buss_number ,part_code
+        order by create_time desc
+
+    </select>
+
+
+    <select id="queryProcessPage" resultType="com.futurecraftsmen.pms.technical.api.domain.technical.productpart.PartAllRelationshipSnapshot">
+
+
+        select buss_number ,procedure_code ,array_to_string(part_codes, ',') part_codes
+        , max(primary_key) primary_key
+        ,max(create_time) create_time,array_to_string(ARRAY_AGG(array_to_string(primary_keys,',')),',' ) primary_keys
+        from (
+        select buss_number ,procedure_code , ARRAY_AGG( distinct COALESCE( part_code,0)
+        ORDER BY COALESCE( part_code,0)) part_codes ,max(primary_key) primary_key,max(create_time) create_time
+        ,ARRAY_AGG(primary_key) primary_keys
+        from ${dynamicTableNameProxy.productSnapshot} a
+
+        where
+        a.enterprise_code = ${dynamicTableNameProxy.enterpriseCode} and a.delete_flag =false
+        and a.procedure_code!=0
+        <if test="data.partUnityNo!=null and data.partUnityNo != '' ">
+            and exists( select 1 from ${dynamicTableNameProxy.productPartProcedure} b
+            where a.procedure_code=b.primary_key
+            and b.number like '%'|| #{data.partUnityNo} ||'%' )
+        </if>
+
+
+        <if test="data.searchName!=null and data.searchName != '' ">
+            and exists( select 1 from ${dynamicTableNameProxy.productPartProcedure} b
+            where a.procedure_code=b.primary_key
+            and b.product_part_procedure_sign like '%'|| #{data.searchName} ||'%' )
+        </if>
+
+
+        <if test="data.contractNumber!=null and data.contractNumber != '' ">
+            and buss_number like '%'|| #{data.contractNumber} ||'%'
+        </if>
+
+
+        <if test="data.natureCode!=null  ">
+            and procedure_nature =#{data.natureCode}
+        </if>
+
+        and exists( select 1 from ${dynamicTableNameProxy.dispatchTaskProduct} b
+        where b.primary_key =a.business_id
+        and b.delete_flag=false
+
+        and coalesce(b.remain_quantity,0)>0
+
+        <if test="data.endDate != null ">
+            and b.Product_Deliver &lt;= #{data.endDate}
+        </if>
+
+        <if test="data.startDate != null  ">
+            and b.Product_Deliver &gt;= #{data.startDate}
+        </if>
+        )
+        and delete_flag=false
+        and a.procedure_code is not null
+        and a.task_Num &gt; COALESCE( a.process_finish_num,0)
+
+        group by buss_number ,business_id ,procedure_code
+        ) group by buss_number ,procedure_code ,part_codes
+        order by create_time desc ,buss_number desc
+
+    </select>
+
+
+    <select id="selectProcessCombo" resultType="com.futurecraftsmen.pms.technical.api.domain.technical.productpart.PartAllRelationshipSnapshot">
+
+        with a as (select product_code, procedure_code, ARRAY_AGG(distinct coalesce(part_code,0) ORDER BY coalesce(part_code,0)) part_codes
+                   from ${dynamicTableNameProxy.productSnapshot}
+                   where procedure_code = #{procedureCode}
+                     and business_id = #{businessId}
+                     and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                     and delete_flag = false
+                     and task_Num &gt; COALESCE(process_finish_num, 0)
+                   group by product_code, procedure_code),
+
+             b as (select product_code
+                        , procedure_code
+                        , ARRAY_AGG(distinct coalesce(part_code,0) ORDER BY coalesce(part_code,0)) part_codes
+                        , max(primary_key)                                 primary_key
+                        , buss_number
+                   from ${dynamicTableNameProxy.productSnapshot}
+                   where procedure_code = #{procedureCode}
+                     and enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+                     and delete_flag = false
+                     and task_Num &gt; COALESCE(process_finish_num, 0)
+                   group by buss_number, product_code, procedure_code)
+        select b.*
+        from a,
+             b
+        where a.product_code = b.product_code
+          and a.part_codes = b.part_codes
+
+    </select>
+
+
+    <update id="updateNumById">
+        update ${dynamicTableNameProxy.productSnapshot}
+        set Process_Finish_Num = COALESCE(#{data.processFinishNum}, 0),
+            Finish_Num         =COALESCE(#{data.finishNum}, 0)
+
+        where primary_key = #{data.primaryKey}
+
+          and task_num >= COALESCE(#{data.processFinishNum}, 0)
+          and task_num * quantity >= COALESCE(#{data.finishNum}, 0)
+
+    </update>
+
+
+    <select id="queryProcessQuantity" resultType="com.futurecraftsmen.pms.technical.api.domain.technical.productpart.PartAllRelationshipSnapshot">
+
+        select coalesce(sum(task_num),0) task_num,coalesce( sum(process_finish_num),0) process_finish_num
+        from (select product_code, route_code, max(task_num) task_num, max(process_finish_num) process_finish_num
+        from (select product_code, route_code, part_code, sum(task_num) task_num, sum(process_finish_num) process_finish_num
+        from ${dynamicTableNameProxy.productSnapshot}
+        where primary_key in
+
+        <foreach collection="data" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        and enterprise_code= ${dynamicTableNameProxy.enterpriseCode}
+        and delete_flag=false
+        group by product_code, route_code, part_code)
+        group by product_code, route_code)
+
+    </select>
+
+</mapper>

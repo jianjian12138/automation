@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TAPD项目质量日报</title>
+</head>
+<body style="padding:10px 5px 10px 5px;">
+<div>
+    <div style="height:10px;">
+    </div>
+    <div style="text-align:center">
+        <strong style="font-size:32px">TAPD项目质量日报</strong>
+        <h4>{{update_time}}</h4>
+        <p></p>
+    </div>
+    <div style="height:10px;">
+    </div>
+    <div>
+        <h5>目前仅关注本周有发布计划项目</h5>
+        {% for workspace_info in report_info_list %}
+        <h2>{{ workspace_info.workspace_name }}</h2>
+        <h3>
+            <a href="{{ workspace_info.workspace_red_bug_link }}" target="_blank">
+                项目紧急和高优先级缺陷遗留总数：{{ workspace_info.workspace_red_priority_bug }}
+            </a>
+        </h3>
+        <div><strong>本周发布计划</strong></div>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>发布计划标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>需求提测率</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>缺陷修复率</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>紧急和高优先级缺陷遗留数</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前状态</strong></td>
+                </tr>
+                {% for releases_data in workspace_info.releases_info %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{releases_data.releases_link}}" target="_blank">{{releases_data.releases_name}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{releases_data.lift_rate}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{releases_data.repair_rate}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{releases_data.red_bug}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{releases_data.releases_status}}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div><strong>重新打开缺陷次数</strong></div>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>缺陷标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>发布计划</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>重新打开次数</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前处理人</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前状态</strong></td>
+                </tr>
+                {% for bug_data in workspace_info.bug_reopen_info %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{bug_data.bug_link}}" target="_blank">{{bug_data.bug_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{bug_data.release_link}}" target="_blank">{{bug_data.release_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.reopen_number}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.current_handler}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.current_status}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div><strong>重新打开需求次数</strong></div>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>需求标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>发布计划</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>重新打开次数</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前处理人</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前状态</strong></td>
+                </tr>
+                {% for story_data in workspace_info.story_reopen_info %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{story_data.story_link}}" target="_blank">{{story_data.story_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{story_data.release_link}}" target="_blank">{{story_data.release_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.reopen_number}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.current_handler}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.current_status}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div><strong>提测签发失败次数</strong></div>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>发布评审标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>发布计划</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>签发失败次数</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>提测人员</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>创建时间</strong></td>
+                </tr>
+                {% for sign_issue_data in workspace_info.sign_issue_repulse %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{sign_issue_data.launch_forms_link}}" target="_blank">{{sign_issue_data.title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{sign_issue_data.release_link}}" target="_blank">{{sign_issue_data.release_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{sign_issue_data.fail_number}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{sign_issue_data.creator}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{sign_issue_data.created}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div><strong>提测冒烟失败列表</strong></div>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>发布评审标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>发布计划</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>提测人员</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>创建时间</strong></td>
+                </tr>
+                {% for smoke_data in workspace_info.smoke_repulse %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{smoke_data.launch_forms_link}}" target="_blank">{{smoke_data.title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{smoke_data.release_link}}" target="_blank">{{smoke_data.release_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{smoke_data.creator}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{smoke_data.created}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div><strong>滞留超3天缺陷</strong></div>
+        <details>
+            <summary style="color:blue;cursor:pointer;">点击查看详情</summary>
+            <div>
+                <table width="100%"
+                       style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                    <tbody>
+                    <tr height="35" style="background-color: #808080; color: #ffffff;">
+                        <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>缺陷标题</strong>
+                        </td>
+                        <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <strong>发布计划</strong></td>
+                        <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <strong>滞留时长</strong></td>
+                        <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <strong>当前状态</strong></td>
+                        <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <strong>当前处理人</strong></td>
+                    </tr>
+                    {% for bug_data in workspace_info.bug_overtime_info %}
+                    <tr height="30" style="background-color: #ffffff; color: #000000;">
+                        <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <a href="{{bug_data.bug_link}}" target="_blank">{{bug_data.bug_title}}</a>
+                        </td>
+                        <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                            <a href="{{bug_data.release_link}}" target="_blank">{{bug_data.release_title}}</a>
+                        </td>
+                        <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.stay_duration}}</td>
+                        <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.current_status}}</td>
+                        <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{bug_data.current_handler}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </details>
+    </div>
+    <br>
+    <div><strong>滞留超3天需求</strong></div>
+    <details>
+        <summary style="color:blue;cursor:pointer;">点击查看详情</summary>
+        <div>
+            <table width="100%"
+                   style="font-size:12px; border:1px solid #000000; border-spacing: 1px; background-color: #000000;">
+                <tbody>
+                <tr height="35" style="background-color: #808080; color: #ffffff;">
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>需求标题</strong>
+                    </td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>发布计划</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>滞留时长</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前状态</strong></td>
+                    <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <strong>当前处理人</strong></td>
+                </tr>
+                {% for story_data in workspace_info.story_overtime_info %}
+                <tr height="30" style="background-color: #ffffff; color: #000000;">
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{story_data.story_link}}" target="_blank">{{story_data.story_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
+                        <a href="{{story_data.release_link}}" target="_blank">{{story_data.release_title}}</a>
+                    </td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.stay_duration}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.current_status}}</td>
+                    <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{story_data.current_handler}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+</div>
+{% endfor %}
+</div>
+</div>
+</body>
+</html>

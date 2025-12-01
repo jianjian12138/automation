@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.dp.service.dao.ProcessTemplateDao">
+    <insert id="createProcessTemplate">
+        INSERT INTO dp_base.t_dp_base_process_template(process_code, process_name, owned_enterprise_code, table_code,
+                                                       process_info, set_operation_flag,
+                                                       process_state, over_started, remark)
+        VALUES (#{processTemplate.processCode}, #{processTemplate.processName}, #{processTemplate.ownedEnterpriseCode},
+                #{processTemplate.tableCode},
+                #{processTemplate.processInfo}, #{processTemplate.setOperationFlag},
+                false, false, #{processTemplate.remark})
+    </insert>
+
+    <update id="updateProcessBaseInfo">
+        UPDATE dp_base.t_dp_base_process_template
+        SET remark = #{remark}
+        <if test="processName != null and  processName != ''">
+            , process_name = #{processName}
+        </if>
+        WHERE process_code = #{processCode}
+        AND delete_flag = false
+    </update>
+
+    <update id="updateProcessTemplateInfo">
+        UPDATE dp_base.t_dp_base_process_template
+        SET process_info       = #{processTemplateInfo},
+            process_check_code = NULL,
+            process_parameter = NULL
+        WHERE process_code = #{processCode}
+          AND process_state = false
+          AND delete_flag = false
+    </update>
+    <update id="validatesProcessTemplateInfo">
+        UPDATE dp_base.t_dp_base_process_template
+        SET process_check_code = #{processCheckCode},
+            coupling_table_codes = #{couplingTableCodes},
+            coupling_field_codes = #{couplingFieldCodes},
+            process_parameter = #{processParameter}
+        WHERE process_code = #{processCode}
+          AND process_state = false
+          AND process_check_code IS NULL
+          AND delete_flag = false
+    </update>
+    <update id="updateProcessOperationStatus">
+        UPDATE dp_base.t_dp_base_process_template
+        SET process_state =
+                CASE
+                    WHEN process_state = true THEN false
+                    WHEN process_state = false THEN true
+                END,
+            over_started  = true
+        WHERE delete_flag = false
+          AND process_code = #{processCode}
+          AND process_check_code IS NOT NULL
+    </update>
+    <update id="setProcessBubbleName">
+        UPDATE dp_base.t_dp_base_process_template
+        SET process_bubble_name = #{bubbleName}
+        WHERE delete_flag = false
+          AND process_code = #{processCode}
+    </update>
+    <delete id="deleteProcessOperation">
+        DELETE
+        FROM dp_base.t_dp_base_process_template
+        WHERE delete_flag = false
+          AND process_code = #{processCode}
+          AND over_started = false
+    </delete>
+
+    <select id="getProcessTemplateModelsByCodes"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessTemplateModel">
+        SELECT id,
+        process_code,
+        process_name,
+        owned_enterprise_code,
+        table_code,
+        process_info,
+        set_operation_flag,
+        process_check_code,
+        process_parameter,
+        process_state,
+        process_bubble_name,
+        over_started,
+        remark,
+        update_time,
+        create_time,
+        delete_flag,
+        coupling_table_codes,
+        coupling_field_codes
+        FROM dp_base.t_dp_base_process_template
+        WHERE process_code IN
+        <foreach collection="processTemplateCodes" index="index" item="processTemplateCode" open="(" separator=","
+                 close=")">
+            #{processTemplateCode}
+        </foreach>
+        AND delete_flag = false
+    </select>
+
+    <select id="getAllProcessTemplateModel"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessTemplateModel">
+        SELECT id,
+               process_code,
+               process_name,
+               owned_enterprise_code,
+               table_code,
+               process_info,
+               set_operation_flag,
+               process_check_code,
+               process_parameter,
+               process_state,
+               process_bubble_name,
+               over_started,
+               remark,
+               update_time,
+               create_time,
+               delete_flag,
+               coupling_table_codes,
+               coupling_field_codes
+        FROM dp_base.t_dp_base_process_template
+        WHERE delete_flag = false
+    </select>
+
+
+    <select id="getProcessNodeInfoByNodes"
+            resultType="com.futurecraftsmen.pms.dp.service.po.base.ProcessTemplateModel">
+        SELECT id,
+        process_code,
+        process_name,
+        owned_enterprise_code,
+        table_code,
+        process_info,
+        set_operation_flag,
+        process_check_code,
+        process_parameter,
+        process_state,
+        over_started,
+        remark,
+        update_time,
+        create_time,
+        delete_flag,
+        coupling_table_codes,
+        coupling_field_codes
+        FROM dp_base.t_dp_base_process_template
+        WHERE delete_flag = false
+        and process_info like #{node}
+
+
+        <foreach collection="nodes" index="index" item="n">
+            UNION
+            SELECT id,
+            process_code,
+            process_name,
+            owned_enterprise_code,
+            table_code,
+            process_info,
+            set_operation_flag,
+            process_check_code,
+            process_parameter,
+            process_state,
+            over_started,
+            remark,
+            update_time,
+            create_time,
+            delete_flag,
+            coupling_table_codes,
+            coupling_field_codes
+            FROM dp_base.t_dp_base_process_template
+            WHERE delete_flag = false
+            AND process_info LIKE #{n}
+        </foreach>
+
+    </select>
+
+</mapper>

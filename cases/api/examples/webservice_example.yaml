@@ -1,0 +1,30 @@
+# WebService (SOAP) 测试示例
+case_name: WebService测试示例
+case_code: WebServiceExample
+priority: 1
+steps:
+  - step_name: SOAP请求示例
+    protocol: webservice
+    wsdl_url: http://www.dneonline.com/calculator.asmx
+    operation: Add
+    params:
+      intA: 10
+      intB: 20
+    response_assert:
+      status_code_assert: 200
+      xpath_assert:
+        "//AddResult": "30"
+      response_assert_data: AddResult
+
+  - step_name: 自定义SOAP Body示例
+    protocol: soap
+    host: http://www.dneonline.com/calculator.asmx
+    soap_body: |
+      <Add xmlns="http://tempuri.org/">
+        <intA>15</intA>
+        <intB>25</intB>
+      </Add>
+    response_assert:
+      status_code_assert: 200
+      xpath_assert:
+        "//AddResult": "40"

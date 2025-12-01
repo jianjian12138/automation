@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.technical.service.dao.technical.IInspectRepairDispatcherMapper">
+
+
+    <!-- 批量插入新记录 -->
+    <insert id="batchSave">
+        INSERT INTO ${tableName}
+        (primary_key,
+        enterprise_code,
+        inspect_main_id,
+        report_main_id,
+        repair_main_id,
+        operator_user_code,
+        assign_num,
+        await_num,
+        remark,
+        status,
+        finish_date)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.primaryKeyValue},
+            #{data.enterpriseCode},
+            #{data.inspectMainId},
+            #{data.reportMainId},
+            #{data.repairMainId},
+            #{data.operatorUserCode},
+            #{data.assignNum},
+            #{data.awaitNum},
+            #{data.remark},
+            #{data.status},
+            #{data.finishDate})
+        </foreach>
+    </insert>
+
+    <select id="getListByRepairMainIds">
+        select * from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and repair_main_id in
+        <foreach collection="repairMainIds" item="repairMainId" open="(" close=")" separator=",">
+            #{repairMainId}
+        </foreach>
+    </select>
+
+    <select id="getListByReportMainIds">
+        select * from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and report_main_id in
+        <foreach collection="reportMainIds" item="reportMainId" open="(" close=")" separator=",">
+            #{reportMainId}
+        </foreach>
+    </select>
+
+    <update id="updateStatusByReportMainIdAndSubmitUserCode">
+        update ${tableName}
+        set status = #{status}
+        where report_main_id = #{reportMainId}
+          and operator_user_code = #{submitUserCode}
+    </update>
+
+    <select id="getOver">
+        select count(1)
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+          and status != #{status}
+          and report_main_id = #{reportMainId}
+    </select>
+
+</mapper>

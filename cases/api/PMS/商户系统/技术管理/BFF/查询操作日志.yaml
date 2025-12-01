@@ -1,0 +1,71 @@
+case_name: 查询操作日志
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    operationBody: '432739600857432064'
+    operationLogTypeEnum: PROCESSROUTE_CHANGE
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    operationBody: test
+    operationLogTypeEnum: test
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-缺少必填参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    operationLogTypeEnum: PROCESSROUTE_CHANGE
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 400
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    operationBody: 999999999
+    operationLogTypeEnum: 999999999
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    operationBody: '!@#$%^&*()'
+    operationLogTypeEnum: '!@#$%^&*()'
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: /staff/getStaffOperationLogList
+  headers: {}
+  method: POST
+  data:
+    operationBody: '432739600857432064'
+    operationLogTypeEnum: PROCESSROUTE_CHANGE
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401

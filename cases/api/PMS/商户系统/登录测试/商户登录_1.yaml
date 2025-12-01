@@ -1,0 +1,95 @@
+case_name: 商户登录
+case_code: TestCase
+priority: 2
+steps:
+- step_name: 正常场景-有效参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    phoneNumber: 04c2481f88532ea82152051aa7c11a4eb94dbc02a8f112f2e6569aa47a1dde3cee3acc26d43aebda028b2820f1f4a72fe236fb0011b0e4a8c1c227800d98b177f4eaf8cc73f4649806bcc3e9cb77b0402399e9db96feca87ad970b41334467be6316e64cb99601f50aace5b3
+    password: 046224c43ba9b6c17a1d95e5403116549639395d05d94ced7d01725d7eda266bedbd3e7a5572bd96bc8e92217d8e6cadd924847aa91cfe825579e78db8568c2129398fe08420dfcbe3df15d80f78dfe0580850255aa07660a0d9c0f6befef25d9e80e51e64867b7928af97ad
+    publicKey: 045daf5a294844e915c221e304d75e0415761ec7bd80c3051a48a2fb2cef6b8adc5304822da1dc312ddc559980cf27fe4c2cbde7daea8e9ae60a7c5d584bbd2a0e
+    verificationInfo: 04602c5d489aeb3a92343a8361fcb9132e6ea27bfc09b12e388c8a03e63adf99b15f0eee2542182b72a82fb22959c0bc5c8632e6feee35bdf2893ec7aa1302b84863e8831adae30006ff78e36acb10623add605697f81c111d41c184617b4e0258034c2354b7f67bfd5e946721e944753b433849942bbe72c564619c23b830
+    timestamp: 1736763060344
+    enterpriseCode: '190787582912233472'
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
+- step_name: 边界值测试-最小参数值
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    phoneNumber: test
+    password: test
+    publicKey: test
+    verificationInfo: test
+    timestamp: 1
+    enterpriseCode: test
+  response_assert:
+    response_assert_data: 成功
+    status_code_assert: 200
+- step_name: 异常场景-缺少必填参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    password: 046224c43ba9b6c17a1d95e5403116549639395d05d94ced7d01725d7eda266bedbd3e7a5572bd96bc8e92217d8e6cadd924847aa91cfe825579e78db8568c2129398fe08420dfcbe3df15d80f78dfe0580850255aa07660a0d9c0f6befef25d9e80e51e64867b7928af97ad
+    publicKey: 045daf5a294844e915c221e304d75e0415761ec7bd80c3051a48a2fb2cef6b8adc5304822da1dc312ddc559980cf27fe4c2cbde7daea8e9ae60a7c5d584bbd2a0e
+    verificationInfo: 04602c5d489aeb3a92343a8361fcb9132e6ea27bfc09b12e388c8a03e63adf99b15f0eee2542182b72a82fb22959c0bc5c8632e6feee35bdf2893ec7aa1302b84863e8831adae30006ff78e36acb10623add605697f81c111d41c184617b4e0258034c2354b7f67bfd5e946721e944753b433849942bbe72c564619c23b830
+    timestamp: 1736763060344
+    enterpriseCode: '190787582912233472'
+  response_assert:
+    response_assert_data: 参数错误
+    status_code_assert: 400
+- step_name: 异常场景-非法参数类型
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    phoneNumber: 999999999
+    password: 999999999
+    publicKey: 999999999
+    verificationInfo: 999999999
+    timestamp: 非法字符串
+    enterpriseCode: 999999999
+  response_assert:
+    response_assert_data: 参数格式错误
+    status_code_assert: 400
+- step_name: 异常场景-特殊字符测试
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    phoneNumber: '!@#$%^&*()'
+    password: '!@#$%^&*()'
+    publicKey: '!@#$%^&*()'
+    verificationInfo: '!@#$%^&*()'
+    timestamp: 1736763060344
+    enterpriseCode: '!@#$%^&*()'
+  response_assert:
+    response_assert_data: 参数验证失败
+    status_code_assert: 400
+- step_name: 异常场景-无权限访问
+  host: $get_host(ERP_TEST,pms_host)
+  path: /login/password/login
+  headers: {}
+  method: POST
+  data:
+    phoneNumber: 04c2481f88532ea82152051aa7c11a4eb94dbc02a8f112f2e6569aa47a1dde3cee3acc26d43aebda028b2820f1f4a72fe236fb0011b0e4a8c1c227800d98b177f4eaf8cc73f4649806bcc3e9cb77b0402399e9db96feca87ad970b41334467be6316e64cb99601f50aace5b3
+    password: 046224c43ba9b6c17a1d95e5403116549639395d05d94ced7d01725d7eda266bedbd3e7a5572bd96bc8e92217d8e6cadd924847aa91cfe825579e78db8568c2129398fe08420dfcbe3df15d80f78dfe0580850255aa07660a0d9c0f6befef25d9e80e51e64867b7928af97ad
+    publicKey: 045daf5a294844e915c221e304d75e0415761ec7bd80c3051a48a2fb2cef6b8adc5304822da1dc312ddc559980cf27fe4c2cbde7daea8e9ae60a7c5d584bbd2a0e
+    verificationInfo: 04602c5d489aeb3a92343a8361fcb9132e6ea27bfc09b12e388c8a03e63adf99b15f0eee2542182b72a82fb22959c0bc5c8632e6feee35bdf2893ec7aa1302b84863e8831adae30006ff78e36acb10623add605697f81c111d41c184617b4e0258034c2354b7f67bfd5e946721e944753b433849942bbe72c564619c23b830
+    timestamp: 1736763060344
+    enterpriseCode: '190787582912233472'
+  response_assert:
+    response_assert_data: 未授权
+    status_code_assert: 401
