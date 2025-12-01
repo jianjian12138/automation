@@ -96,10 +96,10 @@ pipeline {
                         echo "检查本地代码..."
                         echo "========================================"
                         
-                        // 定义本地代码目录（使用用户提供的路径）
+                        # 定义本地代码目录（使用用户提供的路径）
                         LOCAL_CODE_DIR="/var/jenkins_home/workspace/JJ_TEST/JJ_test/automation-test-platform"
                         
-                        // 检查本地代码目录是否存在
+                        # 检查本地代码目录是否存在
                         if [ -d "$LOCAL_CODE_DIR" ]; then
                             echo "✅ 本地代码目录存在: $LOCAL_CODE_DIR"
                             echo "检查本地代码目录结构..."
