@@ -87,14 +87,12 @@ pipeline {
                         uname -a
                         echo "当前目录: $(pwd)"
                         echo "工作目录: ${WORKSPACE}"
-                        echo "网络状态:"
-                        ping -c 3 github.com || echo "GitHub ping失败"
                         echo "========================================"
                     '''
                     
-                    // 使用git步骤直接从GitHub检出代码，增加超时设置
+                    // 使用git步骤直接从GitHub检出代码
                     try {
-                        git branch: 'master', url: 'https://github.com/jianjian12138/automation.git', timeout: 60
+                        git branch: 'master', url: 'https://github.com/jianjian12138/automation.git'
                     } catch (Exception e) {
                         echo "❌ 从GitHub检出代码失败: ${e.getMessage()}"
                         echo "尝试使用本地路径作为fallback..."
@@ -105,7 +103,7 @@ pipeline {
                             echo "尝试从本地路径获取代码..."
                             echo "========================================"
                             
-                            // 列出可能的本地路径
+                            # 列出可能的本地路径
                             POSSIBLE_PATHS=( 
                                 "/var/jenkins_home/automation" 
                                 "/home/jenkins/automation" 
@@ -130,7 +128,7 @@ pipeline {
                             if [ "$CODE_FOUND" = false ]; then
                                 echo "⚠️  未找到完整代码目录，尝试创建必要的目录结构..."
                                 
-                                // 创建基本目录结构
+                                # 创建基本目录结构
                                 mkdir -p cases/api/decimal_place
                                 mkdir -p reports/api
                                 mkdir -p reports/jacoco
