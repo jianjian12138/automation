@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.StaffSimpleDao">
+
+
+
+
+
+    <insert id="addCustomerStaff">
+        INSERT INTO ${tableName}
+        (primary_key,  phone, staff_sign,   enable_flag,
+         permission, type,enterprise_code)
+        VALUES (#{customerStaff.staffCode}, #{customerStaff.phoneNumber}, #{customerStaff.staffName},
+                #{customerStaff.enableFlag}, #{customerStaff.permission}, #{customerStaff.type},
+                #{customerStaff.enterpriseCode})
+    </insert>
+
+
+    <update id="updateStaffType">
+        UPDATE ${tableName}
+        SET type        = #{type},
+            enable_flag = 't'
+        WHERE primary_key = #{staffCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+</mapper>

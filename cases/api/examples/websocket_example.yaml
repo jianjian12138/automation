@@ -3,7 +3,7 @@ case_name: WebSocket测试示例
 case_code: WebSocketExample
 priority: 1
 steps:
-  - step_name: WebSocket连接和消息发送
+  - step_name: WebSocket连接和消息发�?
     protocol: websocket
     ws_url: wss://echo.websocket.org
     message:
@@ -41,3 +41,4 @@ steps:
       status_code_assert: 200
       jsonpath_assert:
         - $.action == "get_data"
+

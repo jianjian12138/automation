@@ -20,38 +20,58 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 
-def generate_html_report(test_results: dict, test_path: str, test_type: str, generate_report: bool = True, keep_reports: bool = False):
+def generate_html_report(test_results: dict, test_path: str, test_type: str, generate_report: bool = True, keep_reports: bool = False, generate_allure: bool = False):
     """
-    生成HTML测试报告
+    生成HTML测试报告（增强版，支持Allure报告）
     
     Args:
         test_results: 测试结果数据
         test_path: 测试文件路径
         test_type: 测试类型 (web/api/mobile)
-        generate_report: 是否生成报告
+        generate_report: 是否生成HTML报告
         keep_reports: 是否保存所有报告
+        generate_allure: 是否生成Allure报告
     """
-    if not generate_report:
-        return
+    # 生成HTML报告
+    if generate_report:
+        try:
+            from core.html_report_generator import HTMLReportGenerator
+            # 根据测试类型生成不同目录的报告
+            report_dir = f"reports/{test_type}"
+            report_generator = HTMLReportGenerator(output_dir=report_dir, keep_all_reports=keep_reports)
+            report_path = report_generator.generate_report(test_results, test_path, is_batch=False)
+            
+            print(f"\n{'='*60}")
+            print(f"[OK] HTML测试报告已生成: {report_path}")
+            if keep_reports:
+                print(f"[INFO] 报告保存模式: 保存所有历史报告")
+            else:
+                print(f"[INFO] 报告保存模式: 覆盖同名报告")
+        except Exception as e:
+            LOG.warning(f"HTML报告生成失败: {e}")
+            import traceback
+            traceback.print_exc()
     
-    try:
-        from core.html_report_generator import HTMLReportGenerator
-        # 根据测试类型生成不同目录的报告
-        report_dir = f"reports/{test_type}"
-        report_generator = HTMLReportGenerator(output_dir=report_dir, keep_all_reports=keep_reports)
-        report_path = report_generator.generate_report(test_results, test_path, is_batch=False)
-        
-        print(f"\n{'='*60}")
-        print(f"[OK] HTML测试报告已生成: {report_path}")
-        if keep_reports:
-            print(f"[INFO] 报告保存模式: 保存所有历史报告")
-        else:
-            print(f"[INFO] 报告保存模式: 覆盖同名报告")
+    # 生成Allure报告
+    if generate_allure:
+        try:
+            from core.allure_report_generator import AllureReportGenerator
+            # 根据测试类型生成不同目录的Allure报告
+            allure_dir = f"reports/allure/{test_type}"
+            allure_generator = AllureReportGenerator(output_dir=allure_dir)
+            allure_path = allure_generator.generate_report(test_results, test_path, is_batch=False)
+            
+            if allure_path:
+                print(f"[OK] Allure报告数据已生成: {allure_path}")
+                print(f"[INFO] 使用命令 'allure generate {allure_path} -o {allure_path}/html' 生成HTML报告")
+                print(f"[INFO] 使用命令 'allure serve {allure_path}' 查看实时报告")
+        except Exception as e:
+            LOG.warning(f"Allure报告生成失败: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    if generate_report or generate_allure:
         print(f"{'='*60}\n")
-    except Exception as e:
-        LOG.warning(f"报告生成失败: {e}")
-        import traceback
-        traceback.print_exc()
 
 
 def print_test_results(test_results: dict):
@@ -239,7 +259,7 @@ def run_web_test(test_path: str, generate_report: bool = True, keep_reports: boo
         sys.exit(1)
 
 
-def run_api_test(test_path: str, generate_report: bool = True, keep_reports: bool = False, enable_cleanup: bool = True):
+def run_api_test(test_path: str, generate_report: bool = True, keep_reports: bool = False, enable_cleanup: bool = True, generate_allure: bool = False):
     """
     运行API测试
     
@@ -248,6 +268,7 @@ def run_api_test(test_path: str, generate_report: bool = True, keep_reports: boo
         generate_report: 是否生成报告
         keep_reports: 是否保存所有报告
         enable_cleanup: 是否启用数据清理
+        generate_allure: 是否生成Allure报告
     """
     LOG.info(f"运行API测试: {test_path}")
     
@@ -258,7 +279,7 @@ def run_api_test(test_path: str, generate_report: bool = True, keep_reports: boo
     print_test_results(result)
     
     # 生成HTML报告
-    generate_html_report(result, test_path, "api", generate_report, keep_reports)
+    generate_html_report(result, test_path, "api", generate_report, keep_reports, generate_allure)
     
     if not result['passed']:
         sys.exit(1)
@@ -310,7 +331,8 @@ def main():
     
     parser.add_argument(
         "test_path",
-        help="测试文件路径"
+        nargs="+",
+        help="测试文件路径或目录（支持多个文件）"
     )
     
     parser.add_argument(
@@ -355,6 +377,11 @@ def main():
         help="按标签过滤测试用例（例如: --tags smoke critical）"
     )
     parser.add_argument(
+        "--allure",
+        action="store_true",
+        help="生成Allure报告"
+    )
+    parser.add_argument(
         "--security-scan",
         action="store_true",
         help="执行完功能测试后触发 Strix 安全扫描"
@@ -379,31 +406,43 @@ def main():
         type=int,
         help="Strix 扫描超时时间（秒）"
     )
+    parser.add_argument(
+        "--parallel",
+        action="store_true",
+        help="API测试并行执行"
+    )
     
     args = parser.parse_args()
     
-    # 规范化路径（支持相对路径和绝对路径，处理中文文件名）
+    # 规范化路径（支持多个测试文件和目录，处理中文文件名）
     import os
-    # 转换为绝对路径（对中文文件名更友好）
-    if not os.path.isabs(args.test_path):
-        # 如果是相对路径，从当前工作目录查找
-        abs_path = os.path.abspath(args.test_path)
-    else:
-        abs_path = args.test_path
+    from pathlib import Path
     
-    # 对于中文文件名，os.path.exists可能因为编码问题失败
-    # 但文件实际存在，所以先尝试使用，如果后续打开失败再报错
-    # 这里只做基本检查：目录是否存在
-    dir_path = os.path.dirname(abs_path)
-    if not os.path.exists(dir_path):
-        LOG.error(f"目录不存在: {dir_path}")
+    # 获取所有测试文件路径
+    test_paths = []
+    for path in args.test_path:
+        abs_path = os.path.abspath(path)
+        if os.path.isdir(abs_path):
+            # 如果是目录，递归查找所有测试文件
+            for root, dirs, files in os.walk(abs_path):
+                for file in files:
+                    if file.endswith(".yaml") or file.endswith(".py"):
+                        test_file = os.path.join(root, file)
+                        test_paths.append(test_file)
+        elif os.path.isfile(abs_path):
+            # 如果是文件，直接添加
+            test_paths.append(abs_path)
+        else:
+            LOG.warning(f"路径不存在或无法访问: {path}")
+    
+    if not test_paths:
+        LOG.error("未找到任何测试文件")
         sys.exit(1)
     
-    # 使用绝对路径（即使os.path.exists返回False，文件可能仍然存在）
-    args.test_path = abs_path
+    LOG.info(f"找到 {len(test_paths)} 个测试文件")
     
     # 检测或使用指定的测试类型
-    test_type = args.type or detect_test_type(args.test_path)
+    test_type = args.type or detect_test_type(test_paths[0])
     
     LOG.info(f"测试类型: {test_type}")
     LOG.info(f"运行环境: {args.env}")
@@ -416,7 +455,7 @@ def main():
         combined_targets = strix_manager.extend_targets_with_case(
             args.security_targets,
             test_type,
-            args.test_path,
+            test_paths[0],
         )
         scan_result = strix_manager.execute(
             targets=combined_targets,
@@ -437,27 +476,72 @@ def main():
     
     # 执行测试
     try:
-        if test_type == "web":
-            run_web_test(
-                args.test_path,
-                generate_report=not args.no_report,
-                keep_reports=args.keep_reports,
-                headless=args.headless,
-                tags=args.tags
-            )
-        elif test_type == "api":
-            run_api_test(
-                args.test_path, 
-                generate_report=not args.no_report,
-                keep_reports=args.keep_reports,
-                enable_cleanup=not args.no_cleanup
-            )
-        elif test_type == "mobile":
-            run_mobile_test(
-                args.test_path,
-                generate_report=not args.no_report,
-                keep_reports=args.keep_reports
-            )
+        if test_type == "api" and args.parallel:
+            # 并行执行API测试
+            LOG.info("并行执行API测试")
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            
+            def execute_single_api_test(test_path):
+                """执行单个API测试"""
+                executor = APITestExecutor(enable_cleanup=not args.no_cleanup)
+                return executor.execute_case(test_path)
+            
+            # 收集所有测试结果
+            all_results = []
+            
+            # 使用线程池并行执行
+            with ThreadPoolExecutor() as executor:
+                # 提交所有测试任务
+                future_to_test = {executor.submit(execute_single_api_test, test_path): test_path for test_path in test_paths}
+                
+                # 处理完成的任务
+                for future in as_completed(future_to_test):
+                    test_path = future_to_test[future]
+                    try:
+                        result = future.result()
+                        all_results.append((test_path, result))
+                        print_test_results(result)
+                        generate_html_report(result, test_path, "api", generate_report=not args.no_report, keep_reports=args.keep_reports, generate_allure=args.allure)
+                    except Exception as e:
+                        LOG.error(f"测试执行失败: {test_path} - {e}")
+            
+            # 检查是否所有测试都通过
+            all_passed = all(result[1]['passed'] for result in all_results)
+            if not all_passed:
+                sys.exit(1)
+        else:
+            # 串行执行测试
+            all_passed = True
+            for test_path in test_paths:
+                try:
+                    if test_type == "web":
+                        run_web_test(
+                            test_path,
+                            generate_report=not args.no_report,
+                            keep_reports=args.keep_reports,
+                            headless=args.headless,
+                            tags=args.tags
+                        )
+                    elif test_type == "api":
+                        run_api_test(
+                            test_path, 
+                            generate_report=not args.no_report,
+                            keep_reports=args.keep_reports,
+                            enable_cleanup=not args.no_cleanup,
+                            generate_allure=args.allure
+                        )
+                    elif test_type == "mobile":
+                        run_mobile_test(
+                            test_path,
+                            generate_report=not args.no_report,
+                            keep_reports=args.keep_reports
+                        )
+                except Exception as e:
+                    LOG.error(f"测试执行失败: {test_path} - {e}")
+                    all_passed = False
+            
+            if not all_passed:
+                sys.exit(1)
     except Exception as e:
         LOG.error(f"测试执行失败: {e}")
         sys.exit(1)
@@ -469,7 +553,7 @@ def main():
         combined_targets = strix_manager.extend_targets_with_case(
             args.security_targets,
             test_type,
-            args.test_path,
+            test_paths[0],  # 只传递第一个文件用于分析
         )
         scan_result = strix_manager.execute(
             targets=combined_targets,

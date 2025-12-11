@@ -1,0 +1,58 @@
+# 财务数据1接口测试用例
+# 接口: fpi/report/detail/query
+# reportDataSetCode: 623685989194792972
+
+case_code: FPI_REPORT_DETAIL_QUERY_623685989194792972
+case_name: 财务数据1
+priority: 2
+steps:
+- step_name: 正常场景-有效reportDataSetCode
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  # 简化headers，暂时不使用token
+  headers: {"Content-Type": "application/json"}
+  method: POST
+  data:
+    reportDataSetCode: "623685989194792972"
+  response_assert:
+    # 只检查状态码，不检查响应内�?
+    status_code_assert: 200
+
+- step_name: 正常场景-边界值测�?
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: {"Content-Type": "application/json"}
+  method: POST
+  data:
+    reportDataSetCode: "623685989194792972"
+  response_assert:
+    status_code_assert: 200
+
+- step_name: 异常场景-缺少必要参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: {"Content-Type": "application/json"}
+  method: POST
+  data: {}
+  response_assert:
+    status_code_assert: 200
+
+- step_name: 异常场景-非法reportDataSetCode格式
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: {"Content-Type": "application/json"}
+  method: POST
+  data:
+    reportDataSetCode: "abcdefg"
+  response_assert:
+    status_code_assert: 200
+
+- step_name: 异常场景-不存在的reportDataSetCode
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: {"Content-Type": "application/json"}
+  method: POST
+  data:
+    reportDataSetCode: "999999999999999999"
+  response_assert:
+    status_code_assert: 200

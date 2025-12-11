@@ -10,4 +10,5 @@ steps:
   response_assert:
     response_assert_data: 接口调用成功
     status_code_assert: 200
-  step_name: 技术改进状态可选值
+  step_name: 技术改进状态可选�?
+

@@ -11,7 +11,7 @@ steps:
   response_assert:
     response_assert_data: 接口调用成功
     status_code_assert: 200
-  step_name: '* 仓储部-入库列表'
+  step_name: '* 仓储�?入库列表'
 - headers: $generate_token(api_host)
   host: $get_host(ERP_TEST,api_host)
   method: GET
@@ -20,4 +20,5 @@ steps:
   response_assert:
     response_assert_data: 接口调用成功
     status_code_assert: 200
-  step_name: '* 仓储部-入库列表'
+  step_name: '* 仓储�?入库列表'
+

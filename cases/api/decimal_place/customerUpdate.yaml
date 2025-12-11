@@ -1,11 +1,11 @@
 # 客户信息更新场景
 # 使用的数据库表：
-# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，查询 primaryKey）
-# 2. dm_m9.sell_t_dm_m9_customer_contacts_9 - 客户联系人表（查询 contactPrimaryKey）
-# 3. dm_m9.sell_t_dm_m9_customer_address_9 - 客户地址表（查询 address primaryKey）
-# 注意：此接口为数据更新接口，需要传入已存在的 primaryKey 进行更新
-# 注意值的唯一性，使用 $mock_data 生成唯一值避免冲突
-# 小数点位限制：无特殊小数位限制（主要测试数据更新功能）
+# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，查询 primaryKey�?
+# 2. dm_m9.sell_t_dm_m9_customer_contacts_9 - 客户联系人表（查�?contactPrimaryKey�?
+# 3. dm_m9.sell_t_dm_m9_customer_address_9 - 客户地址表（查询 address primaryKey�?
+# 注意：此接口为数据更新接口，需要传入已存在�?primaryKey 进行更新
+# 注意值的唯一性，使用 $mock_data 生成唯一值避免冲�?
+# 小数点位限制：无特殊小数位限制（主要测试数据更新功能�?
 
 case_code: CustomerUpdate
 case_name: customerUpdate
@@ -31,7 +31,7 @@ steps:
     openingBank: $mock_data(openingBank, string, length=15)
     invoiceTel: $mock_data(invoiceTel, string, length=12)
     homeCity: 110101
-    homeCityName: "北京市市辖区东城区"
+    homeCityName: "北京市市辖区东城�?
     remark: "123123"
     enterpriseRegion:
     - 11
@@ -98,7 +98,7 @@ steps:
   response_assert:
     status_code_assert: 500
 
-- step_name: 边界值测试-最小参数
+- step_name: 边界值测�?最小参�?
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/update
   headers: $generate_token(pms_host)
@@ -120,7 +120,7 @@ steps:
     jsonpath_assert:
     - $..resCode == 200 or $..resCode == 202
 
-- step_name: 正常场景-更新已有联系人信息
+- step_name: 正常场景-更新已有联系人信�?
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/update
   headers: $generate_token(pms_host)
@@ -137,8 +137,8 @@ steps:
     location: "123"
     taxNumber: $mock_data(taxNumber, string, length=13)
     homeCity: 110101
-    homeCityName: "北京市市辖区东城区"
-    remark: "更新联系人测试"
+    homeCityName: "北京市市辖区东城�?
+    remark: "更新联系人测�?
     enterpriseRegion:
     - 11
     - 1101
@@ -160,4 +160,5 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..resCode == 200 or $..resCode == 202
+
 

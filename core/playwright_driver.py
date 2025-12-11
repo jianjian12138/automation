@@ -99,7 +99,7 @@ class PlaywrightDriver:
     
     def _create_dirs(self):
         """创建必要的目录"""
-        dirs = ['./videos', './traces', './screenshots', './logs/network']
+        dirs = ['./reports/videos', './reports/traces', './reports/screenshots', './logs/network']
         for dir_path in dirs:
             Path(dir_path).mkdir(parents=True, exist_ok=True)
     
@@ -153,7 +153,7 @@ class PlaywrightDriver:
         # 视频录制配置
         if self.record_video:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            context_options['record_video_dir'] = f'./videos/{timestamp}'
+            context_options['record_video_dir'] = f'./reports/videos/{timestamp}'
             context_options['record_video_size'] = self.viewport
         
         # HAR网络日志
@@ -334,7 +334,7 @@ class PlaywrightDriver:
         """
         if not path:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            path = f"./screenshots/screenshot_{timestamp}.png"
+            path = f"./reports/screenshots/screenshot_{timestamp}.png"
         
         LOG.info(f"截图: {path}")
         return self.page.screenshot(path=path, full_page=full_page)
@@ -476,7 +476,7 @@ class PlaywrightDriver:
         # 保存trace
         if self.record_trace and save_trace:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            trace_path = f"./traces/trace_{timestamp}.zip"
+            trace_path = f"./reports/traces/trace_{timestamp}.zip"
             try:
                 self.context.tracing.stop(path=trace_path)
                 LOG.info(f"Trace已保存: {trace_path}")
@@ -504,7 +504,7 @@ class PlaywrightDriver:
             
             # 截图
             try:
-                screenshot_path = f"./screenshots/failed_{timestamp}.png"
+                screenshot_path = f"./reports/screenshots/failed_{timestamp}.png"
                 self.page.screenshot(path=screenshot_path, full_page=True)
                 LOG.error(f"失败截图: {screenshot_path}")
             except:
@@ -513,7 +513,7 @@ class PlaywrightDriver:
             # 保存trace
             if self.record_trace:
                 try:
-                    trace_path = f"./traces/failed_{timestamp}.zip"
+                    trace_path = f"./reports/traces/failed_{timestamp}.zip"
                     self.context.tracing.stop(path=trace_path)
                     LOG.error(f"失败trace: {trace_path}")
                     LOG.error(f"分析失败: playwright show-trace {trace_path}")

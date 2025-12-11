@@ -17,7 +17,7 @@ steps:
     client_id: test_publisher
     response_assert:
       status_code_assert: 200
-      response_assert_data: 消息已发布
+      response_assert_data: 消息已发�?
 
   - step_name: 订阅MQTT主题
     protocol: mqtt
@@ -49,3 +49,4 @@ steps:
     client_id: auth_client
     response_assert:
       status_code_assert: 200
+

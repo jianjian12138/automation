@@ -24,7 +24,7 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-BigDecimal精度测试（8位小数）
+  step_name: 正常场景-BigDecimal精度测试�?位小数）
 - data:
     assistedCost: 1.0e-08
     calculation: calculation_value
@@ -44,7 +44,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最小精度（0.00000001）
+  step_name: 边界值测�?最小精度（0.00000001�?
 - data:
     assistedCost: 99999999.99999999
     calculation: calculation_value
@@ -64,7 +64,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最大值（8位整数+8位小数）
+  step_name: 边界值测�?最大值（8位整�?8位小数）
 - data:
     assistedCost: 123.123456785
     calculation: calculation_value
@@ -84,19 +84,19 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 四舍五入测试-超过8位小数截断
+  step_name: 四舍五入测试-超过8位小数截�?
 - data:
-    assistedCost: 非法字符串
+    assistedCost: 非法字符�?
     calculation: calculation_value
-    costManually: 非法字符串
-    deviceCost: 非法字符串
+    costManually: 非法字符�?
+    deviceCost: 非法字符�?
     formula: formula_value
     formulaEn: formulaen_value
     id: 123456789
     ids: *id001
-    manageCost: 非法字符串
+    manageCost: 非法字符�?
     partUnityNo: UNITY_NO_001
-    testCost: 非法字符串
+    testCost: 非法字符�?
   headers: $generate_token(pms_host)
   host: $get_host(ERP_TEST,pms_host)
   method: POST
@@ -144,4 +144,5 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-零值测试
+  step_name: 正常场景-零值测�?
+

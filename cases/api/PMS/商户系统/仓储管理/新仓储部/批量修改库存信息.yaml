@@ -15,7 +15,7 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
-- step_name: 边界值测试-最小参数值
+- step_name: 边界值测�?最小参数�?
   host: $get_host(ERP_TEST,pms_host)
   path: technology/inventory/batchUpdateStock
   headers: $generate_token(pms_host)
@@ -42,8 +42,8 @@ steps:
   headers: $generate_token(pms_host)
   method: POST
   data:
-    current: 非法字符串
-    size: 非法字符串
+    current: 非法字符�?
+    size: 非法字符�?
   response_assert:
     response_assert_data: 参数格式错误
     status_code_assert: 400
@@ -58,7 +58,7 @@ steps:
   response_assert:
     response_assert_data: 参数验证失败
     status_code_assert: 400
-- step_name: 异常场景-无权限访问
+- step_name: 异常场景-无权限访�?
   host: $get_host(ERP_TEST,pms_host)
   path: technology/inventory/batchUpdateStock
   headers: {}
@@ -67,5 +67,6 @@ steps:
     current: 1
     size: 10
   response_assert:
-    response_assert_data: 未授权
+    response_assert_data: 未授�?
     status_code_assert: 401
+

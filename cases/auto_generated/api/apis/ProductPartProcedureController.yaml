@@ -11,4 +11,5 @@ steps:
   response_assert:
     response_assert_data: 接口调用成功
     status_code_assert: 200
-  step_name: 产品零件工序 控制器
+  step_name: 产品零件工序 控制�?
+

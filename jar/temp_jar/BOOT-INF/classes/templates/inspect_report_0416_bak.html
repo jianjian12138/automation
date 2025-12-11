@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>质检报告</title>
+    <style>
+        @page landscape {
+            size: landscape;
+        }
+
+        @page {
+            size: A4;
+            margin: 6mm 4mm;
+            padding: 0;
+
+            @bottom-left {
+                content: "�? counter(page) "�?;
+                font-size: 12pt; /* 确保页码可见 */
+                color: black;
+            }
+
+            @bottom-right {
+                content: "�? counter(pages) "�?;
+                font-size: 12pt; /* 确保页码可见 */
+                color: black;
+            }
+        }
+
+        body {
+            counter-reset: page; /* 初始化计数器 */
+        }
+
+        .page-portrait:before {
+            /*content: "�? counter(page) "�?;*/
+            counter-increment: page;
+        }
+
+        /* 新一�?*/
+        .new-page {
+            page-break-after: always;
+        }
+
+        /*纵向尺寸*/
+        .page-portrait {
+            margin: 0 6mm;
+        }
+
+        .portrait-title {
+            font-size: 24pt;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .portrait-num {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 2mm;
+        }
+
+        /*横向尺寸*/
+        .page-landscape {
+            page: landscape;
+        }
+
+        /*简宋必须有，否则转pdf没用*/
+        body {
+            margin: 0;
+            font-family: SimSun, sans-serif;
+            font-size: 14px;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .tableBottom tr td {
+            border-bottom: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-top: 1px solid black;
+            height: 1px;
+            /*padding: 5px;*/
+            text-align: center;
+            word-break: break-all;
+            /*width: 44px*/
+        }
+
+        .tableBottom tr td > p {
+            word-break: break-word;
+            font-weight: bold;
+        }
+
+        .tableTop tr td > p {
+            word-break: break-word;
+            font-weight: bold;
+        }
+
+        .tableTop tr td {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-top: 1px solid black;
+            height: 1px;
+            padding: 4px;
+            text-align: center;
+            word-break: break-all;
+            /*width: 44px*/
+        }
+
+        /*/避免图片被截�?/
+        img {
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
+        }
+
+        .Bodyborder {
+            page-break-after: always;
+            /* overflow: auto */
+        }
+
+        .QRcode {
+            width: 16mm;
+            height: 16mm;
+            vertical-align: bottom;
+        }
+
+        .bottomCheck {
+            padding: 10px;
+            border-bottom: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .bottomCheck-none {
+            padding: 10px;
+        }
+
+        .stamp {
+            margin-top: 20px;
+            width: 50mm;
+            height: 50mm;
+            /*display: flex;*/
+            /*flex-direction: column;*/
+            /*align-items: center;*/
+            /*justify-content: flex-end;*/
+            /*position: relative;*/
+        }
+
+        .stampTitle {
+            z-index: 10;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .stampTime {
+            z-index: 10;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            text-align: center;
+
+        }
+
+        .stampImg {
+            position: absolute;
+            width: 50mm;
+            height: 50mm;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-portrait">
+    <div class="portrait-title"><p th:text="${title}">成品检质检报告</p></div>
+    <div class="Bodyborder">
+        <!--        <div>-->
+        <!--            <img th:src="${qrcode}"-->
+        <!--                 alt="二维�? class="QRcode"/>-->
+        <!--            <span class="bold">合同�?<p th:text="${bussNumber}"></p></span>-->
+        <!--        </div>-->
+        <br/>
+        <div class="portrait-num"><p th:text="'单号�? + ${bussNumber}"></p></div>
+        <table style="border-collapse:collapse; width:100%">
+            <tbody class="tableTop">
+            <tr>
+                <td style="width:12%">
+                    <p><strong>批次�?/strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${batchNum}"></p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>产品</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${name}"></p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>检验依�?/strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${inspectBasic}"></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:12%">
+                    <p><strong>检验日�?/strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${inspectDateRange}">2024.01.01-2024.03.01</p>
+                    <!--                    <p th:if="${beginDate != endDate}">-</p>-->
+                    <!--                    <p th:if="${beginDate != endDate}" th:text="${endDate}"></p>-->
+                </td>
+                <td style=" width:12%">
+                    <p><strong>送检数量</strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${taskNum}"></p>
+                </td>
+                <td style=" width:12%">
+                    <p><strong>检验数�?/strong></p>
+                </td>
+                <td style=" width:20%">
+                    <p th:text="${inspectNum}"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="border-collapse:collapse; width:100%">
+            <tbody class="tableBottom">
+            <tr>
+                <td style="width:5%">
+                    <p><strong>序号</strong></p>
+                </td>
+                <td style="width:10%">
+                    <p><strong>检验项</strong></p>
+                </td>
+                <td style="width:10%">
+                    <p><strong>技术要�?/strong></p>
+                </td>
+                <td>
+                    <p><strong>检验结�?/strong></p>
+                </td>
+                <td style="width:10%">
+                    <p><strong>检验设�?/strong></p>
+                </td>
+                <td style="width:10%">
+                    <p><strong>单项判定</strong></p>
+                </td>
+            </tr>
+            <tr th:each="item ,t : ${checkItemsList}">
+                <td>
+                    <p th:text="${t.count}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.name}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.requirement}"></p>
+                </td>
+                <td style="text-align: left;">
+                    <p th:utext="${item.checkResult}" style="/**word-wrap:break-word;*/"></p>
+                </td>
+                <td>
+                    <p th:text="${#lists.isEmpty(item.toolEquipTypes) ? '-' : #strings.arrayJoin(item.toolEquipTypes,',')}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.judge}" style="/**word-wrap:break-word;*/"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="bottomCheck">
+            <div class="left bold">
+                <p th:text="'检验结�?'+${inspectResult}">检验结�?合格</p>
+            </div>
+            <br/>
+            <br/>
+            <div class="left bold">
+                <p th:utext="${remark}"></p>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <div class="right"><p th:text="'检验员: ' + ${inspectUserName}">检验员: </p></div>
+        </div>
+        <div class="bottomCheck-none" style="page-break-inside: avoid;">
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <div class="right"><p th:text="${enterpriseName}">南京航舰电子科技有限公司测试</p></div>
+            <div class="right"><p th:text="${currDate}">2025.01.01</p></div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+
+
+</script>
+
+</html>
+
+
+

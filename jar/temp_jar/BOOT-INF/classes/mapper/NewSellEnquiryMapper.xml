@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.enquiry.NewSellEnquiryDao">
+
+
+    <insert id="addVisibleData">
+        INSERT INTO ${tableName} (primary_key, type, enquiry_number, enquiry_name,
+                                  buyer, seller, customer_data_code, enterprise_code,
+                                  sell_enquiry_belong, user_name, language, payment_strategy, column_titles,
+                                  amount_title, product_detail, remark, state, enquiry_time, data_version,
+                                  purchase_enquiry,son_enterprise_code,
+                                  delete_flag, business_belong, sign_areas)
+        VALUES (#{model.enquiryCode}, #{model.type}, #{model.enquiryNumber}, #{model.enquiryName},
+                #{model.buyer}, #{model.seller}, #{model.customerDataCode},
+                #{model.ownedEnterpriseCode}, #{model.userCode}, #{model.userName}, #{model.language},
+                #{model.paymentStrategy}, #{model.columnTitles}, #{model.amountTitle}, #{model.productDetail},
+                #{model.remark}, #{model.state},
+                #{model.enquiryTime}, #{model.dataVersion}, #{model.purchaseEnquiry}, #{model.sonEnterpriseCode}, 'f',
+                #{model.businessBelong}, #{model.signAreas})
+    </insert>
+
+    <select id="page">
+        SELECT primary_key as enquiryCode,type, enquiry_number, enquiry_name,buyer,
+        seller, customer_data_code, enterprise_code as ownedEnterpriseCode,
+        sell_enquiry_belong as userCode, user_name, language, payment_strategy, column_titles,
+        amount_title,product_detail,remark,state,enquiry_time,data_version,purchase_enquiry,son_enterprise_code,business_belong,sign_areas
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{currentEnterpriseCode}
+        AND delete_flag= 'f'
+        <if test="customerDataCode != null">
+            AND customer_data_code = #{customerDataCode}
+        </if>
+        <if test="userCodes != null and userCodes.size()!=0">
+            AND sell_enquiry_belong IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="enquiryNumber != null and enquiryNumber !=''">
+            AND enquiry_number LIKE '%'|| #{enquiryNumber} ||'%'
+        </if>
+        <if test="state != null ">
+            AND state = #{state}
+        </if>
+        <if test="enquiryTimePreDate != null">
+            AND enquiry_time &gt;= #{enquiryTimePreDate}
+        </if>
+        <if test="enquiryTimePostDate != null">
+            AND enquiry_time &lt;= #{enquiryTimePostDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="sellEnquiryDetailUnrestricted"
+            resultType="com.futurecraftsmen.pms.pas.service.po.enquiry.NewSellEnquiryModel">
+        SELECT primary_key         as enquiryCode,
+               type,
+               enquiry_number,
+               enquiry_name,
+               buyer,
+               seller,
+               customer_data_code,
+               enterprise_code     as ownedEnterpriseCode,
+               sell_enquiry_belong as userCode,
+               user_name, language, payment_strategy, column_titles, amount_title, product_detail, remark, state, enquiry_time, data_version, purchase_enquiry, son_enterprise_code, sign_areas
+        FROM ${tableName}
+        WHERE
+            enterprise_code= #{enterpriseCode}
+          AND primary_key = #{enquiryCode}
+    </select>
+
+    <update id="updateAfterDistribute">
+        UPDATE ${tableName}
+        SET seller              = #{model.seller},
+            buyer              = #{model.buyer},
+            customer_data_code = #{model.customerDataCode},
+            sell_enquiry_belong = #{model.userCode},
+            user_name           = #{model.userName},
+            data_version        = #{model.dataVersion},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.enquiryCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+    <update id="updateAfterConvertToCustomer">
+        UPDATE ${tableName}
+        SET buyer        = #{model.buyer},
+            customer_data_code = #{model.customerDataCode},
+            data_version = #{model.dataVersion},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.enquiryCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+
+    <update id="updateAfterQuote">
+        UPDATE ${tableName}
+        SET state        = #{model.state},
+            data_version = #{model.dataVersion},
+            son_enterprise_code = #{model.sonEnterpriseCode}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.enquiryCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+
+    <update id="compareDataVersionAndUpdate">
+        UPDATE ${tableName}
+        SET enquiry_name     = #{model.enquiryName},
+            buyer            = #{model.buyer},
+            customer_data_code = #{model.customerDataCode},
+            seller           = #{model.seller},
+            payment_strategy = #{model.paymentStrategy},
+            column_titles    = #{model.columnTitles},
+            amount_title     = #{model.amountTitle},
+            product_detail   = #{model.productDetail},
+            remark           = #{model.remark},
+            state            = #{model.state},
+            enquiry_time     = #{model.enquiryTime},
+            data_version     = #{model.dataVersion},
+            sign_areas = #{model.signAreas},
+            son_enterprise_code = #{model.sonEnterpriseCode},
+            delete_flag      = 'f'
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.enquiryCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+    <select id="sellEnquiryDetail"
+            resultType="com.futurecraftsmen.pms.pas.service.po.enquiry.NewSellEnquiryModel">
+        SELECT primary_key as enquiryCode,type, enquiry_number, enquiry_name,buyer,
+        seller, customer_data_code, enterprise_code as ownedEnterpriseCode,
+        sell_enquiry_belong as userCode, user_name, language, payment_strategy, column_titles,
+        amount_title,product_detail,remark,state,enquiry_time,data_version,purchase_enquiry,son_enterprise_code,business_belong,sign_areas
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key = #{enquiryCode}
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <delete id="deleteSellEnquiry">
+        DELETE FROM ${tableName}
+        WHERE enterprise_code = #{currentEnterpriseCode}
+        AND primary_key = #{enquiryCode}
+        AND delete_flag = 'f'
+    </delete>
+
+</mapper>

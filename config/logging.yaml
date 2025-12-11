@@ -28,8 +28,7 @@ handlers:
       encoding: utf8
       when: midnight  # 每天凌晨
   error_file_handler:
-      class: logging.TimedRotatingFileHandler # 输出到文件
-      level: ERROR
+      class: logging.TimedRotatingFileHandler # 输出到文�?      level: ERROR
       formatter: error
       filename: ./logs/error.log
       backupCount: 20

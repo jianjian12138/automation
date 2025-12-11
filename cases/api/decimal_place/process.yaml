@@ -19,7 +19,7 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-BigDecimal精度测试（8位小数）
+  step_name: 正常场景-BigDecimal精度测试�?位小数）
 - data:
     detailList: *id001
     productPartCode: $get_db_field(product_part_code)
@@ -31,7 +31,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最小精度（0.00000001）
+  step_name: 边界值测�?最小精度（0.00000001�?
 - data:
     detailList: *id001
     productPartCode: $get_db_field(product_part_code)
@@ -43,7 +43,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最大值（8位整数+8位小数）
+  step_name: 边界值测�?最大值（8位整�?8位小数）
 - data:
     detailList: *id001
     productPartCode: $get_db_field(product_part_code)
@@ -55,7 +55,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 四舍五入测试-超过8位小数截断
+  step_name: 四舍五入测试-超过8位小数截�?
 - data:
     detailList: *id001
     productPartCode: $get_db_field(product_part_code)
@@ -91,4 +91,5 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-零值测试
+  step_name: 正常场景-零值测�?
+

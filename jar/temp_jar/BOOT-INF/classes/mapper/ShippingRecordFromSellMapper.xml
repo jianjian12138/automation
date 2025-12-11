@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.receiving.ShippingRecordFromSellDao">
+
+    <resultMap id="ShippingRecordFromSellModel" type="com.futurecraftsmen.pms.pas.service.po.receiving.ShippingRecordFromSellModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="purchase_contract" property="purchaseContract"/>
+        <result column="purchase_contract_product" property="purchaseContractProduct"/>
+        <result column="send_num" property="sendNum"/>
+        <result column="sender" property="sender"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+    </resultMap>
+
+
+
+
+
+
+    <select id="recordForProductPage" resultMap="ShippingRecordFromSellModel">
+        SELECT  primary_key, purchase_contract_product,send_num,
+                sender, send_time,enterprise_code
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND purchase_contract = #{purchaseContract}
+        AND purchase_contract_product = #{purchaseContractProduct}
+        ORDER BY send_time DESC
+    </select>
+
+
+</mapper>

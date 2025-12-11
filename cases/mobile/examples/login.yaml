@@ -1,5 +1,5 @@
 # Mobile测试示例 - 登录流程
-# Maestro声明式测试
+# Maestro声明式测�?
 
 appId: com.example.app
 ---
@@ -16,7 +16,7 @@ appId: com.example.app
 - assertVisible: 
     id: "login_container"
 
-# 5. 输入用户名
+# 5. 输入用户�?
 - tapOn: 
     id: "username_input"
 - inputText: "test_user"
@@ -37,4 +37,5 @@ appId: com.example.app
 
 # 10. 验证用户信息
 - assertVisible: "test_user"
+
 

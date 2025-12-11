@@ -1,0 +1,189 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: nacos.pms:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: pms-configuration
+        group: pms
+        file-extension: yaml
+        shared-configs:
+          - { data-id: dubbo-port-mapping.yaml, group: pms, refresh: true , priority: 0}
+          - { data-id: dubbo-common.yaml, group: pms, refresh: true , priority: 1}
+          - { data-id: sign.yaml, group: pms, refresh: true }
+          - { data-id: redisson-single.yaml, group: pms, refresh: true }
+          - { data-id: database.yaml, group: pms, refresh: true }
+          - { data-id: database-auth-dm.yaml, group: pms, refresh: true }
+          - { data-id: register.yaml, group: pms, refresh: true }
+          - { data-id: aliyun-oss.yaml, group: pms, refresh: true }
+          - { data-id: enCode.yaml, group: pms, refresh: true }
+  application:
+    name: pasService-1
+  thymeleaf:
+    check-template-location: true
+    cache: false    #是否缓存，开发模式下设置为false，避免改了模板还要重启服务器，线上设置为true，可以提高性能�?
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+jasypt:
+  encryptor:
+    password: zhangsiyao
+
+template:
+  namespace: 8b480f19-ef0b-4770-b654-ae9329c7e1c2
+
+
+
+
+dynamic:
+  process:
+      sellQuotationPrice:
+        templateCode: 208681881749946368
+
+
+  module:
+    warehouse:
+      table:
+        inventory:
+          tableCode: 323597274306314240     #仓储模块 库存�?todo 后续移除
+        stock:
+          tableCode: 356591388990898176     #仓储模块 �?库存�?
+
+    sell:
+      table:
+        customers:
+          tableCode: 273624145097654272     #销售模块客户信息表
+        customerContact:
+          tableCode: 273629636880236544     #销售模块客户联系人�?
+        filing:
+          tableCode: 275065108726808576     # 销售模块备案记录表
+
+        template:
+          tableCode: 258761128749031100    #销售模块模板单�?
+
+        sellEnquiry:
+          tableCode: 272104970453778432     #航舰 销售询价记录表
+        sellQuotation:
+          tableCode: 274353117712351232     #航舰 销售报价单记录�?
+
+        sellContract:
+          tableCode: 283054396982689792    #销售模块销售方合同�?
+
+        sellOrder:
+          tableCode: 298282895972499456 #销售订单表
+        sellOrderProduct:
+          tableCode: 298698711960387584 #销售订单产品明细表
+        sellOrderTemplate:
+          tableCode: 341715564374523904    #销售模块销售订单模板表
+
+        afterSale:
+          tableCode: 391369551381790720    #销售模块售后服务表
+        afterSaleDetail:
+          tableCode: 391370651619033088    #销售模块售后服务详情表
+
+    technology:
+      table:
+        productPieces:
+          tableCode: 252961608048050176     #技术模块产品计量单位表
+
+    purchase:
+      table:
+
+        venderData:
+          tableCode: 196035226533887000     #采购模块供方信息�?
+        venderContact:
+          tableCode: 197548741136481300     #采购模块供方联系人表
+        template:
+          tableCode: 258761128749039616    #采购模块模板单表
+        lackMaterialTask:
+          tableCode: 372816067241967616     #航舰 采购缺料任务�?
+        taskPurchaseDetail:
+          tableCode: 374621226737598464     #航舰 采购缺料任务采购明细�?
+        outPartDetail:
+          tableCode: 372926432453853184     #航舰 外协加工计划外发零件明细�?
+        outPartTask:
+          tableCode: 376807752259076096     #航舰 外协加工外发零件任务�?
+        outPartSendOrder:
+          tableCode: 377244991510282240     #航舰 零件外发单表
+        outPartSendDetail:
+          tableCode: 376899168926695424     #航舰 外协加工外发零件任务发料记录�?
+
+        purchaseEnquiry:
+          tableCode: 265292513076838400     #航舰 采购询价记录�?
+
+        purchaseQuotation:
+          tableCode: 276779179838799872    #采购模块采购报价单表
+
+        purchaseContract:
+          tableCode: 283005851458076672    #采购模块采购方合同表
+        selfReceivingDetail:
+          tableCode: 380124541529358336    #采购模块自主收货明细�?
+        selfReceivingRecord:
+          tableCode: 382351758695071744    #采购模块自主收货记录�?
+        ShippingRecordFromSell:
+          tableCode: 388098566817841152   #采购模块销售方发货记录�?
+
+        feedback:
+          tableCode: 390993040128606208     # 采购质量反馈�?
+        feedbackDetail:
+          tableCode: 390993495751655424     # 采购质量反馈详情�?
+
+    tempCustomer:
+      table:
+        tempCustomerQuotation:
+          tableCode: 330206219509956608    #临时客户模块 临时客户报价单表
+        tempCustomerContract:
+          tableCode: 330550566201851904    #临时客户模块 临时客户合同�?
+
+    tempVender:
+      table:
+        tempVenderContract:
+          tableCode: 331587167627509760    #临时供方模块 临时供方合同�?
+
+    financing:
+      table:
+        paymentStrategy:
+          tableCode: 210579795732332544    #财务模块报价类型�?
+        productGrade:
+          tableCode: 294691133643292672    #财务模块产品等级�?
+
+    quality:
+      table:
+        inspectInto:
+          tableCode: 373614639189340160 #质量模块-入厂检
+
+    production:
+      table:
+        productionComponent:
+          tableCode: 387408123603976192 #生产模块-生产过程部件�?
+        invoiceOrder:
+          tableCode: 392097388426428416 #生产模块-发货单表
+
+
+    publicData:
+      table:
+        historyPrice:
+          tableCode: 286284878855798784  #公共模块产品历史价格记录�?
+
+        contractProducts:
+          tableCode: 217092471174463488     #公共模块合同产品明细
+
+
+        signedContract:
+          tableCode: 287086137720438784  #已签署的合同
+
+        contractMoneyRecord:
+          tableCode: 288050658328969216  # 合同款项记录
+
+        newContractInvoiceRecord:
+            tableCode: 288050776641896448  # 合同发票记录
+        logisticsInfo:
+            tableCode: 377244105643917312  # 物流信息�?
+
+        deliveryAddress:
+          tableCode: 385989018866941952  # 收货地址信息�?
+
+warehouse:
+  page:
+    receivingTaskPageCode: 411596282257604608 # 仓库模块-收货页面code

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.quality.IInspectIntoDao">
+
+<!--    <resultMap id="queryTotalList"-->
+<!--               type="com.futurecraftsmen.pms.technical.service.domain.quality.inspect.into.InspectIntoTotalModel">-->
+<!--        <id property="procedureName" column="procedure_name"/>-->
+<!--        <id property="batchNum" column="batch_num"/>-->
+<!--        <result property="operatorUserCode" column="operator_user_code"/>-->
+<!--        <result property="operatorUserName" column="operator_user_name"/>-->
+<!--        <result property="files" column="files" jdbcType="ARRAY"-->
+<!--                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>-->
+<!--        <result property="inspectType" column="inspect_type"/>-->
+<!--        <result property="inspectNum" column="inspect_num"/>-->
+<!--        <result property="inspectRatio" column="inspect_ratio"/>-->
+<!--        <result property="shouldInspectNum" column="should_inspect_num"/>-->
+<!--        <result property="passedNum" column="passed_num"/>-->
+<!--        <result property="unPassedNum" column="un_passed_num"/>-->
+<!--        <result property="unPassedDeal" column="un_passed_deal"/>-->
+<!--        <result property="unPassedRemark" column="un_passed_remark"/>-->
+<!--        <result property="remark" column="remark"/>-->
+<!--        <result property="inspectUserName" column="inspect_user_name"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--        <result property="passRate" column="pass_rate"/>-->
+<!--        <result property="checkItems" column="check_items"/>-->
+<!--        <result property="model" column="model"/>-->
+<!--        <result property="pcsName" column="pcs_name"/>-->
+<!--        <result property="relatedName" column="related_name"/>-->
+<!--        <result property="relatedCode" column="related_code"/>-->
+<!--        <result property="relatedType" column="related_type"/>-->
+<!--        <result property="productOrPart" column="product_or_part"/>-->
+<!--        <result property="productOrPartName" column="product_or_part_name"/>-->
+<!--    </resultMap>-->
+
+    <!-- 批量插入新记�?-->
+    <insert id="addTasks">
+        INSERT INTO ${tableName} (primary_key,
+                                  enterprise_code,
+                                  procedure_code,
+                                  procedure_name,
+                                  operator_user_code,
+                                  task_num,
+                                  overdue_date,
+                                  should_inspect_num,
+                                  status,
+                                  remark,
+                                  main_id,
+                                  batch_num,
+                                  model,
+                                  pcs_name,
+                                  related_name,
+                                  related_code,
+                                  related_type,
+                                  product_or_part,
+                                  product_or_part_name,
+                                  receive_num,
+                                  report_batch_no,
+                                  buss_number,
+                                  contract_code,
+                                  check_items,
+                                  contract_quantity,
+        self_receiving_detail,receiving_detail,batch,product_flag,batch_global_code)
+        VALUES
+        <foreach collection="models" index="index" item="data" separator=",">
+            (#{data.primaryKeyValue},
+                #{data.enterpriseCode},
+                #{data.procedureCode},
+                #{data.procedureName},
+                #{data.operatorUserCode},
+                #{data.taskNum},
+                #{data.overdueDate},
+                #{data.shouldInspectNum},
+                #{data.status},
+                #{data.remark},
+                #{data.mainId},
+                #{data.batchNum},
+                #{data.model},
+                #{data.pcsName},
+                #{data.relatedName},
+                #{data.relatedCode},
+                #{data.relatedType},
+                #{data.productOrPart},
+                #{data.productOrPartName},
+                #{data.receiveNum},
+                #{data.reportBatchNo},
+                #{data.bussNumber},
+                #{data.contractCode},
+                #{data.checkItems},
+                #{data.contractQuantity},
+            #{data.selfReceivingDetail},
+            #{data.receivingDetail},
+            #{data.batch},
+            #{data.productFlag}, #{data.batchGlobalCode})
+        </foreach>
+    </insert>
+
+</mapper>

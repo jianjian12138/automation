@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.awaiting.IPmsAwaitingDetailsMapper">
+
+
+    <update id="updateQuantityByContractProductKeys">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="product_quantity =case" suffix="end">
+            <foreach collection="updatedProducts" item="updatedProduct" index="index">
+                when contract_product=#{updatedProduct.contractProduct} then #{updatedProduct.productQuantity}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="pending_count =case" suffix="end">
+            <foreach collection="updatedProducts" item="updatedProduct" index="index">
+                when contract_product= #{updatedProduct.contractProduct} then
+                CASE WHEN (#{updatedProduct.productQuantity} - shipped_count) &lt; 0 THEN 0
+                ELSE (#{updatedProduct.productQuantity} - shipped_count)
+                END
+            </foreach>
+        </trim>
+        where contract_product in
+        <foreach collection="updatedProducts" index="index" item="updatedProduct" separator="," open="(" close=")">
+            #{updatedProduct.contractProduct}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+        AND contract_code = #{contractCode}
+    </update>
+
+    <select id="selectProductDeliveryProgress"
+            resultType="com.futurecraftsmen.pms.pas.service.po.awaiting.ProductDeliveryProgress">
+        -- 步骤1：查询所有已装箱发货单对应的发货任务记录，统计每个待发明细的累计发货量（不关注员工身份信息）
+        WITH shipped AS (
+            SELECT atd.awaiting_details_code,
+                   SUM(COALESCE(atd.this_count, 0)) AS shipped_total
+            FROM ${awaitingTaskDetailsTable} atd
+                     INNER JOIN ${invoiceOrderTable} io ON io.primary_key = atd.invoice_order
+            WHERE atd.enterprise_code = #{enterpriseCode}
+              AND atd.delete_flag = false
+              AND io.enterprise_code = #{enterpriseCode}
+              AND io.delete_flag = false
+              AND io.packaged = true
+            GROUP BY atd.awaiting_details_code
+        )
+        -- 步骤2：关联待发明细表，按产品分组统计总累计发货量和总需发货�?
+        SELECT ad.product_code  AS productCode,
+               ad.product_name  AS productName,
+               COALESCE(SUM(sh.shipped_total), 0) AS shippedTotal,
+               SUM(COALESCE(ad.product_quantity, 0)) AS quantityTotal
+        FROM ${awaitingDetailsTable} ad
+                 LEFT JOIN shipped sh ON sh.awaiting_details_code = ad.primary_key
+        WHERE ad.enterprise_code = #{enterpriseCode}
+          AND ad.delete_flag = 'f'
+          AND ad.product_code IS NOT NULL
+        GROUP BY ad.product_code, ad.product_name
+    </select>
+
+    <select id="selectCurrentYearDeliveryProgress"
+            resultType="com.futurecraftsmen.pms.pas.service.po.awaiting.ProductDeliveryProgress">
+        -- 步骤1：查询当前年范围内所有已装箱发货单对应的发货任务记录，统计每个待发明细的累计发货�?
+        -- 参�?AwaitingGoodsServiceImpl.awaitingGoodsPageList() 方法，使�?invoiceOrder.create_time 作为时间过滤字段
+        WITH shipped AS (
+            SELECT atd.awaiting_details_code,
+                   SUM(COALESCE(atd.this_count, 0)) AS shipped_total
+            FROM ${awaitingTaskDetailsTable} atd
+                     INNER JOIN ${invoiceOrderTable} io ON io.primary_key = atd.invoice_order
+            WHERE atd.enterprise_code = #{enterpriseCode}
+              AND atd.delete_flag = false
+              AND io.enterprise_code = #{enterpriseCode}
+              AND io.delete_flag = false
+              AND io.packaged = true
+              AND io.create_time IS NOT NULL
+              <if test="startDate != null">
+                  AND io.create_time >= #{startDate}
+              </if>
+              <if test="endDate != null">
+                  AND io.create_time &lt;= #{endDate}
+              </if>
+            GROUP BY atd.awaiting_details_code
+        ),
+        -- 步骤2：查询当前年范围内已签约的销售合同对应的待发明细（用于统计需发货量）
+        -- 对于在当前年范围内已经签约过的销售合同订单（state IN ('MUTUAL_SIGN', 'UNILATERAL_SIGN', 'SEALED')）内的产品，
+        -- 即使没有发货记录，也需要添加到统计需发货产品数量
+        signedContracts AS (
+            SELECT sc.primary_key AS contract_code
+            FROM ${sellContractTable} sc
+            WHERE sc.enterprise_code = #{enterpriseCode}
+              AND sc.delete_flag = 'f'
+              AND sc.state IN ('MUTUAL_SIGN', 'UNILATERAL_SIGN', 'SEALED')
+              AND sc.contract_time IS NOT NULL
+              <if test="startDate != null">
+                  AND sc.contract_time >= #{startDate}
+              </if>
+              <if test="endDate != null">
+                  AND sc.contract_time &lt;= #{endDate}
+              </if>
+        )
+        -- 步骤3：统计当前年时间段内总累计发货量和总需发货�?
+        -- 已发货数量：统计有发货记录的产品
+        -- 需发货数量：统计所有在当前年范围内已签约的销售合同订单内的产品，不管是否有发货记�?
+        SELECT NULL AS productCode,
+               NULL AS productName,
+               COALESCE(SUM(sh.shipped_total), 0) AS shippedTotal,
+               SUM(COALESCE(ad.product_quantity, 0)) AS quantityTotal
+        FROM ${awaitingDetailsTable} ad
+                 INNER JOIN signedContracts sc ON sc.contract_code = ad.contract_code
+                 LEFT JOIN shipped sh ON sh.awaiting_details_code = ad.primary_key
+        WHERE ad.enterprise_code = #{enterpriseCode}
+          AND ad.delete_flag = 'f'
+    </select>
+
+</mapper>

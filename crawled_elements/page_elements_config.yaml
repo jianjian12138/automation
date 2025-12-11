@@ -1,0 +1,82 @@
+# 页面元素配置文件示例
+# 格式：页面名�? {元素名称: 元素定位器}
+# 定位器格式：
+# - r,role,name      # role+name定位（推荐）
+# - t,text           # 文本定位
+# - s,css_selector   # CSS选择器定�?# - x,xpath          # XPath定位
+# - t,testid         # data-testid定位（最稳定�?
+# 登录页面元素
+login_page:
+  # 页面标题
+  page_title: text=系统登录
+  
+  # 输入�?  input_username: s,.ant-input[name="username"]  # CSS选择器定�?  input_password: s,.ant-input[name="password"]  # CSS选择器定�?  input_captcha: s,.ant-input[name="captcha"]  # CSS选择器定�?  
+  # 按钮
+  button_login: r,button,登录  # role+name定位
+  button_forgot_password: t,忘记密码  # 文本定位
+  button_register: t,注册账号  # 文本定位
+  
+  # 其他元素
+  image_captcha: s,.captcha-image  # CSS选择器定�?  link_home: t,返回首页  # 文本定位
+
+# 仪表板页面元�?dashboard_page:
+  # 页面标题
+  page_title: text=仪表�?  
+  # 导航菜单
+  menu_sales_contract: t,销售合�? # 文本定位
+  menu_purchase_contract: t,采购合同  # 文本定位
+  menu_finance: t,财务管理  # 文本定位
+  menu_report: t,报表中心  # 文本定位
+  menu_setting: t,系统设置  # 文本定位
+  
+  # 快捷操作按钮
+  button_quick_add_contract: r,button,快速新增合�? # role+name定位
+  button_quick_approval: r,button,待我审批  # role+name定位
+  button_quick_statistics: r,button,数据统计  # role+name定位
+  
+  # 统计卡片
+  card_total_sales: s,.stat-card:has-text(总销售额)  # CSS选择器定�?  card_month_sales: s,.stat-card:has-text(本月销售额)  # CSS选择器定�?  card_pending_approval: s,.stat-card:has-text(待审批合�?  # CSS选择器定�?  card_overdue_contracts: s,.stat-card:has-text(逾期合同)  # CSS选择器定�?  
+  # 用户信息
+  user_avatar: s,.user-avatar  # CSS选择器定�?  user_name: s,.user-name  # CSS选择器定�?  button_logout: t,退出登�? # 文本定位
+
+# 销售合同页面元�?sales_contract_page:
+  # 页面标题
+  page_title: text=销售合同管�?  
+  # 按钮�?  button_add_contract: r,button,新增合同  # role+name定位
+  button_batch_approval: r,button,批量审批  # role+name定位
+  button_export: r,button,导出  # role+name定位
+  button_refresh: r,button,刷新  # role+name定位
+  
+  # 搜索区域
+  input_contract_code_search: s,.ant-input[name="contractCode"]  # CSS选择器定�?  select_contract_status: s,.ant-select[name="status"]  # CSS选择器定�?  select_customer_name: s,.ant-select[name="customerName"]  # CSS选择器定�?  input_start_date: s,.ant-input[name="startDate"]  # CSS选择器定�?  input_end_date: s,.ant-input[name="endDate"]  # CSS选择器定�?  button_search: r,button,搜索  # role+name定位
+  button_reset: r,button,重置  # role+name定位
+  
+  # 表格
+  table_contract_list: s,.ant-table  # CSS选择器定�?  table_header_contract_code: text=合同编号  # 文本定位
+  table_header_customer_name: text=客户名称  # 文本定位
+  table_header_amount: text=合同金额  # 文本定位
+  table_header_status: text=状�? # 文本定位
+  table_header_create_time: text=创建时间  # 文本定位
+  table_header_operation: text=操作  # 文本定位
+  
+  # 分页
+  pagination: s,.ant-pagination  # CSS选择器定�?  button_prev_page: r,button,上一�? # role+name定位
+  button_next_page: r,button,下一�? # role+name定位
+  input_page_size: s,.ant-pagination-options-size-changer  # CSS选择器定�?
+# 新增合同页面元素
+add_contract_page:
+  # 页面标题
+  page_title: text=新增销售合�?  
+  # 基本信息
+  input_contract_code: s,.ant-input[name="contractCode"]  # CSS选择器定�?  input_customer_name: s,.ant-input[name="customerName"]  # CSS选择器定�?  select_customer_type: s,.ant-select[name="customerType"]  # CSS选择器定�?  input_amount: s,.ant-input[name="amount"]  # CSS选择器定�?  input_sign_date: s,.ant-input[name="signDate"]  # CSS选择器定�?  input_effective_date: s,.ant-input[name="effectiveDate"]  # CSS选择器定�?  input_expire_date: s,.ant-input[name="expireDate"]  # CSS选择器定�?  textarea_contract_content: s,.ant-input[name="contractContent"]  # CSS选择器定�?  
+  # 合同条款
+  button_add_clause: r,button,新增条款  # role+name定位
+  button_remove_clause: r,button,删除条款  # role+name定位
+  
+  # 附件上传
+  button_upload_attachment: s,.ant-upload  # CSS选择器定�?  
+  # 提交按钮
+  button_save_draft: r,button,保存草稿  # role+name定位
+  button_submit_for_approval: r,button,提交审批  # role+name定位
+  button_cancel: r,button,取消  # role+name定位
+

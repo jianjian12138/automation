@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.lackmaterial.LackMaterialTaskDao">
+
+    <resultMap id="LackMaterialTaskModel"
+               type="com.futurecraftsmen.pms.pas.service.po.lackmaterialtask.LackMaterialTaskModel">
+        <result column="primary_key" property="lackMaterialTaskCode"/>
+        <result column="source" property="source"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="contract_code" property="contractCode"/>
+        <result column="buss_number" property="bussNumber"/>
+        <result column="product_delivery" property="productDelivery"/>
+        <result column="material" property="material"/>
+        <result column="procedure" property="procedure"/>
+        <result column="product_belong" property="productBelong"/>
+        <result column="name" property="name"/>
+        <result column="model" property="model"/>
+        <result column="demand" property="demand"/>
+        <result column="state" property="state"/>
+        <result column="purchaser" property="purchaser"/>
+        <result column="out_parts" property="outParts" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="out_components" property="outComponents" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="remark" property="remark"/>
+        <result column="business_belong" property="businessBelong"/>
+        <result column="batch_global_code" property="batchGlobalCode"/>
+        <result column="enquired" property="enquired"/>
+        <result column="generate_task" property="generateTask"/>
+        <result column="dispatcher" property="dispatcher"/>
+        <result column="procedure_material" property="procedureMaterial"/>
+        <result column="finish_reason" property="finishReason"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, source,batch_number,contract_code,buss_number,product_delivery,
+    material,procedure,product_belong,name ,model,demand,state,purchaser,out_parts::BIGINT[],out_components::BIGINT[], remark,business_belong,batch_global_code,enquired,generate_task,dispatcher,procedure_material,finish_reason,
+    enterprise_code,delete_flag,create_time
+    </sql>
+
+    <insert id="addTask">
+        INSERT INTO ${tableName} (primary_key, source,batch_number,contract_code,buss_number,product_delivery,
+                                  material,procedure,product_belong,name ,model,demand,state,purchaser,out_parts,out_components,remark,business_belong,batch_global_code,
+                                  enterprise_code,enquired,generate_task,dispatcher,procedure_material,delete_flag)
+        VALUES
+            ( #{model.lackMaterialTaskCode}, #{model.source}, #{model.batchNumber},
+              #{model.contractCode},#{model.bussNumber},
+              #{model.productDelivery}, #{model.material},#{model.procedure},
+              #{model.productBelong},#{model.name},#{model.model},
+              #{model.demand},#{model.state},#{model.purchaser},
+              #{model.outParts,jdbcType=ARRAY},#{model.outComponents,jdbcType=ARRAY},#{model.remark},#{model.businessBelong}, #{model.batchGlobalCode},
+              #{model.enterpriseCode},#{model.enquired},#{model.generateTask},#{model.dispatcher},#{model.procedureMaterial},'f')
+    </insert>
+
+    <insert id="addTasks">
+        INSERT INTO ${tableName} (primary_key, source,batch_number,contract_code,buss_number,product_delivery,
+        material,procedure,product_belong,name ,model,demand,state,purchaser,out_parts,out_components,remark,business_belong,batch_global_code,
+        enterprise_code,enquired,generate_task,dispatcher,procedure_material,delete_flag)
+        VALUES
+        <foreach collection="lackMaterialTaskModels" index="index" item="model" separator=",">
+            ( #{model.lackMaterialTaskCode}, #{model.source}, #{model.batchNumber},
+            #{model.contractCode},#{model.bussNumber},
+            #{model.productDelivery}, #{model.material},#{model.procedure},
+            #{model.productBelong}, #{model.name},#{model.model},
+            #{model.demand},#{model.state},#{model.purchaser},
+            #{model.outParts,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.outComponents,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler},
+            #{model.remark},#{model.businessBelong}, #{model.batchGlobalCode},
+            #{model.enterpriseCode}, #{model.enquired},#{model.generateTask},#{model.dispatcher},#{model.procedureMaterial},'f')
+        </foreach>
+    </insert>
+
+
+    <select id="page" resultMap="LackMaterialTaskModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName} as a
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="sources != null">
+            AND source IN
+            <foreach collection="sources" index="index" item="source" open="(" separator="," close=")">
+                #{source}
+            </foreach>
+        </if>
+        <if test="bussNumber != null and bussNumber !=''">
+            AND buss_number LIKE '%'|| #{bussNumber} ||'%'
+        </if>
+        <if test="searchName != null and searchName !=''">
+            AND (name LIKE '%'|| #{searchName} ||'%' OR model LIKE '%'|| #{searchName} ||'%' )
+        </if>
+        <if test="states != null">
+            AND state IN
+            <foreach collection="states" index="index" item="state" open="(" separator="," close=")">
+                #{state}
+            </foreach>
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            AND (
+            ${dynamicTableNameProxy.getXiHangPartQuery("a.material","xihang",data.partUnityNo)} OR
+            procedure = #{procedureCodeCondition}
+            )
+        </if>
+
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+
+
+        <if test="onlySortByCreateTimeDesc == null">
+            ORDER BY
+            COALESCE(enquired, false),
+            id DESC
+        </if>
+        <if test="onlySortByCreateTimeDesc != null and onlySortByCreateTimeDesc == true">
+            ORDER BY
+            id DESC
+        </if>
+
+
+        <if test="onlySortByCreateTimeDesc != null and onlySortByCreateTimeDesc == false">
+            ORDER BY
+            id
+        </if>
+    </select>
+
+    <select id="pageForProcedure" resultMap="LackMaterialTaskModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName} as a
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND state != #{excludeState}
+        AND source NOT IN
+        <foreach collection="excludeSources" index="index" item="excludeSource" open="(" separator="," close=")">
+            #{excludeSource}
+        </foreach>
+        <if test="bussNumber != null and bussNumber !=''">
+            AND buss_number LIKE '%'|| #{bussNumber} ||'%'
+        </if>
+        <if test="contractCode != null">
+            AND contract_code = #{contractCode}
+        </if>
+        <if test="searchName != null and searchName !=''">
+            AND (name LIKE '%'|| #{searchName} ||'%' OR model LIKE '%'|| #{searchName} ||'%' )
+        </if>
+        <if test="states != null">
+            AND state IN
+            <foreach collection="states" index="index" item="state" open="(" separator="," close=")">
+                #{state}
+            </foreach>
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            AND (
+            ${dynamicTableNameProxy.getXiHangPartQuery("a.material","xihang",data.partUnityNo)} OR
+            procedure = #{procedureCodeCondition}
+            )
+        </if>
+
+        ORDER BY id DESC
+    </select>
+
+    <select id="associatedTasksPage" resultMap="LackMaterialTaskModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="excludedSource != null">
+            AND source != #{excludedSource}
+        </if>
+        <if test="excludedState != null">
+            AND state != #{excludedState}
+        </if>
+        <if test="material != null and procedure ==null">
+            AND material = #{material}
+        </if>
+        <if test="material == null and procedure !=null">
+            AND procedure = #{procedure}
+        </if>
+        <if test="excluded != null">
+            AND primary_key != #{excluded}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY contract_code
+    </select>
+
+    <select id="associatedTasksPageSpecifiedDataScope" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="excludedSource != null">
+            AND source != #{excludedSource}
+        </if>
+        <if test="excludedState != null">
+            AND state != #{excludedState}
+        </if>
+        <if test="material != null and procedure ==null">
+            AND material = #{material}
+        </if>
+        <if test="material == null and procedure !=null">
+            AND procedure = #{procedure}
+        </if>
+        <if test="excluded != null">
+            AND primary_key != #{excluded}
+        </if>
+        <if test="optionalDataBelongFieldValues != null">
+            AND purchaser IN
+            <foreach collection="optionalDataBelongFieldValues" index="index" item="optionalDataBelongFieldValue" open="(" separator=","
+                     close=")">
+                #{optionalDataBelongFieldValue}
+            </foreach>
+        </if>
+        ORDER BY contract_code
+    </select>
+
+    <select id="associatedTasksDemandSum" resultType="java.math.BigDecimal">
+        SELECT SUM (demand)
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="excludedState != null">
+            AND state !=  #{excludedState}
+        </if>
+        <if test="material != null and procedure ==null">
+            AND material = #{material}
+        </if>
+        <if test="material == null and procedure !=null">
+            AND procedure = #{procedure}
+        </if>
+        <if test="excluded != null">
+            AND primary_key != #{excluded}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <select id="detail" resultMap="LackMaterialTaskModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key = #{lackMaterialTaskCode}
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <select id="queryByCodes" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="lackMaterialTaskCodes" index="index" item="lackMaterialTaskCode" open="(" separator="," close=")">
+            #{lackMaterialTaskCode}
+        </foreach>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+    <select id="innerQueryByCodes" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="lackMaterialTaskCodes" index="index" item="lackMaterialTaskCode" open="(" separator="," close=")">
+            #{lackMaterialTaskCode}
+        </foreach>
+    </select>
+
+
+    <update id="distribute">
+        UPDATE ${tableName}
+        SET
+            <trim prefix="purchaser =case" suffix="end">
+                <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                    <if test="lackMaterialTaskModel.purchaser !=null">
+                        when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.purchaser}
+                    </if>
+                </foreach>
+            </trim>
+        ,
+        <trim prefix="remark =case" suffix="end">
+            <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.remark}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="state =case" suffix="end">
+            <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.state}
+            </foreach>
+        </trim>
+        where primary_key in
+        <foreach collection="lackMaterialTaskModels" index="index" item="lackMaterialTaskModel" separator="," open="(" close=")">
+            #{lackMaterialTaskModel.lackMaterialTaskCode}
+        </foreach>
+    </update>
+
+
+    <update id="enquired">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="enquired =case" suffix="end">
+            <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                <if test="lackMaterialTaskModel.enquired !=null">
+                    when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.enquired}
+                </if>
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="state =case" suffix="end">
+            <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.state}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="purchaser =case" suffix="end">
+            <foreach collection="lackMaterialTaskModels" item="lackMaterialTaskModel" index="index">
+                when primary_key=#{lackMaterialTaskModel.lackMaterialTaskCode} then #{lackMaterialTaskModel.purchaser}
+            </foreach>
+        </trim>
+        where primary_key in
+        <foreach collection="lackMaterialTaskModels" index="index" item="lackMaterialTaskModel" separator="," open="(" close=")">
+            #{lackMaterialTaskModel.lackMaterialTaskCode}
+        </foreach>
+    </update>
+
+
+
+    <update id="batchUpdateState">
+        UPDATE
+            ${tableName}
+        SET
+        <if test="finishReason != null and finishReason !=''">
+            finish_reason = #{finishReason},
+        </if>
+        state = #{state}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="lackMaterialTaskCodes" index="index" item="lackMaterialTaskCode" separator="," open="(" close=")">
+            #{lackMaterialTaskCode}
+        </foreach>
+    </update>
+
+    <update id="updateAfterApply">
+        UPDATE
+        ${tableName}
+        SET generate_task = 't',
+            out_parts = array_cat(COALESCE(out_parts, '{}')::bigint[],#{newOutParts}::bigint[]),
+            out_components = array_cat(COALESCE(out_components, '{}')::bigint[],#{newComponents}::bigint[])
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key  =  #{lackMaterialTaskCode}
+    </update>
+
+
+
+
+    <update id="updateProcedureMaterial">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="procedure_material =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.lackMaterialTaskCode} then #{model.procedureMaterial}
+            </foreach>
+        </trim>
+        where primary_key in
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.lackMaterialTaskCode}
+        </foreach>
+    </update>
+
+
+    <update id="updateProcedureMaterialAndStateWhileReceive">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="procedure_material =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.lackMaterialTaskCode} then #{model.procedureMaterial}::bigint
+            </foreach>
+        </trim>
+        ,
+        state = #{state}
+        where primary_key in
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.lackMaterialTaskCode}
+        </foreach>
+    </update>
+
+
+    <select id="queryReceiveMaterials">
+        SELECT procedure_material
+        FROM ${tableName}
+        WHERE enterprise_code = ${enterpriseCode}
+          AND delete_flag = 'f'
+          AND contract_code = #{sellContractCode}
+        AND procedure IN
+        <foreach collection="procedureCodes" index="index" item="procedureCode" separator="," open="(" close=")">
+            #{procedureCode}
+        </foreach>
+          AND procedure_material IS NOT NULL
+    </select>
+
+
+    <select id="selectListByGlobalCode" resultMap="LackMaterialTaskModel">
+        SELECT *
+        FROM ${dynamicTableNameProxy.lackMaterialTask}
+        WHERE enterprise_code = ${dynamicTableNameProxy.enterpriseCode}
+          AND delete_flag = 'f'
+          AND batch_global_code = #{batchGlobalCode}
+    </select>
+
+
+    <select id="associatedTasksSameContract" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="excludedState != null">
+            AND state != #{excludedState}
+        </if>
+        <if test="material != null and procedure ==null">
+            AND material = #{material}
+        </if>
+        <if test="material == null and procedure !=null">
+            AND procedure = #{procedure}
+        </if>
+        <if test="excluded != null">
+            AND primary_key != #{excluded}
+        </if>
+        AND contract_code = #{contractCode}
+    </select>
+
+
+    <select id="queryTaskFromDispatchByMaterialCode" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND (material = #{materialCode} OR procedure_material = #{materialCode})
+        AND contract_code IS NOT NULL
+    </select>
+
+
+    <select id="queryTaskByMaterialCodesOrProcedureCodes" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND
+        (
+        <if test="materialCodes != null and !materialCodes.isEmpty()">
+            material IN
+            <foreach collection="materialCodes" item="materialCode" open="(" close=")" separator=",">
+                #{materialCode}
+            </foreach>
+            <if test="procedureCodes != null and !procedureCodes.isEmpty()">OR</if>
+        </if>
+        <if test="procedureCodes != null and !procedureCodes.isEmpty()">
+            procedure IN
+            <foreach collection="procedureCodes" item="procedureCode" open="(" close=")" separator=",">
+                #{procedureCode}
+            </foreach>
+        </if>
+        )
+        AND contract_code IS NOT NULL
+    </select>
+
+
+    <select id="queryTaskFromDispatchOnlyByMaterialCode" resultMap="LackMaterialTaskModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND material IN
+        <foreach collection="materialCodes" index="index" item="materialCode" separator="," open="(" close=")">
+            #{materialCode}
+        </foreach>
+        AND contract_code IS NOT NULL
+    </select>
+
+</mapper>

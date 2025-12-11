@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven 3.9.10
+Built-By: admin
+Build-Jdk: 21.0.8
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: com.futurecraftsmen.pms.PmsServiceApplication
+Spring-Boot-Version: 3.1.2
+Spring-Boot-Classes: BOOT-INF/classes/
+Spring-Boot-Lib: BOOT-INF/lib/
+Spring-Boot-Classpath-Index: BOOT-INF/classpath.idx
+Spring-Boot-Layers-Index: BOOT-INF/layers.idx
+

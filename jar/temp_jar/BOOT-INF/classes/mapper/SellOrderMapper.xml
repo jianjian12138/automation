@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.sellorder.SellOrderDao">
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.pas.service.po.sellorder.SellOrderModel">
+        <id property="sellOrderCode" column="primary_key"/>
+        <result property="batchNumber" column="sell_order_sign"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="productGrade" column="product_grade"/>
+        <result property="seller" column="seller"/>
+        <result property="products" column="products" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result property="productionTime" column="production_time"/>
+        <result property="deliverDate" column="deliver_date"/>
+        <result property="contractRemark" column="contract_remark"/>
+        <result property="productionStatus" column="production_status"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="customCustomer" column="custom_customer"/>
+        <result property="printed" column="printed"/>
+        <result property="printConfig" column="print_config"/>
+        <result property="sellContract" column="sell_contract" />
+        <result property="purchaseContract" column="purchase_contract" />
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="businessBelong" column="business_belong"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="businessBelong" column="business_belong"/>
+        <result property="qrcodeGeneratedFlag" column="qrcode_generated_flag"/>
+        <result property="purchaseEnterprise" column="purchase_enterprise"/>
+        <result property="hasAttachments" column="has_attachments"/>
+    </resultMap>
+
+    <sql id="fullColumns">
+        primary_key,
+        enterprise_code,
+        sell_order_sign,
+        contract_number,
+        product_grade,
+        seller,
+        products,
+        production_time,
+        deliver_date,
+        production_status,
+        contract_remark,
+        deliver_date,
+        reject_reason,
+        custom_customer,
+        printed,
+        print_config,
+        sell_contract,
+        purchase_contract,
+        business_belong,
+        delete_flag,
+        update_time,
+        qrcode_generated_flag,
+        purchase_enterprise,
+        has_attachments
+    </sql>
+
+    <sql id="columnsWithoutProducts">
+        primary_key,
+        enterprise_code,
+        sell_order_sign,
+        contract_number,
+        product_grade,
+        seller,
+        production_time,
+        deliver_date,
+        production_status,
+        contract_remark,
+        deliver_date,
+        reject_reason,
+        custom_customer,
+        printed,
+        print_config,
+        sell_contract,
+        purchase_contract,
+        business_belong,
+        delete_flag,
+        update_time,
+        business_belong,
+        qrcode_generated_flag,
+        purchase_enterprise,
+        has_attachments
+    </sql>
+
+
+    <insert id="addSellOrder">
+        INSERT INTO ${tableName} (primary_key, sell_order_sign, contract_number, product_grade, seller, products,
+                                  production_time, deliver_date, contract_remark, production_status, custom_customer,
+                                  printed, print_config, sell_contract, purchase_contract, enterprise_code, business_belong,
+                                  purchase_enterprise, has_attachments, qrcode_generated_flag)
+        VALUES (#{model.sellOrderCode}, #{model.batchNumber}, #{model.contractNumber}, #{model.productGrade},
+                #{model.seller},
+                #{model.products}, #{model.productionTime}, #{model.deliverDate},
+                #{model.contractRemark}, #{model.productionStatus}, #{model.customCustomer}, #{model.printed},
+                #{model.printConfig}, #{model.sellContract}, #{model.purchaseContract},
+                #{model.enterpriseCode}, #{model.businessBelong}, #{model.purchaseEnterprise}, #{model.hasAttachments},
+                #{model.qrcodeGeneratedFlag})
+    </insert>
+
+
+    <select id="page" resultMap="resultMap">
+        select
+        <include refid="columnsWithoutProducts"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        <if test="batchNumber != null and batchNumber != ''">
+            and sell_order_sign LIKE '%'|| #{batchNumber} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber != ''">
+            and contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="productGrade != null">
+            and product_grade = #{productGrade}
+        </if>
+        <if test="sellers != null and sellers.size()!=0">
+            AND seller IN
+            <foreach collection="sellers" index="index" item="seller" open="(" separator="," close=")">
+                #{seller}
+            </foreach>
+        </if>
+        <if test="productionStatus != null">
+            and production_status = #{productionStatus}
+        </if>
+        <if test="printed != null and printed == true">
+            and printed = 'true'
+        </if>
+        <if test="printed != null and printed == false">
+            and (printed = 'false' or printed IS NULL)
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        order by create_time desc
+    </select>
+
+
+    <select id="detail" resultMap="resultMap">
+        select
+        <include refid="columnsWithoutProducts"/>
+        from ${tableName}
+        where enterprise_code = #{enterpriseCode}
+        and delete_flag = false
+        and primary_key = #{sellOrderCode}
+    </select>
+
+
+    <select id="queryBaseInfoByCodes" resultMap="resultMap">
+        SELECT primary_key , production_status ,sell_order_sign
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="sellOrderCodes" index="index" item="sellOrderCode" open="(" separator="," close=")">
+            #{sellOrderCode}
+        </foreach>
+    </select>
+
+    <delete id="deleteSellOrder">
+        DELETE
+        FROM ${tableName}
+        WHERE primary_key = #{sellOrderCode}
+          AND enterprise_code = #{enterpriseCode}
+          AND production_status = '未处�?
+    </delete>
+
+    <delete id="update">
+        UPDATE ${tableName}
+        SET
+            custom_customer = #{model.customCustomer},
+            printed         = #{model.printed},
+            print_config    = #{model.printConfig}
+        WHERE primary_key = #{model.sellOrderCode}
+          AND enterprise_code = #{model.enterpriseCode}
+          AND (production_status = '未处�? OR production_status = '处理�?)
+    </delete>
+
+    <select id="countByBatchNumber" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key != #{excludeSellOrderCode}
+          AND sell_order_sign = #{batchNumber}
+          AND delete_flag = 'f'
+    </select>
+
+    <delete id="updatePrinted">
+        UPDATE ${tableName}
+        SET printed = 'true'
+        WHERE primary_key = #{sellOrderCode}
+          AND enterprise_code = #{enterpriseCode}
+    </delete>
+
+    <update id="updateQrcodeGeneratedFlag">
+        UPDATE ${tableName}
+        SET qrcode_generated_flag = #{qrcodeGeneratedFlag}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{sellOrderCode}
+    </update>
+
+    <update id="updateHasAttachments">
+        UPDATE ${tableName}
+        SET has_attachments = 'true'
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{sellOrderCode}
+    </update>
+
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET contract_number = #{contractNumber}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{sellOrderCode}
+    </update>
+
+
+</mapper>

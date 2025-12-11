@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.sellorder.SellOrderProductDao">
+
+    <resultMap id="resultMap" type="com.futurecraftsmen.pms.pas.service.po.sellorder.SellOrderProductModel">
+        <id property="sellOrderProductCode" column="primary_key"/>
+        <result property="productGrade" column="product_grade"/>
+        <result property="productName" column="product_name"/>
+        <result property="publicModel" column="public_model"/>
+        <result property="productRemark" column="product_remark"/>
+        <result property="productQuantity" column="product_quantity"/>
+        <result property="productCode" column="product_code"/>
+        <result property="processRoute" column="process_route"/>
+        <result property="sellOrderCode" column="sell_order_code"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="contractTime" column="contract_time"/>
+        <result property="productDeliver" column="product_deliver"/>
+        <result property="productDeliverStr" column="product_deliver_str"/>
+        <result property="seller" column="seller"/>
+        <result property="dynamicValues" column="dynamic_values"/>
+        <result property="taskGenerated" column="task_generated"/>
+        <result property="sellContractProduct" column="sell_contract_product" />
+        <result property="purchaseContractMaterial" column="purchase_contract_material" />
+        <result property="activelyScheduled" column="actively_scheduled"/>
+        <result property="enterpriseCode" column="enterprise_code"/>
+        <result property="businessBelong" column="business_belong"/>
+    </resultMap>
+
+    <sql id="columns">
+        primary_key
+        , product_grade, product_name, public_model, product_remark,
+        product_quantity, product_code, process_route, sell_order_code,
+        contract_number,contract_time,product_deliver,product_deliver_str,seller,dynamic_values,task_generated,sell_contract_product,purchase_contract_material,actively_scheduled,enterprise_code,business_belong
+    </sql>
+
+    <insert id="addRecords">
+        INSERT INTO ${tableName} (primary_key, product_grade,product_name,public_model,
+        product_remark, product_quantity,product_code,process_route,sell_order_code,contract_number,contract_time,
+        product_deliver,product_deliver_str,seller,task_generated,sell_contract_product,purchase_contract_material,actively_scheduled,enterprise_code,business_belong)
+        VALUES
+        <foreach collection="sellOrderProductModels" index="index" item="model" separator=",">
+            ( #{model.sellOrderProductCode}, #{model.productGrade}, #{model.productName},
+            #{model.publicModel}, #{model.productRemark},#{model.productQuantity}, #{model.productCode},
+            #{model.processRoute},
+            #{model.sellOrderCode},#{model.contractNumber},#{model.contractTime},
+            #{model.productDeliver},#{model.productDeliverStr},#{model.seller},#{model.taskGenerated},
+            #{model.sellContractProduct},#{model.purchaseContractMaterial},#{model.activelyScheduled},
+            #{model.enterpriseCode}, #{model.businessBelong})
+        </foreach>
+    </insert>
+
+    <delete id="deleteSellOrderProducts">
+        DELETE
+        FROM ${tableName}
+        WHERE sell_order_code = #{sellOrderCode}
+          AND enterprise_code = #{enterpriseCode}
+    </delete>
+
+
+    <select id="queryByCode" resultMap="resultMap">
+        select
+        <include refid="columns"/>
+        from ${tableName}
+        where
+        primary_key = #{sellOrderProductCode}
+        and sell_order_code = #{sellOrderCode}
+        and delete_flag = false
+        and enterprise_code = #{enterpriseCode}
+    </select>
+
+    <select id="queryBySellOrderCode" resultMap="resultMap">
+        select <include refid="columns"/>
+        from ${tableName}
+        where sell_order_code = #{sellOrderCode}
+        and delete_flag = false
+        and enterprise_code = #{enterpriseCode}
+        order by id
+    </select>
+
+    <update id="update">
+        UPDATE ${tableName}
+        SET product_remark = #{model.productRemark},
+            dynamic_values = #{model.dynamicValues}
+        where primary_key = #{model.sellOrderProductCode}
+          and delete_flag = false
+          and enterprise_code = #{model.enterpriseCode}
+    </update>
+
+
+
+    <update id="updateQuantityByContractProductKeys">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="product_quantity =case" suffix="end">
+            <foreach collection="updatedProducts" item="updatedProduct" index="index">
+                when sell_contract_product=#{updatedProduct.sellContractProduct} then #{updatedProduct.productQuantity}
+            </foreach>
+        </trim>
+        where sell_contract_product in
+        <foreach collection="updatedProducts" index="index" item="updatedProduct" separator="," open="(" close=")">
+            #{updatedProduct.sellContractProduct}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+        AND sell_order_code = #{sellOrderCode}
+    </update>
+
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET contract_number = #{contractNumber}
+        where sell_order_code = #{sellOrderCode}
+          and delete_flag = false
+          and enterprise_code = #{enterpriseCode}
+    </update>
+
+</mapper>

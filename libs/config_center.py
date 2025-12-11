@@ -44,11 +44,36 @@ class MultiCompatibleTimedRotatingFileHandler(TimedRotatingFileHandler):
                 if os.path.exists(self.baseFilename):
                     os.rename(self.baseFilename, dfn)
         else:
-            # Windows系统处理方式
+            # Windows系统处理方式 - 改进版，添加错误处理
             dfn = self.rotation_filename(self.baseFilename + "." + time.strftime(self.suffix, timeTuple))
-            if os.path.exists(dfn):
-                os.remove(dfn)
-            self.rotate(self.baseFilename, dfn)
+            
+            # 尝试使用更安全的方式处理日志轮转
+            retry_count = 0
+            max_retries = 3
+            success = False
+            
+            while retry_count < max_retries and not success:
+                try:
+                    # 先关闭当前日志流
+                    if self.stream:
+                        self.stream.close()
+                        self.stream = None
+                    
+                    # 处理目标文件已存在的情况
+                    if os.path.exists(dfn):
+                        os.remove(dfn)
+                    
+                    # 尝试重命名文件
+                    os.rename(self.baseFilename, dfn)
+                    success = True
+                except Exception as e:
+                    retry_count += 1
+                    if retry_count == max_retries:
+                        # 最后一次重试失败，记录错误并跳过轮转
+                        print(f"日志轮转失败，跳过本次轮转: {e}")
+                    else:
+                        # 重试
+                        time.sleep(0.1)
         
         # 删除超过备份数量的旧日志文件
         if self.backupCount > 0:

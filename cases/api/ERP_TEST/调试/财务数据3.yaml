@@ -1,0 +1,65 @@
+# 财务数据3接口测试用例
+# 接口�?fpi/report/detail/query
+# reportDataSetCode: 623685989194792974
+
+case_code: FPI_REPORT_DETAIL_QUERY_623685989194792974
+case_name: 财务数据3
+priority: 2
+steps:
+- step_name: 正常场景-有效reportDataSetCode
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    reportDataSetCode: "623685989194792974"
+  response_assert:
+    response_assert_data: 查询成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200
+    - $..data.dataList != null
+    - $..data.total >= 0
+
+- step_name: 正常场景-边界值测�?  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    reportDataSetCode: "623685989194792974"
+  response_assert:
+    response_assert_data: 查询成功
+    status_code_assert: 200
+    jsonpath_assert:
+    - $..code == 200
+    - $..data.dataList != null
+
+- step_name: 异常场景-缺少必要参数
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: $generate_token(pms_host)
+  method: POST
+  data: {}
+  response_assert:
+    status_code_assert: 400
+
+- step_name: 异常场景-非法reportDataSetCode格式
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    reportDataSetCode: "abcdefg"
+  response_assert:
+    status_code_assert: 400
+
+- step_name: 异常场景-不存在的reportDataSetCode
+  host: $get_host(ERP_TEST,pms_host)
+  path: /report/detail/query
+  headers: $generate_token(pms_host)
+  method: POST
+  data:
+    reportDataSetCode: "999999999999999999"
+  response_assert:
+    status_code_assert: 400
+

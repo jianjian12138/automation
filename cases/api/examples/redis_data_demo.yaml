@@ -2,7 +2,7 @@ case_name: Redis数据获取示例
 case_code: RedisDataDemo
 priority: 1
 steps:
-  - step_name: 获取普通键值
+  - step_name: 获取普通键�?
     host: $get_host(ERP_TEST,pms_host)
     path: /cache/verify
     headers: $generate_token(pms_host)
@@ -20,7 +20,7 @@ steps:
     headers: $generate_token(pms_host)
     method: POST
     data:
-      # 使用通配符匹配，返回第一个匹配的键值
+      # 使用通配符匹配，返回第一个匹配的键�?
       captchaData: $get_redis(SBC:*)
       sessionData: $get_redis(session:*)
       cacheData: $get_redis(CacheKey-*)
@@ -33,20 +33,20 @@ steps:
     headers: $generate_token(pms_host)
     method: POST
     data:
-      # 获取 Hash 的特定字段
+      # 获取 Hash 的特定字�?
       userName: $get_redis(user:1001, name)
       userEmail: $get_redis(user:1001, email)
       userPhone: $get_redis(user:1001, phone)
     response_assert:
       status_code_assert: 200
 
-  - step_name: 获取缓存变量（从environment.yaml配置）
+  - step_name: 获取缓存变量（从environment.yaml配置�?
     host: $get_host(ERP_TEST,pms_host)
     path: /cache/module
     headers: $generate_token(pms_host)
     method: POST
     data:
-      # 从配置的 cache_variable 中获取
+      # 从配置的 cache_variable 中获�?
       operationUserHash: $get_cache_var(operation_user_hash_key)
       moduleHash: $get_cache_var(module_hash_key)
       tableHash: $get_cache_var(table_hash_key)
@@ -60,9 +60,9 @@ steps:
     method: POST
     data:
       # 从数据库获取业务数据
-      contractCode: $get_db_field(contract_code, status='已审核')
+      contractCode: $get_db_field(contract_code, status='已审�?)
       
-      # 从 Redis 获取缓存数据
+      # �?Redis 获取缓存数据
       processTemplate: $get_cache_var(process_template_hash_key)
       currentUser: $get_redis(current:user)
       
@@ -74,17 +74,18 @@ steps:
       status_code_assert: 200
       response_assert_data: 业务流程执行成功
 
-  - step_name: 验证码测试（使用Redis）
+  - step_name: 验证码测试（使用Redis�?
     host: $get_host(ERP_TEST,pms_host)
     path: /auth/verify-code
     headers: $generate_token(pms_host)
     method: POST
     data:
-      # 从 Redis 获取验证码信息
+      # �?Redis 获取验证码信�?
       captchaCode: $get_redis(SBC:*, code)
       captchaPosition: $get_redis(SBC:*, position)
       sessionId: $get_redis(session:current)
     response_assert:
       status_code_assert: 200
       response_assert_data: 验证成功
+
 

@@ -27,7 +27,7 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-BigDecimal精度测试（8位小数）
+  step_name: 正常场景-BigDecimal精度测试�?位小数）
 - data:
     batchNum: batchnum_value
     cid: 123456789
@@ -50,7 +50,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最小精度（0.00000001）
+  step_name: 边界值测�?最小精度（0.00000001�?
 - data:
     batchNum: batchnum_value
     cid: 123456789
@@ -73,7 +73,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 边界值测试-最大值（8位整数+8位小数）
+  step_name: 边界值测�?最大值（8位整�?8位小数）
 - data:
     batchNum: batchnum_value
     cid: 123456789
@@ -96,21 +96,21 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 四舍五入测试-超过8位小数截断
+  step_name: 四舍五入测试-超过8位小数截�?
 - data:
     batchNum: batchnum_value
     cid: 123456789
-    complementNum: 非法字符串
+    complementNum: 非法字符�?
     contractCode: $get_db_field(contract_code)
     distributeDetailList: *id001
     needFinishDate: '2025-01-01 12:00:00'
-    num: 非法字符串
+    num: 非法字符�?
     parentPartCode: $get_db_field(parentpartcode)
     partCode: $get_db_field(partcode)
-    pickDataNum: 非法字符串
+    pickDataNum: 非法字符�?
     remark: ''
     routeId: 123456789
-    scrapNum: 非法字符串
+    scrapNum: 非法字符�?
     userCodeList: *id002
   headers: $generate_token(pms_host)
   host: $get_host(ERP_TEST,pms_host)
@@ -165,4 +165,5 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-  step_name: 正常场景-零值测试
+  step_name: 正常场景-零值测�?
+

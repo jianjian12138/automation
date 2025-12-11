@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.lackmaterial.LogisticsInfoDao">
+
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key,tracking_number,logistics_name,business_type,explain,enterprise_code,delete_flag
+    </sql>
+
+    <insert id="addLogisticsInfo">
+        INSERT INTO ${tableName} (primary_key,tracking_number,logistics_name,business_type,explain,enterprise_code,delete_flag)
+        VALUES
+            ( #{model.logisticsInfoCode}, #{model.trackingNumber},#{model.logisticsName},#{model.businessType},#{model.explain},
+              #{model.enterpriseCode},'f')
+    </insert>
+
+</mapper>

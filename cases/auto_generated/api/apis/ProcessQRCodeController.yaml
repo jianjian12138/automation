@@ -10,4 +10,5 @@ steps:
   response_assert:
     response_assert_data: 接口调用成功
     status_code_assert: 200
-  step_name: 二维码-流程码相关接口 bff
+  step_name: 二维�?流程码相关接�?bff
+

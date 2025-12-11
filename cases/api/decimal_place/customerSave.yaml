@@ -1,9 +1,9 @@
 # 客户信息保存场景
 # 使用的数据库表：
-# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，插入客户数据）
+# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，插入客户数据�?
 # 注意：此接口为数据更新接口，成功后会插入数据到客户信息表
 # 每次接口成功插入数据后，会自动进行数据清理操作，防止影响后续测试
-# 小数点位限制：无特殊小数位限制（主要测试数据保存功能）
+# 小数点位限制：无特殊小数位限制（主要测试数据保存功能�?
 
 case_code: CustomerSave
 case_name: customerSave
@@ -44,9 +44,10 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..resCode == 200 or $..resCode == 202
-    # 如果接口返回 resCode=503 且 msg="客户名称已存在" 或 "客户联系人已存在"，则需要修改参数后重试
+    # 如果接口返回 resCode=503 �?msg="客户名称已存�? �?"客户联系人已存在"，则需要修改参数后重试
   cleanup:
     table: dm_m9.sell_t_dm_m9_customers_9
     id_field: primary_key
     # 数据清理：测试成功后自动删除插入的客户记录，通过响应中的 primary_key 字段定位要删除的记录
+
 

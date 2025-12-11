@@ -18,7 +18,7 @@ steps:
         - $.id == "123"
         - $.name != null
 
-  - step_name: Dubbo带多个参数
+  - step_name: Dubbo带多个参�?
     protocol: dubbo
     host: 192.168.1.100
     port: 20880
@@ -33,3 +33,4 @@ steps:
     response_assert:
       status_code_assert: 200
       response_assert_data: success
+

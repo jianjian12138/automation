@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>接口自动化测试报告</title>
+    <title>接口自动化测试报�?/title>
 </head>
 <body style="padding:10px 5px 10px 5px;">
 <div>
@@ -23,9 +23,9 @@
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>测试项目</strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>执行环境</strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>执行起止时间</strong></td>
-                <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>执行人</strong></td>
+                <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>执行�?/strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>测试结论</strong></td>
-                <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>通过率</strong></td>
+                <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>通过�?/strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>Total</strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>Pass</strong></td>
                 <td width="10%" style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;"><strong>Fail</strong></td>
@@ -36,8 +36,8 @@
                 <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{project_name}}</td>
                 <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{report_env}}</td>
                 <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">
-                    <div>起 {{report_start_time}}</div>
-                    <div>止 {{report_end_time}}</div>
+                    <div>�?{{report_start_time}}</div>
+                    <div>�?{{report_end_time}}</div>
                 </td>
                 <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px;">{{report_exe_user}}</td>
                 <td style="border:1px solid #AAAAAA; padding:2px 5px 2px 5px; color: {{report_result_color}};">
@@ -56,10 +56,10 @@
     </div>
     <div style="height:20px;">
     </div>
-    <div><strong>2.用例执行失败汇总</strong></div>
+    <div><strong>2.用例执行失败汇�?/strong></div>
     <div>
         {% if case_fail == [] %}
-        <div>没有任何符合条件的用例执行数据</div>
+        <div>没有任何符合条件的用例执行数�?/div>
         {% else %}
         {% for case_info in case_fail %}
         <table width="100%"
@@ -192,7 +192,7 @@
     </div>
     <div style="height:20px;">
     </div>
-    <div><strong>3.所有用例执行明细</strong></div>
+    <div><strong>3.所有用例执行明�?/strong></div>
     <details>
         <summary style="color:blue;cursor:pointer;"><strong>点击展开</strong></summary>
         <div style="height:10px;"></div>
@@ -329,3 +329,6 @@
 </div>
 </body>
 </html>
+
+
+

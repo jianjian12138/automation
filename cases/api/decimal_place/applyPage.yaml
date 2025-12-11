@@ -1,12 +1,12 @@
 # 客户拜访申请分页查询场景
 # 使用的数据库表：
-# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，获取 primaryKey）
-# 2. dm_m9.sell_t_dm_m9_customer_visit_9 - 客户拜访表（拜访记录明细）
-# 注意：
+# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，获取 primaryKey�?
+# 2. dm_m9.sell_t_dm_m9_customer_visit_9 - 客户拜访表（拜访记录明细�?
+# 注意�?
 # - primaryKey 字段的值从数据库中查询，从 customers 表中随机获取一个有效的客户主键
-# - 此接口用于分页查询客户拜访记录列表
-# - 返回数据中的 estimatedCost 和 actualCosts 字段支持8位小数精度
-# 小数点位限制：8位（estimatedCost字段和actualCosts字段支持8位小数）
+# - 此接口用于分页查询客户拜访记录列�?
+# - 返回数据中的 estimatedCost �?actualCosts 字段支持8位小数精�?
+# 小数点位限制�?位（estimatedCost字段和actualCosts字段支持8位小数）
 
 case_code: ApplyPage
 case_name: applyPage
@@ -22,13 +22,13 @@ steps:
     current: 1
     size: 10
   response_assert:
-    response_assert_data: 查询客户的详情成功
+    response_assert_data: 查询客户的详情成�?
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..pageDetails != null
 
-- step_name: 边界值测试-第一页查询
+- step_name: 边界值测�?第一页查�?
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/apply/page
   headers: $generate_token(pms_host)
@@ -43,7 +43,7 @@ steps:
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
 
-- step_name: 边界值测试-较大分页大小
+- step_name: 边界值测�?较大分页大小
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/apply/page
   headers: $generate_token(pms_host)
@@ -67,12 +67,12 @@ steps:
     current: 1
     size: 10
   response_assert:
-    response_assert_data: 查询客户的详情成功
+    response_assert_data: 查询客户的详情成�?
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
 
-- step_name: 异常场景-非法primaryKey值
+- step_name: 异常场景-非法primaryKey�?
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/apply/page
   headers: $generate_token(pms_host)
@@ -84,4 +84,5 @@ steps:
   response_assert:
     response_assert_data: 请求参数格式错误
     status_code_assert: 200
+
 

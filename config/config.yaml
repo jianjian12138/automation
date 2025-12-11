@@ -17,25 +17,19 @@ playwright:
   screenshot_on_failure: true
   video_on_failure: true
   trace_on_failure: true
-  # 本地Chrome浏览器路径（可选，如果Chrome安装失败，可以指定本地Chrome路径）
-  # 示例: chrome_executable_path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  # 本地Chrome浏览器路径（可选，如果Chrome安装失败，可以指定本地Chrome路径�?  # 示例: chrome_executable_path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
   # 如果为空，将自动检测本地Chrome路径
-  chrome_executable_path: ""  # 留空则自动检测
-  # 是否使用MCP（Model Context Protocol）代替Playwright（实验性功能）
+  chrome_executable_path: ""  # 留空则自动检�?  # 是否使用MCP（Model Context Protocol）代替Playwright（实验性功能）
   use_mcp: false
 
 # API测试配置
 api:
-  timeout: 30  # 秒
-  retry_times: 3
-  retry_delay: 1  # 秒
-  verify_ssl: false
+  timeout: 30  # �?  retry_times: 3
+  retry_delay: 1  # �?  verify_ssl: false
   log_level: "INFO"
   # 步骤重试配置
   step_retry:
-    max_retries: 5  # 默认最大重试次数
-    retry_delay: 1  # 每次重试间隔（秒）
-
+    max_retries: 5  # 默认最大重试次�?    retry_delay: 1  # 每次重试间隔（秒�?
 # Mobile测试配置 (Maestro)
 mobile:
   app_id: ""
@@ -63,8 +57,7 @@ logging:
 # 并发配置
 concurrency:
   max_workers: 4
-  timeout_per_case: 300  # 秒
-
+  timeout_per_case: 300  # �?
 # 通知配置（可选）
 notification:
   email:
@@ -82,4 +75,5 @@ cursor:
   enabled: true
   auto_fix_on_failure: true
   auto_generate_assertion: true
+
 

@@ -13,12 +13,13 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
-- step_name: 异常场景-无权限访问
+- step_name: 异常场景-无权限访�?
   host: $get_host(ERP_TEST,pms_host)
   path: /technical/auto/test/requestAwaitingDetails
   headers: {}
   method: POST
   data: {}
   response_assert:
-    response_assert_data: 未授权
+    response_assert_data: 未授�?
     status_code_assert: 401
+

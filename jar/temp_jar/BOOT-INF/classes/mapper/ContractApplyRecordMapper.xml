@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.ContractApplyRecordDao">
+
+
+    <resultMap id="ContractApplyRecordWithOppositeModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractApplyRecordWithOppositeModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="applicant" property="applicant"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="amount" property="amount"/>
+        <result column="currency" property="currency"/>
+        <result column="confirmed_exchange_rate" property="confirmedExchangeRate"/>
+        <result column="remark" property="remark"/>
+        <result column="final_approve" property="finalApprove"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="reject_time" property="rejectTime"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="contract_code" property="contractCode"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="opposite" property="opposite"/>
+    </resultMap>
+
+
+    <select id="pagingQueryRecordForSellContract"
+            resultMap="ContractApplyRecordWithOppositeModel">
+        SELECT * FROM (
+        SELECT
+        record.primary_key,
+        'money' as record_type,
+        record.applicant,
+        record.apply_time,
+        record.record_amount as amount,
+        record.currency,
+        record.confirmed_exchange_rate,
+        record.remark,
+        record.final_approve,
+        record.confirm_time,
+        record.reject_reason,
+        record.reject_time,
+        record.approval_status,
+        record.signed_contract,
+        record.contract_number,
+        record.payment_time,
+        record.enterprise_code,
+        contract.counterpart AS opposite,
+        contract.contract AS contract_code,
+        record.create_time
+        FROM ${moneyTableName} record
+        INNER JOIN ${signedContractTable} contract ON record.signed_contract = contract.primary_key
+        WHERE record.enterprise_code = #{enterpriseCode}
+        AND record.delete_flag = 'f'
+        AND contract.identity = 't'
+        AND contract.canceled = 'f'
+        <if test="opposite != null and opposite !=''">
+            AND contract.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND record.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="applicants!= null and applicants.size()>0">
+            AND record.applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+        <if test="staffCodes!= null and staffCodes.size()>0">
+            AND record.applicant IN
+            <foreach collection="staffCodes" index="index" item="staffCode" open="(" separator="," close=")">
+                #{staffCode}
+            </foreach>
+        </if>
+        <if test="approveStatus!= null and approveStatus.size()>0">
+            AND record.approval_status IN
+            <foreach collection="approveStatus" index="index" item="approveState" open="(" separator="," close=")">
+                #{approveState}
+            </foreach>
+        </if>
+        <if test="applyTimePre != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &gt;= #{applyTimePre}
+        </if>
+        <if test="applyTimePost != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &lt;= #{applyTimePost}
+        </if>
+
+        UNION ALL
+
+        SELECT
+        record.primary_key,
+        'invoice' as record_type,
+        record.applicant,
+        record.apply_time,
+        record.invoice_amount as amount,
+        NULL as currency,
+        NULL as confirmed_exchange_rate,
+        record.remark,
+        record.final_approve,
+        record.confirm_time,
+        record.reject_reason,
+        record.reject_time,
+        record.approval_status,
+        record.signed_contract,
+        record.contract_number,
+        NULL as payment_time,
+        record.enterprise_code,
+        contract.counterpart AS opposite,
+        contract.contract AS contract_code,
+        record.create_time
+        FROM ${invoiceTableName} record
+        INNER JOIN ${signedContractTable} contract ON record.signed_contract = contract.primary_key
+        WHERE record.enterprise_code = #{enterpriseCode}
+        AND record.delete_flag = 'f'
+        AND contract.identity = 't'
+        AND contract.canceled = 'f'
+        <if test="opposite != null and opposite !=''">
+            AND contract.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND record.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="applicants!= null and applicants.size()>0">
+            AND record.applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+        <if test="staffCodes!= null and staffCodes.size()>0">
+            AND record.applicant IN
+            <foreach collection="staffCodes" index="index" item="staffCode" open="(" separator="," close=")">
+                #{staffCode}
+            </foreach>
+        </if>
+        <if test="approveStatus!= null and approveStatus.size()>0">
+            AND record.approval_status IN
+            <foreach collection="approveStatus" index="index" item="approveState" open="(" separator="," close=")">
+                #{approveState}
+            </foreach>
+        </if>
+        <if test="applyTimePre != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &gt;= #{applyTimePre}
+        </if>
+        <if test="applyTimePost != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &lt;= #{applyTimePost}
+        </if>
+        ) combined_records
+        ORDER BY combined_records.create_time DESC
+    </select>
+
+</mapper>

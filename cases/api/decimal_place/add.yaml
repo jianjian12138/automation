@@ -1,15 +1,15 @@
 # 采购合同-发票记录添加
 # 使用的数据库表：
 # 1. dm_m9.purchase_t_dm_m9_contract_9 - 采购合同表（主要表）
-# 2. dm_m9.purchase_t_dm_m9_invoice_record_9 - 发票记录表（发票记录明细）
-# 3. dm_m9.base_module_t_dm_m9_invoice_records_9 - 发票记录基础表（备用）
-# 注意：contractCode 字段的值从数据库中查询，条件是 state 为 "UNILATERAL_SIGN" 或 "MUTUAL_SIGN"
-# 小数点位限制：13位（invoiceAmount字段支持13位小数）
+# 2. dm_m9.purchase_t_dm_m9_invoice_record_9 - 发票记录表（发票记录明细�?
+# 3. dm_m9.base_module_t_dm_m9_invoice_records_9 - 发票记录基础表（备用�?
+# 注意：contractCode 字段的值从数据库中查询，条件是 state �?"UNILATERAL_SIGN" �?"MUTUAL_SIGN"
+# 小数点位限制�?3位（invoiceAmount字段支持13位小数）
 case_name: add
 case_code: Add
 priority: 2
 steps:
-- step_name: 正常场景-BigDecimal精度测试（13位小数）
+- step_name: 正常场景-BigDecimal精度测试�?3位小数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -23,7 +23,7 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
-- step_name: 边界值测试-最小精度（0.0000000000001）
+- step_name: 边界值测�?最小精度（0.0000000000001�?
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -31,11 +31,11 @@ steps:
   data:
     contractCode: $get_db_field(contractCode, state=unilateral_sign)
     invoiceAmount: "0.0000000000001"
-    remark: "边界值测试-最小精度"
+    remark: "边界值测�?最小精�?
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-- step_name: 边界值测试-最大值（13位整数+13位小数）
+- step_name: 边界值测�?最大值（13位整�?13位小数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -43,11 +43,11 @@ steps:
   data:
     contractCode: $get_db_field(contractCode, state=mutual_sign)
     invoiceAmount: "999999999999.9999999999999"
-    remark: "边界值测试-最大值"
+    remark: "边界值测�?最大�?
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-- step_name: 四舍五入测试-超过13位小数截断
+- step_name: 四舍五入测试-超过13位小数截�?
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -55,7 +55,7 @@ steps:
   data:
     contractCode: $get_db_field(contractCode, state=unilateral_sign)
     invoiceAmount: "123.12345678901234"
-    remark: "四舍五入测试-超过13位小数"
+    remark: "四舍五入测试-超过13位小�?
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
@@ -66,8 +66,8 @@ steps:
   method: POST
   data:
     contractCode: $get_db_field(contractCode, state=mutual_sign)
-    invoiceAmount: "非法字符串"
-    remark: "异常场景-非法值"
+    invoiceAmount: "非法字符�?
+    remark: "异常场景-非法�?
   response_assert:
     response_assert_data: 请求参数格式错误
     status_code_assert: 200
@@ -91,7 +91,8 @@ steps:
   data:
     contractCode: $get_db_field(contractCode, state=mutual_sign)
     invoiceAmount: "0.0"
-    remark: "边界测试-零值"
+    remark: "边界测试-零�?
   response_assert:
     response_assert_data: 发票金额错误
     status_code_assert: 200
+

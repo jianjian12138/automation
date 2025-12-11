@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.production.ProductionComponentDao">
+
+    <resultMap id="ProductionComponentModel"
+               type="com.futurecraftsmen.pms.pas.service.po.production.ProductionComponentModel">
+        <result column="primary_key" property="componentCode"/>
+        <result column="component_name" property="componentName"/>
+        <result column="area" property="area"/>
+        <result column="out_procedures" property="outProcedures" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="quantity" property="quantity"/>
+        <result column="produce_sub_report" property="produceSubReport"/>
+        <result column="operator" property="operator"/>
+        <result column="contract_code" property="contractCode"/>
+        <result column="applied" property="applied"/>
+        <result column="report_date" property="reportDate"/>
+        <result column="remark" property="remark"/>
+        <result column="send_sum" property="sendSum"/>
+        <result column="arranger_staff" property="arrangerStaff"/>
+        <result column="arrange_time" property="arrangeTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+
+    <!--所有的字段-->
+    <sql id="columns">
+        primary_key, component_name,area,out_procedures::BIGINT[], quantity,produce_sub_report,operator,contract_code,
+        applied,report_date,remark,send_sum,arranger_staff,arrange_time,
+        enterprise_code,delete_flag,create_time
+    </sql>
+
+
+
+    <select id="selectByContractAndProcedure" resultMap="ProductionComponentModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        <if test="keyword != null">
+            AND component_name LIKE '%'|| #{keyword} ||'%'
+        </if>
+        AND applied = 'f'
+        AND contract_code = #{contractCode}
+        AND #{procedure} = ANY(out_procedures)
+        ORDER BY id DESC
+    </select>
+
+
+    <select id="queryByCodes" resultMap="ProductionComponentModel">
+        SELECT <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="componentCodes" index="index" item="componentCode" open="(" separator="," close=")">
+            #{componentCode}
+        </foreach>
+    </select>
+
+    <update id="updateAfterApply">
+        UPDATE
+        ${tableName}
+        SET applied = 't',
+            send_sum = 0,
+            arranger_staff = #{arrangerStaff},
+            arrange_time = #{arrangeTime}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="componentCodes" index="index" item="componentCode" separator="," open="(" close=")">
+            #{componentCode}
+        </foreach>
+        AND (applied = 'f' OR applied IS NULL)
+    </update>
+
+    <update id="batchUpdateSendSum">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="send_sum =case" suffix="end">
+            <foreach collection="productionComponentSendSumUpdaters" item="productionComponentSendSumUpdater" index="index">
+                <if test="productionComponentSendSumUpdater.sendSumNeedAdd !=null">
+                    when primary_key=#{productionComponentSendSumUpdater.componentCode} then (send_sum + #{productionComponentSendSumUpdater.sendSumNeedAdd})
+                </if>
+            </foreach>
+        </trim>
+        where primary_key in
+        <foreach collection="productionComponentSendSumUpdaters" index="index" item="productionComponentSendSumUpdater" separator="," open="(" close=")">
+            #{productionComponentSendSumUpdater.componentCode}
+        </foreach>
+    </update>
+
+</mapper>

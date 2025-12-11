@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.TempCustomerContractDao">
+
+
+    <resultMap id="TempCustomerContractModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.TempCustomerContractModel">
+        <result column="primary_key" property="contractCode"/>
+        <result column="source" property="source"/>
+        <result column="contract_name" property="contractName"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="contract_type" property="contractType"/>
+        <result column="buyer" property="buyer"/>
+        <result column="seller" property="seller"/>
+        <result column="enterprise_code" property="ownedEnterpriseCode"/>
+        <result column="customer_code" property="customerCode"/>
+        <result column="customer_contact" property="customerContactCode"/>
+        <result column="user_code" property="userCode"/>
+        <result column="language" property="language"/>
+        <result column="payment_strategy" property="paymentStrategy"/>
+        <result column="column_titles" property="columnTitles"/>
+        <result column="amount_title" property="amountTitle"/>
+        <result column="product_detail" property="productDetail"/>
+        <result column="clauses_chs" property="clausesChs"/>
+        <result column="clauses_en" property="clausesEn"/>
+        <result column="state" property="state"/>
+        <result column="contract_time" property="contractTime"/>
+        <result column="data_version" property="dataVersion"/>
+        <result column="sign_areas" property="signAreas"/>
+        <result column="sell_contract" property="sellContract"/>
+        <result column="sell_quotation" property="sellQuotation"/>
+        <result column="buyer_quotation" property="buyerQuotation"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="attachments" property="attachments" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="temp_data" property="tempData"/>
+        <result column="business_belong" property="businessBelong"/>
+        <result column="qrcode_generated_flag" property="qrcodeGeneratedFlag"/>
+    </resultMap>
+
+    <insert id="addVisibleData">
+        INSERT INTO ${tableName} (primary_key, source, contract_name, contract_number,contract_type,
+                                  buyer, seller, enterprise_code,customer_code,customer_contact,
+                                  user_code, language, payment_strategy, column_titles,
+                                  amount_title, product_detail, clauses_chs, clauses_en,
+                                  state,contract_time, data_version,
+                                sign_areas,sell_contract,sell_quotation,buyer_quotation,attachments, temp_data,delete_flag,business_belong)
+        VALUES (#{model.contractCode}, #{model.source}, #{model.contractName}, #{model.contractNumber},#{model.contractType},
+                #{model.buyer}, #{model.seller},
+                #{model.ownedEnterpriseCode}, #{model.customerCode}, #{model.customerContactCode},
+                #{model.userCode},  #{model.language},
+                #{model.paymentStrategy}, #{model.columnTitles}, #{model.amountTitle},
+                #{model.productDetail},
+                #{model.clausesChs}, #{model.clausesEn}, #{model.state},#{model.contractTime}, #{model.dataVersion},
+                #{model.signAreas},#{model.sellContract},#{model.sellQuotation},#{model.buyerQuotation},#{model.attachments},NULL, 'f',#{model.businessBelong})
+    </insert>
+
+
+
+    <select id="page" resultMap="TempCustomerContractModel">
+        SELECT primary_key, source, contract_name, contract_number,contract_type,
+        buyer, seller, enterprise_code,customer_code,customer_contact,
+        user_code, language, payment_strategy, column_titles,
+        amount_title, product_detail,
+        state,contract_time,cancel_reason,sell_contract, data_version,business_belong
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND user_code = #{userCode}
+        <if test="contractNumber != null and contractNumber !=''">
+            AND contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="contractTimePreDate != null">
+            AND contract_time &gt;= #{contractTimePreDate}
+        </if>
+        <if test="contractTimePostDate != null">
+            AND contract_time &lt;= #{contractTimePostDate}
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="contractDetail" resultMap="TempCustomerContractModel">
+        SELECT primary_key, source, contract_name, contract_number,contract_type,
+        buyer, seller, enterprise_code,customer_code,customer_contact,
+        user_code, language, payment_strategy, column_titles,
+        amount_title, product_detail, clauses_chs, clauses_en,
+        state,contract_time, data_version,
+        sign_areas,sell_contract,sell_quotation,buyer_quotation,attachments, temp_data,business_belong,qrcode_generated_flag
+        FROM  ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key= #{contractCode}
+        AND user_code= #{userCode}
+    </select>
+
+
+    <update id="clearTempData">
+        UPDATE ${tableName}
+        SET temp_data = NULL
+        WHERE
+            enterprise_code= #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+          AND temp_data IS NOT NULL
+    </update>
+
+
+    <update id="updateTempData">
+        UPDATE ${tableName}
+        SET temp_data = #{model.tempData}
+        WHERE
+            enterprise_code= #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+
+    <select id="countByContractNumber" resultType="int">
+        SELECT COUNT(id)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key != #{excludeContractCode}
+        AND contract_number = #{contractNumber}
+        AND delete_flag = 'f'
+    </select>
+
+
+
+    <update id="compareDataVersionAndUpdate">
+        UPDATE ${tableName}
+        SET
+            contract_name = #{model.contractName},
+            contract_number = #{model.contractNumber},
+            buyer= #{model.buyer},
+            seller = #{model.seller},
+            customer_code = #{model.customerCode},
+            customer_contact = #{model.customerContactCode},
+            user_code = #{model.userCode},
+            language = #{model.language},
+            payment_strategy = #{model.paymentStrategy},
+            column_titles = #{model.columnTitles},
+            amount_title= #{model.amountTitle},
+            clauses_chs = #{model.clausesChs},
+            clauses_en = #{model.clausesEn},
+            product_detail = #{model.productDetail},
+            contract_time = #{model.contractTime},
+            temp_data = null,
+            state= #{model.state},
+            sign_areas = #{model.signAreas},
+            sell_contract = #{model.sellContract},
+            sell_quotation = #{model.sellQuotation},
+            buyer_quotation = #{model.buyerQuotation},
+            cancel_reason = #{model.cancelReason},
+            attachments = #{model.attachments},
+            data_version = #{model.dataVersion},
+            delete_flag = 'f'
+        WHERE
+            enterprise_code= #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+          AND data_version = #{clientDataVersion}
+    </update>
+
+
+    <delete id="delete">
+        DELETE FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+          AND data_version = #{clientDataVersion}
+    </delete>
+
+
+    <select id="innerContractDetail" resultMap="TempCustomerContractModel">
+        SELECT primary_key, source, contract_name, contract_number,contract_type,
+               buyer, seller, enterprise_code,customer_code,customer_contact,
+               user_code, language, payment_strategy, column_titles,
+            amount_title, product_detail, clauses_chs, clauses_en,
+            state,contract_time, data_version,
+            sign_areas,sell_contract,sell_quotation,buyer_quotation,attachments, temp_data
+        FROM  ${tableName}
+        WHERE
+            enterprise_code= #{enterpriseCode}
+          AND primary_key= #{contractCode}
+    </select>
+
+    <update id="updateQrcodeGeneratedFlag">
+        UPDATE ${tableName}
+        SET qrcode_generated_flag = #{qrcodeGeneratedFlag}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{contractCode}
+    </update>
+
+    <update id="updateWhileProductQuantityChangedAfterSigned">
+        UPDATE ${tableName}
+        SET product_detail = #{model.productDetail},
+            data_version   = #{model.dataVersion}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+
+
+    <update id="updateBuyerAndContractNumber">
+        UPDATE ${tableName}
+        SET buyer           = #{model.buyer},
+            contract_number = #{model.contractNumber},
+            data_version    = #{model.dataVersion}
+        WHERE enterprise_code = #{model.ownedEnterpriseCode}
+          AND primary_key = #{model.contractCode}
+    </update>
+</mapper>

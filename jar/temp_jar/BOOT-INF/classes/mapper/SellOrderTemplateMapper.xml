@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Zhongzao Software Co. LTD 2022-2062 All rights reserved
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.sellorder.SellOrderTemplateDao">
+
+
+    <insert id="addVisibleData">
+        INSERT INTO ${tableName} (primary_key, template_name,  enterprise_code,
+                                  user_code,print_config)
+        VALUES (#{model.templateCode}, #{model.templateName},
+                #{model.enterpriseCode}, #{model.userCode},#{model.printConfig})
+    </insert>
+
+
+
+
+    <delete id="deleteTemplate">
+        DELETE FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key = #{templateCode}
+    </delete>
+
+
+
+
+    <select id="allTemplates"
+            resultType="com.futurecraftsmen.pms.pas.service.po.sellorder.SellOrderTemplateModel">
+        SELECT primary_key as templateCode,
+        template_name,
+        user_code,
+        print_config,
+        enterprise_code
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="detail"
+            resultType="com.futurecraftsmen.pms.pas.service.po.sellorder.SellOrderTemplateModel">
+        SELECT primary_key as templateCode,
+        template_name,
+        user_code,
+        print_config,
+        enterprise_code
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND primary_key = #{templateCode}
+        AND delete_flag= 'f'
+    </select>
+
+</mapper>

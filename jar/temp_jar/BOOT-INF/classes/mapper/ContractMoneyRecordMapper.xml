@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.ContractMoneyRecordDao">
+
+
+    <resultMap id="ContractMoneyRecordModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractMoneyRecordModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="applicant" property="applicant"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="money_record_type" property="moneyRecordType"/>
+        <result column="record_amount" property="recordAmount"/>
+        <result column="currency" property="currency"/>
+        <result column="confirmed_money" property="confirmedMoney"/>
+        <result column="confirmed_exchange_rate" property="confirmedExchangeRate"/>
+        <result column="remark" property="remark"/>
+        <result column="final_approve" property="finalApprove"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="reject_time" property="rejectTime"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="record_batch" property="recordBatch"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+    </resultMap>
+
+    <resultMap id="ContractMoneyRecordWithOppositeModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractMoneyRecordWithOppositeModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="applicant" property="applicant"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="money_record_type" property="moneyRecordType"/>
+        <result column="record_amount" property="recordAmount"/>
+        <result column="currency" property="currency"/>
+        <result column="confirmed_money" property="confirmedMoney"/>
+        <result column="confirmed_exchange_rate" property="confirmedExchangeRate"/>
+        <result column="remark" property="remark"/>
+        <result column="final_approve" property="finalApprove"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="reject_time" property="rejectTime"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="record_batch" property="recordBatch"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+        <result column="opposite" property="opposite"/>
+    </resultMap>
+
+    <resultMap id="ContractMoneyRecordSummary"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractMoneyRecordSummary">
+        <result column="collectSum" property="collectSum"/>
+        <result column="paymentSum" property="paymentSum"/>
+    </resultMap>
+
+
+    <insert id="addRecord">
+        INSERT INTO ${tableName}
+        (primary_key, applicant, apply_time, money_record_type, record_amount, currency, confirmed_money, confirmed_exchange_rate, remark,
+         final_approve,
+         confirm_time,
+         reject_reason, reject_time, approval_status, signed_contract, record_batch, contract_number, payment_time,
+         enterprise_code, son_enterprise_code)
+        VALUES (#{model.recordCode}, #{model.applicant}, #{model.applyTime},
+                #{model.moneyRecordType}, #{model.recordAmount}, #{model.currency}, #{model.confirmedMoney}, #{model.confirmedExchangeRate},
+                #{model.remark},
+                #{model.finalApprove}, #{model.confirmTime},
+                #{model.rejectReason}, #{model.rejectTime}, #{model.approvalStatus}, #{model.signedContract},
+                #{model.recordBatch}, #{model.contractNumber}, #{model.paymentTime},
+                #{model.enterpriseCode}, #{model.sonEnterpriseCode})
+    </insert>
+
+    <insert id="batchAddRecord">
+        INSERT INTO ${tableName} (primary_key, applicant, apply_time, money_record_type, record_amount, currency, confirmed_money,
+        confirmed_exchange_rate, remark,
+        final_approve,
+        confirm_time,
+        reject_reason, reject_time, approval_status, signed_contract, record_batch, contract_number, payment_time,
+        enterprise_code, son_enterprise_code)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            (#{model.recordCode}, #{model.applicant}, #{model.applyTime},
+            #{model.moneyRecordType}, #{model.recordAmount}, #{model.currency}, #{model.confirmedMoney}, #{model.confirmedExchangeRate},
+            #{model.remark},
+            #{model.finalApprove}, #{model.confirmTime},
+            #{model.rejectReason}, #{model.rejectTime}, #{model.approvalStatus}, #{model.signedContract},
+            #{model.recordBatch}, #{model.contractNumber}, #{model.paymentTime},
+            #{model.enterpriseCode}, #{model.sonEnterpriseCode})
+        </foreach>
+    </insert>
+
+    <select id="queryByRecordCodes"
+            resultMap="ContractMoneyRecordModel">
+        SELECT primary_key,
+        applicant,
+        apply_time,
+        money_record_type,
+        record_amount,
+        currency, confirmed_money, confirmed_exchange_rate,
+        remark,
+        final_approve,
+        confirm_time,
+        reject_reason,
+        reject_time,
+        approval_status,
+        signed_contract,
+        record_batch,
+        contract_number,
+        payment_time,
+        enterprise_code,
+        son_enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="recordCodes" index="index" item="recordCode" open="(" separator=","
+                 close=")">
+            #{recordCode}
+        </foreach>
+        AND delete_flag = 'f'
+    </select>
+
+    <select id="queryByRecordCodeAndSignedContractCode"
+            resultMap="ContractMoneyRecordModel">
+        SELECT primary_key,
+               applicant,
+               apply_time,
+               money_record_type,
+               record_amount,
+               currency,
+               confirmed_money,
+               confirmed_exchange_rate,
+               remark,
+               final_approve,
+               confirm_time,
+               reject_reason,
+               reject_time,
+               approval_status,
+               signed_contract,
+               record_batch,
+               contract_number,
+               payment_time,
+               enterprise_code,
+               son_enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{recordCode}
+          AND signed_contract = #{signedContract}
+          AND delete_flag = 'f'
+    </select>
+
+
+
+    <update id="update">
+        UPDATE ${tableName}
+        SET record_amount   = #{model.recordAmount},
+            remark          = #{model.remark},
+            currency                = #{model.currency},
+            confirmed_money         = #{model.confirmedMoney},
+            confirmed_exchange_rate = #{model.confirmedExchangeRate},
+            final_approve   = #{model.finalApprove},
+            payment_time = #{model.paymentTime},
+            confirm_time    = #{model.confirmTime},
+            reject_reason   = #{model.rejectReason},
+            reject_time     = #{model.rejectTime},
+            approval_status = #{model.approvalStatus}
+        WHERE primary_key = #{model.recordCode}
+          AND enterprise_code = #{model.enterpriseCode}
+    </update>
+
+
+    <update id="batchUpdate">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="record_amount =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.recordAmount}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="remark =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.remark}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="final_approve =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.finalApprove}::bigint
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="confirm_time =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.confirmTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="reject_reason =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.rejectReason}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="reject_time =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.rejectTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="approval_status =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.approvalStatus}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="currency =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.currency}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="confirmed_exchange_rate =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.confirmedExchangeRate}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="confirmed_money =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.confirmedMoney}::numeric
+            </foreach>
+        </trim>
+        WHERE primary_key IN
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.recordCode}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <update id="deleteRecord">
+        UPDATE ${tableName}
+        SET delete_flag = 't'
+        WHERE primary_key = #{model.recordCode}
+          AND enterprise_code = #{model.enterpriseCode}
+    </update>
+
+    <select id="pageQuerySameContract"
+            resultMap="ContractMoneyRecordModel">
+        SELECT primary_key,
+               applicant,
+               apply_time,
+               money_record_type,
+               record_amount,
+        currency,
+        confirmed_money,
+        confirmed_exchange_rate,
+               remark,
+               final_approve,
+               confirm_time,
+               reject_reason,
+               reject_time,
+               approval_status,
+               signed_contract,
+               record_batch,
+               contract_number,
+               payment_time,
+               enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND signed_contract = #{signedContractCode}
+          AND delete_flag = 'f'
+        <if test="filterWithDrawnRecords">
+            AND approval_status != 'WITHDRAWN'
+        </if>
+        ORDER BY apply_time DESC
+    </select>
+
+
+    <select id="statisticsConfirmedContractMoneyForSellContract"
+            resultMap="ContractMoneyRecordWithOppositeModel">
+        SELECT monryRecord.primary_key,
+        monryRecord.applicant,
+        monryRecord.apply_time,
+        monryRecord.money_record_type,
+        monryRecord.record_amount,
+        monryRecord.currency,
+        monryRecord.confirmed_money,
+        monryRecord.confirmed_exchange_rate,
+        monryRecord.remark,
+        monryRecord.final_approve,
+        monryRecord.confirm_time,
+        monryRecord.reject_reason,
+        monryRecord.reject_time,
+        monryRecord.approval_status,
+        monryRecord.signed_contract,
+        monryRecord.record_batch,
+        monryRecord.contract_number,
+        monryRecord.payment_time,
+        monryRecord.enterprise_code,
+        sellContract.buyer_name AS opposite
+        FROM ${moneyRecordTableName} monryRecord
+        JOIN (
+        SELECT signed_contract, buyer_name, state, user_code, contract_time,
+        money_apply_returned, invoice_apply_returned, business_belong
+        FROM ${sellContractTableName}
+        WHERE 1=1
+        <if test="states != null and states.size()!=0">
+            AND state IN
+            <foreach collection="states" index="index" item="state" open="(" separator="," close=")">
+                #{state}
+            </foreach>
+        </if>
+        <if test="userCodes != null and userCodes.size()!=0">
+            AND user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="buyerName!=null and buyerName!=''">
+            AND buyer_name LIKE '%'|| #{buyerName} ||'%'
+        </if>
+        <if test="oppositeUnique!=null and oppositeUnique!=''">
+            AND buyer_name = #{oppositeUnique}
+        </if>
+        <if test="contractTimePreDate != null">
+            AND contract_time &gt;= #{contractTimePreDate}
+        </if>
+        <if test="contractTimePostDate != null">
+            AND contract_time &lt;= #{contractTimePostDate}
+        </if>
+        <if test="applyReturned != null and applyReturned == true">
+            AND (money_apply_returned = true OR invoice_apply_returned = true)
+        </if>
+        <if test="applyReturned != null and applyReturned == false">
+            AND COALESCE(money_apply_returned, false) = false
+            AND COALESCE(invoice_apply_returned, false) = false
+        </if>
+        <if test="businessBelong != null and businessBelong !=''">
+            AND business_belong = #{businessBelong}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ) sellContract
+        ON sellContract.signed_contract = monryRecord.signed_contract
+        WHERE monryRecord.enterprise_code = #{enterpriseCode}
+        AND monryRecord.delete_flag = 'f'
+        AND monryRecord.approval_status = 'CONFIRMED'
+        AND monryRecord.money_record_type = #{moneyRecordType}
+        <if test="contractNumber!=null and contractNumber!=''">
+            AND monryRecord.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        ORDER BY monryRecord.id DESC
+    </select>
+
+
+    <select id="statisticsConfirmedContractMoneyForSellDetail"
+            resultMap="ContractMoneyRecordWithOppositeModel">
+        SELECT monryRecord.primary_key,
+        monryRecord.applicant,
+        monryRecord.apply_time,
+        monryRecord.money_record_type,
+        monryRecord.record_amount,
+        monryRecord.currency,
+        monryRecord.confirmed_money,
+        monryRecord.confirmed_exchange_rate,
+        monryRecord.remark,
+        monryRecord.final_approve,
+        monryRecord.confirm_time,
+        monryRecord.reject_reason,
+        monryRecord.reject_time,
+        monryRecord.approval_status,
+        monryRecord.signed_contract,
+        monryRecord.record_batch,
+        monryRecord.contract_number,
+        monryRecord.payment_time,
+        monryRecord.enterprise_code,
+        historyPrice.opposite AS opposite
+        FROM ${moneyRecordTableName} monryRecord
+        INNER JOIN (
+            SELECT DISTINCT ON (hp.signed_contract) 
+                   hp.signed_contract, hp.opposite, hp.material_code, hp.material_name, hp.material_model,
+                   hp.staff, hp.payment_strategy, hp.record_time, hp.type
+            FROM ${historyPriceTableName} hp
+            <if test="partUnityNo != null and partUnityNo != ''">
+            INNER JOIN ${productPartTableName} pp ON pp.primary_key = hp.material_code
+            </if>
+            WHERE hp.type = 1
+            <if test="opposite!=null and opposite!=''">
+                AND hp.opposite LIKE '%'|| #{opposite} ||'%'
+            </if>
+            <if test="oppositeUnique!=null and oppositeUnique!=''">
+                AND hp.opposite = #{oppositeUnique}
+            </if>
+            <if test="searchName != null and searchName != ''">
+                AND (hp.material_name LIKE '%'|| #{searchName} ||'%' OR hp.material_model LIKE '%'|| #{searchName} ||'%')
+            </if>
+            <if test="sellers != null and sellers.size()!=0">
+                AND hp.staff IN
+                <foreach collection="sellers" index="index" item="code" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+            <if test="paymentStrategy != null">
+                AND hp.payment_strategy = #{paymentStrategy}
+            </if>
+            <if test="recordTimePreDate != null">
+                AND hp.record_time &gt;= #{recordTimePreDate}
+            </if>
+            <if test="recordTimePostDate != null">
+                AND hp.record_time &lt;= #{recordTimePostDate}
+            </if>
+            <if test="partUnityNo != null and partUnityNo != ''">
+                AND pp.unity_no LIKE '%'|| #{partUnityNo} ||'%'
+            </if>
+            <if test="dataScopeParams.dataScope != null">
+                ${dataScopeParams.dataScope}
+            </if>
+            ORDER BY hp.signed_contract, hp.id DESC
+        ) historyPrice
+        ON historyPrice.signed_contract = monryRecord.signed_contract
+        WHERE monryRecord.enterprise_code = #{enterpriseCode}
+        AND monryRecord.delete_flag = 'f'
+        AND monryRecord.approval_status = 'CONFIRMED'
+        AND monryRecord.money_record_type = #{moneyRecordType}
+        <if test="contractNumber!=null and contractNumber!=''">
+            AND monryRecord.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        ORDER BY monryRecord.id DESC
+    </select>
+
+
+
+    <select id="queryRecordsBySignedContractCodes"
+            resultMap="ContractMoneyRecordModel">
+        SELECT
+        primary_key, applicant, apply_time, money_record_type, record_amount,
+        currency, confirmed_money, confirmed_exchange_rate,
+        remark, final_approve,
+        confirm_time,
+        reject_reason, reject_time, approval_status, signed_contract,record_batch,contract_number, payment_time,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator=","
+                 close=")">
+            #{signedContractCode}
+        </foreach>
+        AND delete_flag = 'f'
+        <if test="applicants != null and applicants.size()!=0">
+            AND applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+    </select>
+
+
+
+    <select id="totalAmountConfirmed" resultType="com.futurecraftsmen.pms.pas.service.base.TotalAmount">
+        SELECT SUM(COALESCE(confirmed_money, record_amount)) AS data
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator=","
+                 close=")">
+            #{signedContractCode}
+        </foreach>
+        AND approval_status = 'CONFIRMED'
+          AND delete_flag = 'f'
+    </select>
+
+
+    <select id="contractRecordAmountSum" resultType="com.futurecraftsmen.pms.pas.service.base.ContractRecordAmountSum">
+        SELECT SUM(COALESCE(confirmed_money, record_amount)) AS confirmedAmountSum, signed_contract as signedContract
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator=","
+                 close=")">
+            #{signedContractCode}
+        </foreach>
+        AND approval_status = 'CONFIRMED'
+        AND delete_flag = 'f'
+        GROUP BY signed_contract
+    </select>
+
+
+    <select id="countByContractAndStatus" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract = #{signedContractCode}
+        AND approval_status = #{status}
+        AND delete_flag = 'f'
+    </select>
+
+
+    <select id="batchCountByContractAndStatus" resultType="com.futurecraftsmen.pms.pas.service.base.ConfirmingRecordCountResult">
+        SELECT COUNT(*) AS confirmingStatusDataCount, signed_contract as signedContract
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator=","
+                 close=")">
+            #{signedContractCode}
+        </foreach>
+        AND approval_status = #{status}
+        AND delete_flag = 'f'
+        GROUP BY signed_contract
+    </select>
+
+
+    <select id="incomePage"
+            resultMap="ContractMoneyRecordWithOppositeModel">
+        SELECT a.primary_key,
+        a.applicant,
+        a.apply_time,
+        a.money_record_type,
+        a.record_amount,
+        a.confirmed_money,
+        a.currency,
+        a.confirmed_exchange_rate,
+        a.remark,
+        a.final_approve,
+        a.confirm_time,
+        a.reject_reason,
+        a.reject_time,
+        a.approval_status,
+        a.signed_contract,
+        a.record_batch,
+        a.contract_number,
+        a.payment_time,
+        a.enterprise_code,
+        b.counterpart AS opposite
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE
+        b.enterprise_code = #{enterpriseCode}
+        <if test="opposite != null and opposite !=''">
+            AND b.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        AND b.delete_flag = 'f'
+        AND a.enterprise_code = #{enterpriseCode}
+        AND a.approval_status = 'CONFIRMED'
+        AND a.money_record_type = 'COLLECT'
+        AND a.delete_flag = 'f'
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+        ORDER BY a.confirm_time DESC
+    </select>
+
+
+    <select id="summaryPage"
+            resultMap="ContractMoneyRecordWithOppositeModel">
+        SELECT a.primary_key,
+        a.applicant,
+        a.apply_time,
+        a.money_record_type,
+        a.record_amount,
+        a.confirmed_money,
+        a.currency,
+        a.confirmed_exchange_rate,
+        a.remark,
+        a.final_approve,
+        a.confirm_time,
+        a.reject_reason,
+        a.reject_time,
+        a.approval_status,
+        a.signed_contract,
+        a.record_batch,
+        a.contract_number,
+        a.payment_time,
+        a.enterprise_code,
+        b.counterpart AS opposite
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE
+        b.enterprise_code = #{enterpriseCode}
+        <if test="opposite != null and opposite !=''">
+            AND b.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        AND b.delete_flag = 'f'
+        AND a.enterprise_code = #{enterpriseCode}
+        AND a.approval_status = 'CONFIRMED'
+        AND a.delete_flag = 'f'
+        AND a.money_record_type = 'PAYMENT'
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+        ORDER BY a.confirm_time DESC
+    </select>
+
+
+
+    <select id="income"
+            resultMap="ContractMoneyRecordSummary">
+        SELECT
+        SUM(COALESCE(a.confirmed_money, a.record_amount)) AS collectSum
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE
+        b.enterprise_code = #{enterpriseCode}
+        <if test="opposite != null and opposite !=''">
+            AND b.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        AND b.delete_flag = 'f'
+        AND a.enterprise_code = #{enterpriseCode}
+        AND a.approval_status = 'CONFIRMED'
+        AND a.delete_flag = 'f'
+        AND a.money_record_type = 'COLLECT'
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+    </select>
+
+
+    <select id="summary"
+            resultMap="ContractMoneyRecordSummary">
+        SELECT
+        SUM(COALESCE(a.confirmed_money, a.record_amount)) AS paymentSum
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE
+        b.enterprise_code = #{enterpriseCode}
+        <if test="opposite != null and opposite !=''">
+            AND b.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        AND b.delete_flag = 'f'
+        AND a.enterprise_code = #{enterpriseCode}
+        AND a.approval_status = 'CONFIRMED'
+        AND a.delete_flag = 'f'
+        AND a.money_record_type = 'PAYMENT'
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+    </select>
+
+    <!--
+        查询已收金额月度汇总（按合同签章时间分组）
+        
+        业务逻辑说明�?
+        1. 销售总额按历史价格记录的 record_time（合同签章时间）统计
+        2. 已收金额应统一按合同签章时间（contract_time）统计，而不是按收款确认时间（confirm_time）统�?
+        3. 原因：如果合同在3月签章，但收款在4月确认，按确认时间统计会导致�?
+           - 3月销售总额包含该合同，�?月已收金额不包含
+           - 4月已收金额包含该合同收款，但4月销售总额不包�?
+           - 结果�?月已收金额可能大�?月销售总额，出现负数未收金�?
+        
+        修正方案�?
+        - 已收金额按合同签章时间（b.contract_time）分组统�?
+        - 确保销售总额和已收金额的时间维度一致，都是按合同签章时间统�?
+        - 未收金额 = 销售总额 - 已收金额 才有业务意义
+        
+        查询条件�?
+        - 只统计已确认的收款记录（approval_status = 'CONFIRMED'�?
+        - 只统计收款类型（money_record_type = 'COLLECT'�?
+        - 合同签章时间必须在查询时间范围内
+    -->
+    <select id="collectMonthlySummary" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(b.contract_time, 'YYYY-MM')               AS summaryMonth,
+               SUM(COALESCE(a.confirmed_money, a.record_amount)) AS amount
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE b.enterprise_code = #{enterpriseCode}
+          AND b.delete_flag = 'f'
+          AND a.enterprise_code = #{enterpriseCode}
+          AND a.approval_status = 'CONFIRMED'
+          AND a.delete_flag = 'f'
+          AND a.money_record_type = 'COLLECT'
+          AND b.contract_time IS NOT NULL
+        <if test="startDate != null">
+            AND b.contract_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND b.contract_time &lt;= #{endDate}
+        </if>
+        GROUP BY to_char(b.contract_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+    <select id="uncollectMonthlySummary" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(a.confirm_time, 'YYYY-MM')               AS summaryMonth,
+               SUM(COALESCE(a.record_amount, 0) - COALESCE(a.confirmed_money, 0)) AS amount
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE b.enterprise_code = #{enterpriseCode}
+          AND b.delete_flag = 'f'
+          AND a.enterprise_code = #{enterpriseCode}
+          AND a.approval_status = 'CONFIRMED'
+          AND a.delete_flag = 'f'
+          AND a.money_record_type = 'COLLECT'
+          AND a.confirm_time IS NOT NULL
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+        GROUP BY to_char(a.confirm_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+    <select id="paidMonthlySummary" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(a.confirm_time, 'YYYY-MM')               AS summaryMonth,
+               SUM(COALESCE(a.confirmed_money, a.record_amount)) AS amount
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE b.enterprise_code = #{enterpriseCode}
+          AND b.delete_flag = 'f'
+          AND a.enterprise_code = #{enterpriseCode}
+          AND a.approval_status = 'CONFIRMED'
+          AND a.delete_flag = 'f'
+          AND a.money_record_type = 'PAYMENT'
+          AND a.confirm_time IS NOT NULL
+        <if test="startDate != null">
+            AND a.confirm_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.confirm_time &lt;= #{endDate}
+        </if>
+        GROUP BY to_char(a.confirm_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+    <select id="unpaidMonthlySummary" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(a.apply_time, 'YYYY-MM')               AS summaryMonth,
+               SUM(COALESCE(a.record_amount, 0) - COALESCE(a.confirmed_money, 0)) AS amount
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE b.enterprise_code = #{enterpriseCode}
+          AND b.delete_flag = 'f'
+          AND a.enterprise_code = #{enterpriseCode}
+          AND a.delete_flag = 'f'
+          AND a.money_record_type = 'PAYMENT'
+          AND a.apply_time IS NOT NULL
+        <if test="startDate != null">
+            AND a.apply_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND a.apply_time &lt;= #{endDate}
+        </if>
+        GROUP BY to_char(a.apply_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+    <select id="totalPayableSummary" resultMap="ContractMoneyRecordSummary">
+        SELECT
+        SUM(COALESCE(a.record_amount, 0)) AS paymentSum,
+        0 AS collectSum
+        FROM ${moneyRecordTable} a
+        LEFT JOIN ${signedContractTable} b ON a.signed_contract = b.primary_key
+        WHERE b.enterprise_code = #{enterpriseCode}
+          AND b.delete_flag = 'f'
+          AND a.enterprise_code = #{enterpriseCode}
+          AND a.delete_flag = 'f'
+          AND a.money_record_type = 'PAYMENT'
+    </select>
+
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET contract_number = #{contractNumber}
+        WHERE signed_contract = #{signedContract}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <select id="queryMoneyRecordFilterWithDrawnRecords"
+            resultMap="ContractMoneyRecordWithOppositeModel">
+        SELECT
+        record.primary_key,
+        record.applicant,
+        record.apply_time,
+        record.money_record_type,
+        record.record_amount,
+        record.currency,
+        record.confirmed_money,
+        record.confirmed_exchange_rate,
+        record.remark,
+        record.final_approve,
+        record.confirm_time,
+        record.reject_reason,
+        record.reject_time,
+        record.approval_status,
+        record.signed_contract,
+        record.record_batch,
+        record.contract_number,
+        record.payment_time,
+        record.enterprise_code,
+        contract.counterpart AS opposite
+        FROM ${recordTableName} record
+        INNER JOIN ${signedContractTable} contract ON record.signed_contract = contract.primary_key
+        WHERE record.enterprise_code = #{enterpriseCode}
+        AND record.delete_flag = 'f'
+        AND record.approval_status != 'WITHDRAWN'
+        AND contract.canceled = 'f'
+        <if test="opposite != null and opposite !=''">
+            AND contract.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND record.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="userCodes!= null and userCodes.size()>0">
+            AND contract.user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="applicants!= null and applicants.size()>0">
+            AND record.applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+        <if test="approveStatus!= null and approveStatus.size()>0">
+            AND record.approval_status IN
+            <foreach collection="approveStatus" index="index" item="approveState" open="(" separator="," close=")">
+                #{approveState}
+            </foreach>
+        </if>
+        <if test="paymentTimePre != null">
+            AND record.payment_time IS NOT NULL
+            AND record.payment_time &gt;= #{paymentTimePre}
+        </if>
+        <if test="paymentTimePost != null">
+            AND record.payment_time IS NOT NULL
+            AND record.payment_time &lt;= #{paymentTimePost}
+        </if>
+        ORDER BY record.id DESC
+    </select>
+
+</mapper>

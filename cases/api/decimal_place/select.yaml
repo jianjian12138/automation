@@ -1,14 +1,14 @@
 # 客户查询场景
 # 使用的数据库表：
-# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，查询 primaryKey）
-# 注意：此接口为查询接口，只需要传入 primaryKey 查询客户信息
-# 小数点位限制：8位（visitList[].estimatedCost 和 visitList[].actualCosts 字段支持8位小数）
+# 1. dm_m9.sell_t_dm_m9_customers_9 - 客户信息表（主要表，查询 primaryKey�?
+# 注意：此接口为查询接口，只需要传�?primaryKey 查询客户信息
+# 小数点位限制�?位（visitList[].estimatedCost �?visitList[].actualCosts 字段支持8位小数）
 
 case_code: Select
 case_name: select
 priority: 2
 steps:
-- step_name: 正常场景-查询客户信息（8位小数精度测试）
+- step_name: 正常场景-查询客户信息�?位小数精度测试）
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/select
   headers: $generate_token(pms_host)
@@ -16,7 +16,7 @@ steps:
   data:
     primaryKey: $get_db_field(customerPrimaryKey)
   response_assert:
-    response_assert_data: 查询客户的详情成功
+    response_assert_data: 查询客户的详情成�?
     status_code_assert: 200
     jsonpath_assert:
     - $..resCode == 200 or $..resCode == 202 or $..code == 200 or $..code == 202
@@ -41,7 +41,7 @@ steps:
   response_assert:
     status_code_assert: 500
 
-- step_name: 正常场景-查询已有客户的拜访记录
+- step_name: 正常场景-查询已有客户的拜访记�?
   host: $get_host(ERP_TEST,pms_host)
   path: /sell/customer/select
   headers: $generate_token(pms_host)
@@ -49,8 +49,9 @@ steps:
   data:
     primaryKey: $get_db_field(customerPrimaryKey)
   response_assert:
-    response_assert_data: 查询客户的详情成功
+    response_assert_data: 查询客户的详情成�?
     status_code_assert: 200
     jsonpath_assert:
     - $..resCode == 200 or $..resCode == 202 or $..code == 200 or $..code == 202
     - $..data.visitList != null
+

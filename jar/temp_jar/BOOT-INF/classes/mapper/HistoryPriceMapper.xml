@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.HistoryPriceDao">
+
+    <resultMap id="HistoryPriceModel"
+               type="com.futurecraftsmen.pms.pas.service.po.HistoryPriceModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="material_code" property="materialCode"/>
+        <result column="procedure_code" property="procedureCode"/>
+        <result column="material_name" property="materialName"/>
+        <result column="material_model" property="materialModel"/>
+
+        <result column="payment_strategy" property="paymentStrategy"/>
+        <result column="exchange_rate" property="exchangeRate"/>
+        <result column="tax_rate_percent" property="taxRatePercent"/>
+
+        <result column="product_quantity" property="productQuantity"/>
+        <result column="product_unit_price" property="productUnitPrice"/>
+        <result column="product_total_price" property="productTotalPrice"/>
+        <result column="product_rmb_unit_price" property="productRmbUnitPrice"/>
+        <result column="product_rmb_total_price" property="productRmbTotalPrice"/>
+        <result column="opposite" property="opposite"/>
+        <result column="record_time" property="recordTime"/>
+        <result column="remark" property="remark"/>
+        <result column="type" property="type"/>
+        <result column="quotation" property="quotation"/>
+        <result column="signed_contract" property="signedContract"/>
+
+        <result column="customer_code" property="customerCode"/>
+        <result column="vender_data_code" property="venderDataCode"/>
+        <result column="staff" property="staff"/>
+        <result column="department" property="department"/>
+        <result column="contract_material" property="contractMaterial"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+    </resultMap>
+
+
+    <resultMap id="SellDetailInfoModel"
+               type="com.futurecraftsmen.pms.pas.service.po.SellDetailInfoModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="payment_strategy" property="paymentStrategy"/>
+        <result column="product_total_price" property="productTotalPrice"/>
+        <result column="product_rmb_total_price" property="productRmbTotalPrice"/>
+        <result column="exchange_rate" property="exchangeRate"/>
+        <result column="tax_rate_percent" property="taxRatePercent"/>
+        <result column="opposite" property="opposite"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+
+    <resultMap id="PurchaseDetailInfoModel"
+               type="com.futurecraftsmen.pms.pas.service.po.PurchaseDetailInfoModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="payment_strategy" property="paymentStrategy"/>
+        <result column="product_total_price" property="totalPrice"/>
+        <result column="product_rmb_total_price" property="rmbTotalPrice"/>
+        <result column="exchange_rate" property="exchangeRate"/>
+        <result column="tax_rate_percent" property="taxRatePercent"/>
+        <result column="opposite" property="opposite"/>
+        <result column="signed_contract" property="signedContract"/>
+    </resultMap>
+
+    <resultMap id="productSalesSummaryMap"
+               type="com.futurecraftsmen.pms.pas.service.impl.report.innerInterface.productSaleInfo.ProductSalesSummary">
+        <result property="productCode" column="product_code"/>
+        <result property="totalQuantity" column="total_quantity"/>
+    </resultMap>
+
+
+    <resultMap id="sellerSaleTotal"
+               type="com.futurecraftsmen.pms.pas.service.impl.report.innerInterface.sellDetailStatistics.SellerSaleTotal">
+        <result property="seller" column="staff"/>
+        <result property="total" column="total"/>
+    </resultMap>
+
+
+    <resultMap id="venderPurchaseDetail"
+               type="com.futurecraftsmen.pms.pas.service.impl.report.innerInterface.purchaseDetailStatistics.VenderPurchaseDetail">
+        <result property="vender" column="opposite"/>
+        <result property="total" column="total"/>
+    </resultMap>
+
+
+    <insert id="addRecords">
+        INSERT INTO ${tableName}(
+        primary_key,
+        material_code,
+        procedure_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        contract_material,
+        enterprise_code,
+        son_enterprise_code)
+        VALUES
+        <foreach collection="historyPriceModels" index="index" item="model" separator=",">
+            ( #{model.recordCode}, #{model.materialCode},#{model.procedureCode},#{model.materialName},#{model.materialModel}, #{model.paymentStrategy},
+            #{model.exchangeRate}, #{model.taxRatePercent},
+            #{model.productQuantity}, #{model.productUnitPrice},
+            #{model.productTotalPrice}, #{model.productRmbUnitPrice}, #{model.productRmbTotalPrice},
+            #{model.opposite}, #{model.recordTime},
+            #{model.remark}, #{model.type}, #{model.quotation}, #{model.signedContract},
+            #{model.customerCode}, #{model.venderDataCode}, #{model.staff},#{model.department},
+            #{model.contractMaterial},
+            #{model.enterpriseCode},#{model.sonEnterpriseCode})
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteStrikeRecords" >
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND signed_contract = #{signedContract}
+    </delete>
+
+
+    <select id="sellStrikPaging" resultMap="HistoryPriceModel">
+        SELECT
+        primary_key,
+        contract_material,
+        material_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        enterprise_code
+        FROM ${tableName} as a
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (material_name LIKE '%'|| #{param.searchName} ||'%' OR material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.seller != null and param.seller.size()!=0">
+            AND staff IN
+            <foreach collection="param.seller" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND record_time &lt;= #{param.recordTimePostDate}
+        </if>
+
+        AND type = 1
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+
+        <if test="data.partUnityNo != null and data.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.material_Code","xihang",data.partUnityNo)}
+        </if>
+        ORDER BY record_time DESC, id DESC
+    </select>
+
+    <select id="sellStrikPagingExport" resultMap="HistoryPriceModel">
+        SELECT
+        primary_key,
+        contract_material,
+        material_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (material_name LIKE '%'|| #{param.searchName} ||'%' OR material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.seller != null and param.seller.size()!=0">
+            AND staff IN
+            <foreach collection="param.seller" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND record_time &lt;= #{param.recordTimePostDate}
+        </if>
+        AND type = 1
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        <if test="param.codes !=null and param.codes.size() > 0">
+            AND primary_key IN
+            <foreach collection="param.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        ORDER BY record_time DESC, id DESC
+        <if test="param.pageSize != null and param.offset != null and param.pageSize &gt; 0 and param.offset &gt;= 0">
+            LIMIT #{param.pageSize} OFFSET #{param.offset}
+        </if>
+    </select>
+
+
+    <select id="sellDetailInfos" resultMap="SellDetailInfoModel">
+        SELECT t.primary_key,
+        t.payment_strategy,
+        t.product_total_price,
+        t.product_rmb_total_price,
+        t.exchange_rate,
+        t.tax_rate_percent,
+        t.signed_contract,
+        t.opposite,
+        t.create_time,
+        t.update_time,
+        t.delete_flag
+        FROM ${tableName} t
+        <if test="param.partUnityNo != null and param.partUnityNo != ''">
+        INNER JOIN ${productPartTableName} t1 ON t.material_code = t1.primary_key
+        </if>
+        WHERE t.enterprise_code = #{enterpriseCode}
+        AND t.delete_flag = 'f'
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND t.remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND t.opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.partUnityNo != null and param.partUnityNo != ''">
+            AND t1.unity_no LIKE '%'|| #{param.partUnityNo} ||'%'
+        </if>
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (t.material_name LIKE '%'|| #{param.searchName} ||'%' OR t.material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.seller != null and param.seller.size()!=0">
+            AND t.staff IN
+            <foreach collection="param.seller" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.paymentStrategy != null">
+            AND t.payment_strategy = #{param.paymentStrategy}
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND t.record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND t.record_time &lt;= #{param.recordTimePostDate}
+        </if>
+
+        AND t.type = 1
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY t.id
+    </select>
+
+    <!--
+        根据合同编号列表查询历史价格记录（销售类型）
+        
+        业务逻辑说明�?
+        1. 直接按合同编号列表查询历史价格记录，不按 record_time 筛�?
+        2. 查询条件：type = 1（销售类型），signed_contract IN (合同编号列表)
+        3. 用于统计指定合同的所有历史价格记录，不管 record_time 是什么时�?
+        
+        使用场景�?
+        - 查询指定月份签章的合同，统计这些合同的销售总额
+        - 确保销售总额和已收金额都基于同一批合同编号统计，数据范围一�?
+        
+        修正原因�?
+        - 之前使用 sellDetailInfos 方法�?record_time 筛选，�?record_time 可能与合同签章时间不一�?
+        - 导致可能漏掉部分历史价格记录，销售总额计算不准�?
+        - 现在直接按合同编号查询，确保统计完整
+        
+        查询条件�?
+        - 只统计销售类型（type = 1�?
+        - 只统计未删除的记录（delete_flag = 'f'�?
+        - 合同编号必须在指定的合同编号列表�?
+    -->
+    <select id="sellDetailInfosByContractCodes" resultMap="SellDetailInfoModel">
+        SELECT t.primary_key,
+               t.payment_strategy,
+               t.product_total_price,
+               t.product_rmb_total_price,
+               t.exchange_rate,
+               t.tax_rate_percent,
+               t.signed_contract,
+               t.opposite,
+               t.create_time,
+               t.update_time,
+               t.delete_flag
+        FROM ${tableName} t
+        WHERE t.enterprise_code = #{enterpriseCode}
+          AND t.delete_flag = 'f'
+          AND t.type = 1
+          AND t.signed_contract IN
+          <foreach collection="signedContractCodes" item="signedContractCode" open="(" separator="," close=")">
+              #{signedContractCode}
+          </foreach>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY t.id
+    </select>
+
+
+    <select id="latestRecordsForSell" resultMap="HistoryPriceModel">
+        SELECT primary_key,
+        contract_material,
+               material_code,
+               material_name,
+               material_model,
+               payment_strategy,
+               exchange_rate,
+               tax_rate_percent,
+               product_quantity,
+               product_unit_price,
+               opposite,
+               record_time,
+               remark,
+               type,
+               quotation,
+               signed_contract,
+               customer_code,
+               vender_data_code,
+               staff,
+               enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="customerCode != null">
+            AND customer_code = #{customerCode}
+        </if>
+
+        <if test="customerCode == null">
+            AND opposite = #{opposite}
+        </if>
+        AND material_code = #{materialCode}
+        AND type = #{type}
+        ORDER BY record_time DESC, id DESC LIMIT 10
+    </select>
+
+
+    <select id="purchaseStrikPaging" resultMap="HistoryPriceModel">
+        SELECT
+        primary_key,
+        contract_material,
+        material_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        enterprise_code
+        FROM ${tableName} a
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.partUnityNo != null and param.partUnityNo != '' ">
+            and ${dynamicTableNameProxy.getXiHangPartQuery("a.material_code","xihang",param.partUnityNo)}
+        </if>
+
+
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (material_name LIKE '%'|| #{param.searchName} ||'%' OR material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.buyer != null and param.buyer.size()!=0">
+            AND staff IN
+            <foreach collection="param.buyer" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND record_time &lt;= #{param.recordTimePostDate}
+        </if>
+
+        AND type = 3
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY record_time DESC, id DESC
+    </select>
+
+    <select id="purchaseStrikPagingExport" resultMap="HistoryPriceModel">
+        SELECT
+        primary_key,
+        contract_material,
+        material_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (material_name LIKE '%'|| #{param.searchName} ||'%' OR material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.buyer != null and param.buyer.size()!=0">
+            AND staff IN
+            <foreach collection="param.buyer" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND record_time &lt;= #{param.recordTimePostDate}
+        </if>
+        <if test="param.codes !=null and param.codes.size() > 0">
+            AND primary_key IN
+            <foreach collection="param.codes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        AND type = 3
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        ORDER BY record_time DESC, id DESC
+        <if test="param.pageSize != null and param.offset != null and param.pageSize &gt; 0 and param.offset &gt;= 0">
+            LIMIT #{param.pageSize} OFFSET #{param.offset}
+        </if>
+    </select>
+
+
+    <select id="purchaseDetailInfos" resultMap="PurchaseDetailInfoModel">
+        SELECT primary_key,
+        payment_strategy,
+        product_total_price,
+        product_rmb_total_price,
+        exchange_rate,
+        tax_rate_percent,
+        signed_contract,
+        opposite
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.contractNumber != null and param.contractNumber != ''">
+            AND remark LIKE '%'|| #{param.contractNumber} ||'%'
+        </if>
+
+        <if test="param.opposite != null and param.opposite != ''">
+            AND opposite LIKE '%'|| #{param.opposite} ||'%'
+        </if>
+
+        <if test="param.searchName != null and param.searchName != ''">
+            AND (material_name LIKE '%'|| #{param.searchName} ||'%' OR material_model LIKE '%'|| #{param.searchName} ||'%')
+        </if>
+
+        <if test="param.buyer != null and param.buyer.size()!=0">
+            AND staff IN
+            <foreach collection="param.buyer" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+
+        <if test="param.recordTimePreDate != null">
+            AND record_time &gt;= #{param.recordTimePreDate}
+        </if>
+        <if test="param.recordTimePostDate != null">
+            AND record_time &lt;= #{param.recordTimePostDate}
+        </if>
+
+        AND type = 3
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <select id="recordsForPurchasePaging" resultMap="HistoryPriceModel">
+        SELECT primary_key,
+        contract_material,
+        material_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="opposite != null and opposite !=''">
+            AND opposite LIKE '%'|| #{opposite} ||'%'
+        </if>
+        AND material_code = #{materialCode}
+        AND type = #{type}
+        ORDER BY
+        <choose>
+            <when test="recordTimeOrder != null or productUnitPriceOrder != null">
+                <if test="recordTimeOrder != null">
+                    record_time
+                    <choose>
+                        <when test="recordTimeOrder">ASC</when>
+                        <otherwise>DESC</otherwise>
+                    </choose>
+                    ,
+                </if>
+                <if test="productUnitPriceOrder != null">
+                    product_unit_price
+                    <choose>
+                        <when test="productUnitPriceOrder">ASC</when>
+                        <otherwise>DESC</otherwise>
+                    </choose>
+                    ,
+                </if>
+                id DESC
+            </when>
+            <otherwise>
+                id DESC
+            </otherwise>
+        </choose>
+    </select>
+
+
+
+    <select id="selectListByCondition" resultMap="HistoryPriceModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="condition.id != null">
+            AND material_code = #{condition.id}
+        </if>
+
+        <if test="condition.pid != null">
+            AND procedure_Code = #{condition.pid}
+        </if>
+        AND type = #{condition.type}  order by record_time DESC , id desc
+    </select>
+
+
+    <select id="selectPageByCondition" resultMap="HistoryPriceModel">
+        SELECT *
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="condition.id != null">
+            AND material_code = #{condition.id}
+        </if>
+
+        <if test="condition.pid != null">
+            AND procedure_Code = #{condition.pid}
+        </if>
+        AND type = #{condition.type} order by record_time DESC , id desc
+    </select>
+
+
+    <select id="queryByContractCodeAndContractMaterials" resultMap="HistoryPriceModel">
+        SELECT primary_key,
+        material_code,
+        procedure_code,
+        material_name,
+        material_model,
+        payment_strategy,
+        exchange_rate,
+        tax_rate_percent,
+        product_quantity,
+        product_unit_price,
+        product_total_price,
+        product_rmb_unit_price,
+        product_rmb_total_price,
+        opposite,
+        record_time,
+        remark,
+        type,
+        quotation,
+        signed_contract,
+        customer_code,
+        vender_data_code,
+        staff,
+        department,
+        contract_material,
+        enterprise_code,
+        son_enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        AND type = #{type}
+        AND signed_contract = #{signedContract}
+        AND contract_material IN
+        <foreach collection="contractMaterials" index="index" item="contractMaterial" open="(" separator=","
+                 close=")">
+            #{contractMaterial}
+        </foreach>
+    </select>
+
+
+    <update id="updateRecords">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="product_quantity =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.productQuantity}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="product_total_price =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.productTotalPrice}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="product_rmb_total_price =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.productRmbTotalPrice}
+            </foreach>
+        </trim>
+        where primary_key in
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.recordCode}
+        </foreach>
+    </update>
+
+    <select id="saleNumTop10" resultMap="productSalesSummaryMap">
+        select material_code as product_code,SUM(product_quantity) as total_quantity
+        from ${tableName}
+        WHERE
+        AND material_code IS NOT NULL
+        AND type =1
+        AND delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        GROUP BY
+        material_code
+        ORDER BY
+        total_quantity DESC
+        LIMIT 10
+    </select>
+
+
+    <select id="lowestTransactionPriceWithOpposite">
+        SELECT
+        material_code,
+        MIN(product_unit_price) as min_price
+        FROM
+        ${tableName}
+        WHERE
+        material_code IN
+        <foreach collection="materialCodes" index="index" item="materialCode" separator="," open="(" close=")">
+            #{materialCode}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        AND type = #{type}
+        AND payment_strategy = #{paymentStrategy}
+        AND opposite = #{opposite}
+        GROUP BY
+        material_code
+    </select>
+
+
+    <select id="saleTotal">
+        select SUM(product_rmb_total_price)
+        FROM ${tableName}
+        WHERE
+        type =1
+        AND delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+    <!--
+        查询销售总额月度汇总（按合同签章时间分组）
+        
+        业务逻辑说明�?
+        1. 统计历史价格记录�?type = 1（销售类型）的记�?
+        2. 通过 signed_contract 关联已签章合同表，获取合同的 contract_time（合同签章时间）
+        3. 按合同的 contract_time（合同签章时间）分组统计，而不是按历史价格记录�?record_time 统计
+        4. 汇总每个月�?product_rmb_total_price（产品人民币总价�?
+        5. 时间维度：contract_time（合同签章时间），与已收金额的时间维度保持一�?
+        
+        重要修正�?
+        - 之前�?record_time 统计，但 record_time 可能不是合同签章时间，导致时间维度不一�?
+        - 现在通过关联合同表，�?contract_time 统计，确保与已收金额的时间维度一�?
+        - 未收金额 = 销售总额 - 已收金额 才有业务意义
+        
+        查询条件�?
+        - 只统计销售类型（type = 1�?
+        - 只统计未删除的记录（delete_flag = false�?
+        - 合同签章时间必须在查询时间范围内
+        - 历史价格记录必须有对应的合同（signed_contract IS NOT NULL�?
+    -->
+    <select id="saleMonthlySummary" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(b.contract_time, 'YYYY-MM') AS summaryMonth,
+               SUM(hp.product_rmb_total_price)      AS amount
+        FROM ${tableName} hp
+        LEFT JOIN ${signedContractTableName} b ON hp.signed_contract = b.primary_key
+        WHERE hp.type = 1
+          AND hp.delete_flag = false
+          AND hp.enterprise_code = #{enterpriseCode}
+          AND hp.signed_contract IS NOT NULL
+          AND b.contract_time IS NOT NULL
+        <if test="startDate != null">
+            AND b.contract_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND b.contract_time &lt;= #{endDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        GROUP BY to_char(b.contract_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+    <select id="quoteMonthlyAverage" resultType="com.futurecraftsmen.pms.pas.service.base.MonthlyAmountSummary">
+        SELECT to_char(record_time, 'YYYY-MM') AS summaryMonth,
+               AVG(product_rmb_total_price)    AS amount
+        FROM ${tableName}
+        WHERE type = 0
+          AND delete_flag = false
+          AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+        GROUP BY to_char(record_time, 'YYYY-MM')
+        ORDER BY summaryMonth
+    </select>
+
+
+    <select id="purchaseTotal">
+        select SUM(product_rmb_total_price)
+        FROM ${tableName}
+        WHERE
+        type =3
+        AND delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+
+    <select id="sellSaleTotalTop10" resultMap="sellerSaleTotal">
+        select staff,SUM(product_rmb_total_price) as total
+        from ${tableName}
+        WHERE
+        type =1
+        AND delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        <if test="staffCodes != null">
+            AND staff IN
+            <foreach collection="staffCodes" index="index" item="staffCode" separator="," open="(" close=")">
+                #{staffCode}
+            </foreach>
+        </if>
+        GROUP BY
+        staff
+        ORDER BY
+        total DESC
+        LIMIT 10
+    </select>
+
+
+    <select id="venderPurchaseTotalTop10" resultMap="venderPurchaseDetail">
+        select opposite,SUM(product_rmb_total_price) as total
+        from ${tableName}
+        WHERE
+        type =3
+        AND delete_flag = false
+        AND enterprise_code = #{enterpriseCode}
+        <if test="startDate != null">
+            AND record_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        GROUP BY
+        opposite
+        ORDER BY
+        total DESC
+        LIMIT 10
+    </select>
+
+    <update id="updateContractMaterialRecord">
+        UPDATE ${tableName}
+        SET product_quantity        = #{model.productQuantity},
+            product_total_price     = #{model.productTotalPrice},
+            product_rmb_total_price = #{model.productRmbTotalPrice}
+        WHERE
+            type = #{model.type}
+          AND signed_contract = #{model.signedContract}
+          AND contract_material = #{model.contractMaterial}
+          AND enterprise_code = #{model.enterpriseCode}
+    </update>
+
+    <update id="batchUpdateContractMaterialRecords">
+        UPDATE ${tableName}
+        SET
+        product_quantity = CASE
+        <foreach collection="models" item="model" separator="">
+            WHEN type = #{model.type} AND signed_contract = #{model.signedContract} AND contract_material = #{model.contractMaterial} THEN
+            #{model.productQuantity}
+        </foreach>
+        END,
+        product_total_price = CASE
+        <foreach collection="models" item="model" separator="">
+            WHEN type = #{model.type} AND signed_contract = #{model.signedContract} AND contract_material = #{model.contractMaterial} THEN
+            #{model.productTotalPrice}
+        </foreach>
+        END,
+        product_rmb_total_price = CASE
+        <foreach collection="models" item="model" separator="">
+            WHEN type = #{model.type} AND signed_contract = #{model.signedContract} AND contract_material = #{model.contractMaterial} THEN
+            #{model.productRmbTotalPrice}
+        </foreach>
+        END
+        WHERE
+        type = #{type}
+        AND signed_contract = #{signedContract}
+        AND enterprise_code = #{enterpriseCode}
+        AND contract_material IN (
+        <foreach collection="models" item="model" separator=",">
+            #{model.contractMaterial}
+        </foreach>
+        )
+    </update>
+
+
+    <update id="updateOppositeAndContractNumber">
+        UPDATE ${tableName}
+        SET opposite = #{opposite},
+            remark   = #{contractNumber}
+        WHERE signed_contract = #{signedContract}
+          AND customer_code = #{customerCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET remark = #{contractNumber}
+        WHERE signed_contract = #{signedContract}
+          AND customer_code = #{customerCode}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+    <!-- 查询当前年所有已成交的报价单的总金额（type=0且signed_contract不为null�?-->
+    <select id="queryCurrentYearDealQuotationTotalAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(product_rmb_total_price), 0)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+          AND type = 0
+          AND signed_contract IS NOT NULL
+          AND record_time IS NOT NULL
+          AND record_time &gt;= #{startDate}
+          AND record_time &lt;= #{endDate}
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+    <!-- 查询当前年的发货进度统计（需要发货数量，已发货数量） -->
+    <!-- 注意：此方法已废弃，发货进度应通过IAwaitingDetailsMapper查询 -->
+    <select id="queryCurrentYearDeliveryProgress" resultType="java.util.Map">
+        SELECT 
+            COALESCE(SUM(product_quantity), 0) AS totalRequiredQuantity
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = false
+          AND type = 1
+          AND signed_contract IS NOT NULL
+          AND record_time IS NOT NULL
+          AND record_time &gt;= #{startDate}
+          AND record_time &lt;= #{endDate}
+        <if test="dataScopeParams.dataScope != null">
+            ${dataScopeParams.dataScope}
+        </if>
+    </select>
+
+</mapper>

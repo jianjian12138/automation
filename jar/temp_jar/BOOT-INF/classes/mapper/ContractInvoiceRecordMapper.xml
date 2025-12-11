@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.ContractInvoiceRecordDao">
+
+
+    <resultMap id="ContractInvoiceRecordModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractInvoiceRecordModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="applicant" property="applicant"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="invoice_type" property="invoiceType"/>
+        <result column="contract_amount" property="contractAmount"/>
+        <result column="invoice_amount" property="invoiceAmount"/>
+        <result column="remark" property="remark"/>
+        <result column="final_approve" property="finalApprove"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="reject_time" property="rejectTime"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="record_batch" property="recordBatch"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+    </resultMap>
+
+
+    <resultMap id="ContractInvoiceRecordWithOppositeModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.ContractInvoiceRecordWithOppositeModel">
+        <result column="primary_key" property="recordCode"/>
+        <result column="applicant" property="applicant"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="invoice_type" property="invoiceType"/>
+        <result column="contract_amount" property="contractAmount"/>
+        <result column="invoice_amount" property="invoiceAmount"/>
+        <result column="remark" property="remark"/>
+        <result column="final_approve" property="finalApprove"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="reject_time" property="rejectTime"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="signed_contract" property="signedContract"/>
+        <result column="record_batch" property="recordBatch"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+        <result column="opposite" property="opposite"/>
+    </resultMap>
+
+
+    <insert id="addRecord">
+        INSERT INTO ${tableName}
+        (primary_key, applicant, apply_time, invoice_type, contract_amount, invoice_amount, remark, final_approve,
+         confirm_time,
+         reject_reason, reject_time, approval_status, signed_contract, record_batch, contract_number,
+         enterprise_code,son_enterprise_code)
+        VALUES (#{model.recordCode}, #{model.applicant}, #{model.applyTime},
+                #{model.invoiceType}, #{model.contractAmount}, #{model.invoiceAmount}, #{model.remark},
+                #{model.finalApprove}, #{model.confirmTime},
+                #{model.rejectReason}, #{model.rejectTime}, #{model.approvalStatus}, #{model.signedContract},
+                #{model.recordBatch}, #{model.contractNumber},
+                #{model.enterpriseCode}, #{model.sonEnterpriseCode})
+    </insert>
+
+
+
+    <select id="queryByRecordCodeAndSignedContractCode"
+            resultMap="ContractInvoiceRecordModel">
+        SELECT primary_key,
+               applicant,
+               apply_time,
+               invoice_type,
+               contract_amount,
+               invoice_amount,
+               remark,
+               final_approve,
+               confirm_time,
+               reject_reason,
+               reject_time,
+               approval_status,
+               signed_contract,
+               record_batch,
+               contract_number,
+               enterprise_code,
+               son_enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{recordCode}
+          AND signed_contract = #{signedContract}
+          AND delete_flag = 'f'
+    </select>
+
+
+    <select id="queryByRecordCodes"
+            resultMap="ContractInvoiceRecordModel">
+        SELECT primary_key,
+        applicant,
+        apply_time,
+        invoice_type,
+        contract_amount,
+        invoice_amount,
+        remark,
+        final_approve,
+        confirm_time,
+        reject_reason,
+        reject_time,
+        approval_status,
+        signed_contract,
+        record_batch,
+        contract_number,
+        enterprise_code,
+        son_enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="recordCodes" index="index" item="recordCode" open="(" separator=","
+                 close=")">
+            #{recordCode}
+        </foreach>
+        AND delete_flag = 'f'
+    </select>
+
+    <update id="update">
+        UPDATE ${tableName}
+        SET invoice_amount             = #{model.invoiceAmount},
+            remark          = #{model.remark},
+            final_approve  = #{model.finalApprove},
+            confirm_time   = #{model.confirmTime},
+            reject_reason   = #{model.rejectReason},
+            reject_time     = #{model.rejectTime},
+            approval_status = #{model.approvalStatus}
+        WHERE primary_key = #{model.recordCode}
+          AND enterprise_code = #{model.enterpriseCode}
+    </update>
+
+
+    <update id="batchUpdate">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="invoice_amount =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.invoiceAmount}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="remark =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.remark}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="final_approve =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.finalApprove}::bigint
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="confirm_time =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.confirmTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="reject_reason =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.rejectReason}::varchar
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="reject_time =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.rejectTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="approval_status =case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.recordCode} then #{model.approvalStatus}::varchar
+            </foreach>
+        </trim>
+        WHERE primary_key IN
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.recordCode}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <select id="pageQuerySameContract"
+            resultMap="ContractInvoiceRecordModel">
+        SELECT primary_key,
+               applicant,
+               apply_time,
+               invoice_type,
+               contract_amount,
+               invoice_amount,
+               remark,
+               final_approve,
+               confirm_time,
+               reject_reason,
+               reject_time,
+               approval_status,
+               signed_contract,
+               record_batch,
+               contract_number,
+               enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND signed_contract = #{signedContractCode}
+          AND delete_flag = 'f'
+        ORDER BY apply_time DESC
+    </select>
+
+
+
+    <select id="queryRecordsBySignedContractCodes"
+            resultMap="ContractInvoiceRecordModel">
+        SELECT
+        primary_key, applicant, apply_time, invoice_type, contract_amount, invoice_amount, remark, final_approve,
+        confirm_time,
+        reject_reason, reject_time, approval_status, signed_contract,record_batch,contract_number,
+        enterprise_code
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator="," close=")">
+            #{signedContractCode}
+        </foreach>
+        AND delete_flag = 'f'
+        <if test="applicants != null and applicants.size()!=0">
+            AND applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="countByContractAndStatus" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND signed_contract = #{signedContractCode}
+          AND approval_status = #{status}
+          AND delete_flag = 'f'
+    </select>
+
+
+    <select id="batchCountByContractAndStatus" resultType="com.futurecraftsmen.pms.pas.service.base.ConfirmingRecordCountResult">
+        SELECT COUNT(*) AS confirmingStatusDataCount,signed_contract as signedContract
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND signed_contract IN
+        <foreach collection="signedContractCodes" index="index" item="signedContractCode" open="(" separator=","
+                 close=")">
+            #{signedContractCode}
+        </foreach>
+        AND approval_status = #{status}
+        AND delete_flag = 'f'
+        GROUP BY signed_contract
+    </select>
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET contract_number = #{contractNumber}
+        WHERE signed_contract = #{signedContract}
+          AND enterprise_code = #{enterpriseCode}
+    </update>
+
+
+    <select id="queryInvoiceRecordFilterWithDrawnRecords"
+            resultMap="ContractInvoiceRecordWithOppositeModel">
+        SELECT
+        record.primary_key,
+        record.applicant,
+        record.apply_time,
+        record.invoice_type,
+        record.invoice_amount,
+        record.remark,
+        record.final_approve,
+        record.confirm_time,
+        record.reject_reason,
+        record.reject_time,
+        record.approval_status,
+        record.signed_contract,
+        record.record_batch,
+        record.contract_number,
+        record.enterprise_code,
+        contract.counterpart AS opposite
+        FROM ${invoiceTableName} record
+        INNER JOIN ${signedContractTable} contract ON record.signed_contract = contract.primary_key
+        WHERE record.enterprise_code = #{enterpriseCode}
+        AND record.delete_flag = 'f'
+        AND record.approval_status != 'WITHDRAWN'
+        AND contract.canceled = 'f'
+        <if test="opposite != null and opposite !=''">
+            AND contract.counterpart LIKE '%'|| #{opposite} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND record.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="userCodes!= null and userCodes.size()>0">
+            AND contract.user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="applicants!= null and applicants.size()>0">
+            AND record.applicant IN
+            <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+                #{applicant}
+            </foreach>
+        </if>
+        <if test="approveStatus!= null and approveStatus.size()>0">
+            AND record.approval_status IN
+            <foreach collection="approveStatus" index="index" item="approveState" open="(" separator="," close=")">
+                #{approveState}
+            </foreach>
+        </if>
+        <if test="applyTimePre != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &gt;= #{applyTimePre}
+        </if>
+        <if test="applyTimePost != null">
+            AND record.apply_time IS NOT NULL
+            AND record.apply_time &lt;= #{applyTimePost}
+        </if>
+        ORDER BY record.id DESC
+    </select>
+
+
+    <update id="deleteRecord">
+        UPDATE ${tableName}
+        SET delete_flag = 't'
+        WHERE primary_key = #{model.recordCode}
+          AND enterprise_code = #{model.enterpriseCode}
+    </update>
+
+</mapper>

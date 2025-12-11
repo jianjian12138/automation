@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.lackmaterial.TaskPurchaseDetailDao">
+
+    <resultMap id="TaskPurchaseDetailModel"
+               type="com.futurecraftsmen.pms.pas.service.po.lackmaterialtask.TaskPurchaseDetailModel">
+        <result column="primary_key" property="taskPurchaseDetailCode"/>
+        <result column="lack_material_task" property="lackMaterialTask"/>
+        <result column="vender" property="vender"/>
+        <result column="vender_name" property="venderName"/>
+        <result column="enquiry_code" property="enquiryCode"/>
+        <result column="enquiry_number" property="enquiryNumber"/>
+        <result column="enquiry_num" property="enquiryNum"/>
+        <result column="enquiry_time" property="enquiryTime"/>
+        <result column="vender_reply" property="venderReply"/>
+        <result column="contract_code" property="contractCode"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="contract_num" property="contractNum"/>
+        <result column="contract_time" property="contractTime"/>
+        <result column="material_code" property="materialCode"/>
+        <result column="enterprise_code" property="enterpriseCode"/>
+        <result column="delete_flag" property="deleteFlag"/>
+    </resultMap>
+
+
+<!--    &lt;!&ndash;所有的字段&ndash;&gt;-->
+    <sql id="columns">
+        primary_key, lack_material_task,vender,vender_name,enquiry_code,
+    enquiry_number,enquiry_num,enquiry_time,vender_reply,contract_code ,contract_number,contract_num,contract_time,material_code,enterprise_code,delete_flag
+    </sql>
+
+    <insert id="add">
+        INSERT INTO ${tableName} (primary_key, lack_material_task,vender,vender_name,enquiry_code,
+        enquiry_number,enquiry_num,enquiry_time,vender_reply,contract_code ,contract_number,contract_num,
+        contract_time,material_code,
+                                  enterprise_code,delete_flag)
+        VALUES
+        <foreach collection="models" index="index" item="model" separator=",">
+            ( #{model.taskPurchaseDetailCode}, #{model.lackMaterialTask}, #{model.vender}, #{model.venderName},
+              #{model.enquiryCode}, #{model.enquiryNumber},#{model.enquiryNum},
+            #{model.enquiryTime},#{model.venderReply},#{model.contractCode},#{model.contractNumber},
+            #{model.contractNum}, #{model.contractTime},#{model.materialCode},
+              #{model.enterpriseCode},'f')
+        </foreach>
+    </insert>
+
+
+    <select id="associateRecords" resultMap="TaskPurchaseDetailModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND lack_material_task IN
+        <foreach collection="lackMaterialTaskCodes" index="index" item="lackMaterialTaskCode" open="(" separator="," close=")">
+            #{lackMaterialTaskCode}
+        </foreach>
+    </select>
+
+    <select id="taskPurchaseDetailPaging" resultMap="TaskPurchaseDetailModel">
+        SELECT
+        <include refid="columns"/>
+        FROM ${tableName}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND lack_material_task =  #{lackMaterialTaskCode}
+        AND enquiry_time IS NOT NULL
+        <if test="onlyContractStageRecords">
+            AND contract_code IS NOT NULL
+        </if>
+        ORDER BY
+        <choose>
+            <when test="onlyContractStageRecords">
+                contract_time DESC
+            </when>
+            <otherwise>
+                enquiry_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+
+
+    <delete id="delete">
+        DELETE
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key IN (
+        <foreach collection="taskPurchaseDetailCodes" index="index" item="taskPurchaseDetailCode" separator=",">
+             #{taskPurchaseDetailCode}
+        </foreach>
+        )
+    </delete>
+
+
+
+    <update id="updateRecordsByPurchaseEnquiry">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="vender =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.vender}::bigint
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="vender_name =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.venderName}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="enquiry_code =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.enquiryCode}::bigint
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="enquiry_number =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.enquiryNumber}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="enquiry_num =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.enquiryNum}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="enquiry_time =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.enquiryTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="vender_reply =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.venderReply}::varchar
+            </foreach>
+        </trim>
+        WHERE primary_key in
+        <foreach collection="taskPurchaseDetails" index="index" item="taskPurchaseDetail" separator="," open="(" close=")">
+            #{taskPurchaseDetail.taskPurchaseDetailCode}
+        </foreach>
+    </update>
+
+
+    <update id="updateRecordsByPurchaseContract">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="contract_code =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.contractCode}::bigint
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="contract_number =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.contractNumber}
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="contract_num =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.contractNum}::numeric
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="contract_time =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.contractTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="material_code =case" suffix="end">
+            <foreach collection="taskPurchaseDetails" item="taskPurchaseDetail" index="index">
+                when primary_key=#{taskPurchaseDetail.taskPurchaseDetailCode} then #{taskPurchaseDetail.materialCode}::bigint
+            </foreach>
+        </trim>
+        WHERE primary_key in
+        <foreach collection="taskPurchaseDetails" index="index" item="taskPurchaseDetail" separator="," open="(" close=")">
+            #{taskPurchaseDetail.taskPurchaseDetailCode}
+        </foreach>
+    </update>
+
+</mapper>

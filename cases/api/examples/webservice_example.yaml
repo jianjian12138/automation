@@ -28,3 +28,4 @@ steps:
       status_code_assert: 200
       xpath_assert:
         "//AddResult": "40"
+

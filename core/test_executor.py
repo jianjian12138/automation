@@ -150,18 +150,24 @@ class APITestExecutor:
         
     def load_case(self, case_path: str) -> Dict:
         """
-        加载测试用例
+        加载测试用例（增强版，支持数据驱动测试）
         
         :param case_path: 用例文件路径
         :return: 用例字典
         """
         LOG.info(f"加载测试用例: {case_path}")
         with open(case_path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
+            case = yaml.safe_load(f)
+        
+        # 检查是否为数据驱动测试用例
+        if 'data' in case:
+            LOG.info(f"检测到数据驱动测试用例，包含 {len(case.get('data', []))} 组测试数据")
+        
+        return case
             
     def execute_case(self, case_path: str) -> Dict:
         """
-        执行测试用例
+        执行测试用例（增强版，支持数据驱动测试）
         
         :param case_path: 用例文件路径
         :return: 执行结果
@@ -169,6 +175,71 @@ class APITestExecutor:
         case = self.load_case(case_path)
         LOG.info(f"开始执行用例: {case.get('case_name', 'Unknown')}")
         
+        # 清空之前的数据记录
+        self.inserted_data = []
+        
+        # 初始化结果
+        results = {
+            'case_name': case.get('case_name'),
+            'case_code': case.get('case_code'),
+            'total_steps': 0,
+            'passed_steps': 0,
+            'failed_steps': 0,
+            'step_results': [],
+            'data_driven': False,
+            'data_driven_results': []
+        }
+        
+        # 获取测试数据
+        test_data = case.get('data', [])
+        
+        # 检查是否为数据驱动测试
+        if test_data:
+            LOG.info(f"开始数据驱动测试，共 {len(test_data)} 组数据")
+            results['data_driven'] = True
+            
+            # 执行每组测试数据
+            for data_index, data in enumerate(test_data, 1):
+                LOG.info(f"执行第 {data_index}/{len(test_data)} 组数据: {data}")
+                
+                # 保存原始变量，执行完后恢复
+                original_variables = self.variables.copy()
+                
+                # 设置当前组测试数据到变量中
+                self.variables.update(data)
+                
+                # 执行当前组数据的测试用例
+                data_results = self._execute_single_case(case)
+                
+                # 记录当前组数据的结果
+                data_results['data_index'] = data_index
+                data_results['test_data'] = data
+                results['data_driven_results'].append(data_results)
+                
+                # 合并结果
+                results['total_steps'] += data_results['total_steps']
+                results['passed_steps'] += data_results['passed_steps']
+                results['failed_steps'] += data_results['failed_steps']
+                results['step_results'].extend(data_results['step_results'])
+                
+                # 恢复原始变量
+                self.variables = original_variables
+        else:
+            # 普通测试用例
+            results = self._execute_single_case(case)
+        
+        results['passed'] = results['failed_steps'] == 0
+        LOG.info(f"用例执行完成: {results['passed_steps']}/{results['total_steps']} 通过")
+        
+        return results
+        
+    def _execute_single_case(self, case: Dict) -> Dict:
+        """
+        执行单个测试用例（内部方法，用于数据驱动测试）
+        
+        :param case: 测试用例字典
+        :return: 执行结果
+        """
         # 清空之前的数据记录
         self.inserted_data = []
         
@@ -699,6 +770,7 @@ class APITestExecutor:
     def _execute_step(self, step: Dict) -> Dict:
         """
         执行单个步骤
+        优化：支持更简洁的YAML语法，自动推断协议和方法
         
         :param step: 步骤配置
         :return: 执行结果
@@ -716,10 +788,26 @@ class APITestExecutor:
         }
         
         try:
-            # 1. 确定使用的协议
+            # 1. 优化：自动推断协议和方法
+            # 支持简化语法：直接使用url代替host+path，自动推断方法（GET/POST）
+            if 'url' in step:
+                # 简化语法：使用url代替host+path
+                full_url = self._process_variables(step.get('url', ''))
+                host = ''
+                path = full_url
+            else:
+                # 传统语法：host+path
+                host = self._process_variables(step.get('host', ''))
+                path = self._process_variables(step.get('path', step.get('url', '')))
+                full_url = f"{host}{path}" if host else path
+            
+            # 自动推断方法：如果有data字段，默认为POST，否则为GET
+            method = step.get('method', 'POST' if step.get('data') or step.get('json') else 'GET').upper()
+            
+            # 确定使用的协议
             protocol = step.get('protocol', 'http').lower()
             
-            # 如果未指定协议，尝试从步骤类型推断
+            # 如果未指定协议，尝试从URL或步骤类型推断
             if protocol == 'http' and 'protocol' not in step:
                 # 检查是否有SQL相关字段
                 if step.get('sql'):
@@ -728,50 +816,51 @@ class APITestExecutor:
                 elif step.get('operation') in ['get', 'set', 'delete', 'del', 'exists', 'keys', 'hget', 'hset', 'hgetall', 'ttl']:
                     protocol = 'redis'
                 # 从URL推断
-                else:
-                    host = self._process_variables(step.get('host', ''))
-                    if host:
-                        if host.startswith('ws://') or host.startswith('wss://'):
-                            protocol = 'websocket'
-                        elif 'dubbo' in host.lower() or step.get('port', 0) == 20880:
-                            protocol = 'dubbo'
-                        elif step.get('topic') or step.get('action') in ['publish', 'subscribe']:
-                            protocol = 'mqtt'
+                elif full_url:
+                    if full_url.startswith('ws://') or full_url.startswith('wss://'):
+                        protocol = 'websocket'
+                    elif 'dubbo' in full_url.lower() or step.get('port', 0) == 20880:
+                        protocol = 'dubbo'
+                    elif step.get('topic') or step.get('action') in ['publish', 'subscribe']:
+                        protocol = 'mqtt'
             
             # 2. 获取对应的协议适配器
             adapter = self._get_protocol_adapter(protocol)
             
-            # 如果不支持多协议或协议适配器不可用，回退到原有HTTP处理
+            # 3. 优化：统一处理headers，支持字符串或字典格式，自动添加Content-Type
+            headers_raw = step.get('headers', {})
+            if isinstance(headers_raw, str):
+                headers = self._process_variables(headers_raw)
+            else:
+                headers = self._process_dict(headers_raw)
+            
+            # 自动添加Content-Type头
+            if method in ['POST', 'PUT', 'PATCH'] and 'Content-Type' not in headers:
+                headers['Content-Type'] = 'application/json'
+            
+            # 4. 优化：支持json字段，与data字段等效
+            data = self._process_dict(step.get('data', step.get('json', {})))
+            params = self._process_dict(step.get('params', {}))
+            
+            # 5. 保存请求信息
+            result['request'] = {
+                'method': method,
+                'url': full_url,
+                'host': host,
+                'path': path,
+                'headers': headers,
+                'params': params,
+                'data': data
+            }
+            
+            # 6. 根据协议执行请求
             if not adapter and protocol in ['http', 'https']:
-                # 保存请求信息
-                host = self._process_variables(step.get('host', ''))
-                path = self._process_variables(step.get('path', step.get('url', '')))
-                method = step.get('method', 'GET').upper()
-                headers_raw = step.get('headers', {})
-                if isinstance(headers_raw, str):
-                    headers = self._process_variables(headers_raw)
-                else:
-                    headers = self._process_dict(headers_raw)
-                params = self._process_dict(step.get('params', {}))
-                data = self._process_dict(step.get('data', {}))
-                full_url = f"{host}{path}" if host else path
-                
-                result['request'] = {
-                    'method': method,
-                    'url': full_url,
-                    'host': host,
-                    'path': path,
-                    'headers': headers,
-                    'params': params,
-                    'data': data
-                }
-                
                 # 使用原有的HTTP请求逻辑（向后兼容）
                 response_dict = self._send_http_request_legacy(step)
                 result['response'] = response_dict
                 
                 # 执行断言
-                assert_config = step.get('response_assert', {})
+                assert_config = step.get('response_assert', step.get('assert', {}))
                 self._assert_response_legacy(response_dict, assert_config, result)
                 
                 # 提取变量
@@ -786,56 +875,31 @@ class APITestExecutor:
                 # 更新适配器的变量
                 adapter.set_variables(self.variables)
                 
-                # 3. 保存请求信息（在发送请求前保存，以便在报告中显示）
-                host = self._process_variables(step.get('host', ''))
-                path = self._process_variables(step.get('path', step.get('url', '')))
-                method = step.get('method', 'GET').upper()
-                headers_raw = step.get('headers', {})
-                if isinstance(headers_raw, str):
-                    headers = self._process_variables(headers_raw)
-                else:
-                    headers = self._process_dict(headers_raw)
-                params = self._process_dict(step.get('params', {}))
-                data = self._process_dict(step.get('data', {}))
-                full_url = f"{host}{path}" if host else path
-                
-                result['request'] = {
-                    'method': method,
-                    'url': full_url,
-                    'host': host,
-                    'path': path,
-                    'headers': headers,
-                    'params': params,
-                    'data': data
-                }
-                
-                # 4. 发送请求
+                # 发送请求
                 response = adapter.send_request(step)
                 
-                # 5. 保存响应
+                # 保存响应
                 result['response'] = response
                 
-                # 6. 执行断言
-                assert_config = step.get('response_assert', {})
+                # 执行断言：优化支持assert和response_assert两种语法
+                assert_config = step.get('response_assert', step.get('assert', {}))
                 errors = adapter.validate_response(response, assert_config)
                 result['errors'].extend(errors)
                 
-                # 7. 提取变量
+                # 提取变量
                 if 'extract' in step:
-                    # 统一使用_extract_variables_legacy方法处理变量提取（所有协议都使用这个方法）
-                    # 保存当前步骤的响应数据，供extract使用
+                    # 统一使用_extract_variables_legacy方法处理变量提取
                     self.current_response_data = response
-                    # 对于HTTP协议，response是dict格式，需要转换为legacy格式
+                    # 对于HTTP协议，response是dict格式，直接使用
                     if protocol in ['http', 'https']:
-                        # HTTP适配器返回的response格式已经是dict，直接使用
                         response_dict = response
                     else:
-                        # 其他协议也转换为dict格式
+                        # 其他协议转换为dict格式
                         response_dict = response if isinstance(response, dict) else {'body': str(response), 'json': None}
                     self._extract_variables_legacy(response_dict, step['extract'])
-                # 更新适配器变量
-                adapter.set_variables(self.variables)
-                
+                    # 更新适配器变量
+                    adapter.set_variables(self.variables)
+            
             result['passed'] = len(result['errors']) == 0
             
         except Exception as e:
@@ -933,20 +997,32 @@ class APITestExecutor:
     
     def _assert_response_legacy(self, response_dict: Dict, assert_config: Dict, result: Dict):
         """
-        执行响应断言（向后兼容方法）
+        执行响应断言（增强版）
+        支持多种断言类型：状态码、响应消息、JSONPath、响应头、响应时间、正则表达式、内容包含
         """
-        # 状态码断言
+        # 1. 状态码断言（增强：支持列表格式）
         if 'status_code_assert' in assert_config:
             expected_code = assert_config['status_code_assert']
             actual_code = response_dict.get('status_code', 0)
-            if actual_code != expected_code:
-                error = f"状态码断言失败: 期望{expected_code}, 实际{actual_code}"
-                LOG.error(error)
-                result['errors'].append(error)
+            
+            # 支持列表格式：[200, 201, 202]
+            if isinstance(expected_code, list):
+                if actual_code not in expected_code:
+                    error = f"状态码断言失败: 期望{expected_code}, 实际{actual_code}"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"状态码断言通过: {actual_code}")
             else:
-                LOG.info(f"状态码断言通过: {actual_code}")
+                # 单个状态码
+                if actual_code != expected_code:
+                    error = f"状态码断言失败: 期望{expected_code}, 实际{actual_code}"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"状态码断言通过: {actual_code}")
                 
-        # 响应消息断言
+        # 2. 响应消息断言
         if 'response_assert_data' in assert_config:
             expected_msg = assert_config['response_assert_data']
             response_body = response_dict.get('body', '')
@@ -956,8 +1032,84 @@ class APITestExecutor:
                 result['errors'].append(error)
             else:
                 LOG.info(f"响应消息断言通过")
+        
+        # 3. 响应头断言
+        if 'headers_assert' in assert_config:
+            headers_assert = assert_config['headers_assert']
+            actual_headers = response_dict.get('headers', {})
+            
+            if isinstance(headers_assert, dict):
+                for header_name, expected_value in headers_assert.items():
+                    actual_value = actual_headers.get(header_name.lower() if isinstance(actual_headers, dict) else header_name)
+                    if actual_value is None:
+                        error = f"响应头断言失败: 未找到头信息'{header_name}'"
+                        LOG.error(error)
+                        result['errors'].append(error)
+                    elif actual_value != expected_value:
+                        error = f"响应头断言失败: {header_name}期望值{expected_value}, 实际值{actual_value}"
+                        LOG.error(error)
+                        result['errors'].append(error)
+                    else:
+                        LOG.info(f"响应头断言通过: {header_name} = {actual_value}")
                 
-        # JSONPath断言
+        # 4. 响应时间断言
+        if 'response_time_assert' in assert_config:
+            expected_time = assert_config['response_time_assert']
+            actual_time = response_dict.get('duration', 0)
+            
+            if isinstance(expected_time, dict):
+                # 支持范围断言：{"max": 1.5, "min": 0.1}
+                if 'max' in expected_time and actual_time > expected_time['max']:
+                    error = f"响应时间断言失败: 期望最大{expected_time['max']}s, 实际{actual_time}s"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                elif 'min' in expected_time and actual_time < expected_time['min']:
+                    error = f"响应时间断言失败: 期望最小{expected_time['min']}s, 实际{actual_time}s"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"响应时间断言通过: {actual_time}s")
+            elif isinstance(expected_time, (int, float)):
+                # 单个值：最大响应时间
+                if actual_time > expected_time:
+                    error = f"响应时间断言失败: 期望最大{expected_time}s, 实际{actual_time}s"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"响应时间断言通过: {actual_time}s")
+        
+        # 5. 内容包含断言
+        if 'contains_assert' in assert_config:
+            contains_list = assert_config['contains_assert']
+            if not isinstance(contains_list, list):
+                contains_list = [contains_list]
+            
+            response_body = response_dict.get('body', '')
+            for expected_content in contains_list:
+                if expected_content not in response_body:
+                    error = f"内容包含断言失败: 未找到'{expected_content}'"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"内容包含断言通过: 找到'{expected_content}'")
+        
+        # 6. 正则表达式断言
+        if 'regex_assert' in assert_config:
+            regex_list = assert_config['regex_assert']
+            if not isinstance(regex_list, list):
+                regex_list = [regex_list]
+            
+            response_body = response_dict.get('body', '')
+            for regex_pattern in regex_list:
+                import re
+                if not re.search(regex_pattern, response_body):
+                    error = f"正则表达式断言失败: 未匹配到'{regex_pattern}'"
+                    LOG.error(error)
+                    result['errors'].append(error)
+                else:
+                    LOG.info(f"正则表达式断言通过: 匹配到'{regex_pattern}'")
+        
+        # 7. JSONPath断言（增强版）
         if 'jsonpath_assert' in assert_config:
             try:
                 response_json = response_dict.get('json')
@@ -972,6 +1124,51 @@ class APITestExecutor:
                 error = f"JSONPath断言失败: {e}"
                 LOG.error(error)
                 result['errors'].append(error)
+        
+        # 8. 数据类型断言
+        if 'type_assert' in assert_config:
+            type_assert_list = assert_config['type_assert']
+            if not isinstance(type_assert_list, list):
+                type_assert_list = [type_assert_list]
+            
+            response_json = response_dict.get('json')
+            if response_json:
+                for type_assert in type_assert_list:
+                    if isinstance(type_assert, dict):
+                        for jsonpath, expected_type in type_assert.items():
+                            try:
+                                jsonpath_parse = parse(jsonpath)
+                                matches = jsonpath_parse.find(response_json)
+                                if matches:
+                                    actual_value = matches[0].value
+                                    actual_type = type(actual_value).__name__
+                                    
+                                    # 支持基本类型映射
+                                    type_mapping = {
+                                        'string': 'str',
+                                        'int': 'int',
+                                        'float': 'float',
+                                        'boolean': 'bool',
+                                        'list': 'list',
+                                        'dict': 'dict',
+                                        'none': 'NoneType'
+                                    }
+                                    
+                                    expected_type_name = type_mapping.get(expected_type.lower(), expected_type)
+                                    if actual_type != expected_type_name:
+                                        error = f"数据类型断言失败: {jsonpath}期望类型{expected_type}, 实际类型{actual_type}"
+                                        LOG.error(error)
+                                        result['errors'].append(error)
+                                    else:
+                                        LOG.info(f"数据类型断言通过: {jsonpath}类型为{actual_type}")
+                                else:
+                                    error = f"数据类型断言失败: 路径'{jsonpath}'未找到数据"
+                                    LOG.error(error)
+                                    result['errors'].append(error)
+                            except Exception as e:
+                                error = f"数据类型断言失败: {e}"
+                                LOG.error(error)
+                                result['errors'].append(error)
     
     def _extract_variables_legacy(self, response_dict: Dict, extracts: List):
         """

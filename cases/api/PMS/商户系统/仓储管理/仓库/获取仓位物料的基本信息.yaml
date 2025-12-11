@@ -1,4 +1,4 @@
-case_name: 获取仓位物料的基本信息
+case_name: 获取仓位物料的基本信�?
 case_code: TestCase
 priority: 2
 steps:
@@ -14,7 +14,7 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
-- step_name: 边界值测试-最小参数值
+- step_name: 边界值测�?最小参数�?
   host: $get_host(ERP_TEST,pms_host)
   path: 127.0.0.1:88/fpi/qrcode/warehouse/shippingSpace/getBaseInfo
   headers: $generate_token(pms_host)
@@ -44,7 +44,7 @@ steps:
   response_assert:
     response_assert_data: 参数验证失败
     status_code_assert: 400
-- step_name: 异常场景-无权限访问
+- step_name: 异常场景-无权限访�?
   host: $get_host(ERP_TEST,pms_host)
   path: 127.0.0.1:88/fpi/qrcode/warehouse/shippingSpace/getBaseInfo
   headers: {}
@@ -52,5 +52,6 @@ steps:
   data:
     shippingSpaceId: '357619694474231808'
   response_assert:
-    response_assert_data: 未授权
+    response_assert_data: 未授�?
     status_code_assert: 401
+

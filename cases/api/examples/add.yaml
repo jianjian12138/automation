@@ -2,7 +2,7 @@ case_name: add
 case_code: Add
 priority: 2
 steps:
-- step_name: 正常场景-BigDecimal精度测试（8位小数）
+- step_name: 正常场景-BigDecimal精度测试�?位小数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -17,7 +17,7 @@ steps:
     status_code_assert: 200
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
-- step_name: 边界值测试-最小精度（0.00000001）
+- step_name: 边界值测�?最小精度（0.00000001�?
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -30,7 +30,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-- step_name: 边界值测试-最大值（8位整数+8位小数）
+- step_name: 边界值测�?最大值（8位整�?8位小数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -43,7 +43,7 @@ steps:
   response_assert:
     response_assert_data: 成功
     status_code_assert: 200
-- step_name: 四舍五入测试-超过8位小数截断
+- step_name: 四舍五入测试-超过8位小数截�?
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/invoiceRecord/add
   headers: $generate_token(pms_host)
@@ -63,7 +63,7 @@ steps:
   method: POST
   data:
     contractCode: 456178536858124288
-    invoiceAmount: 非法字符串
+    invoiceAmount: 非法字符�?
     recordBatch: 1
     remark: ''
   response_assert:
@@ -95,3 +95,4 @@ steps:
   response_assert:
     response_assert_data: 发票金额错误
     status_code_assert: 200
+

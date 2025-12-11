@@ -1,12 +1,9 @@
 
 # 采购合同创建场景
 # 使用的数据库表：
-# 1. dm_m9.purchase_t_dm_m9_venders_9 - 供方信息表（获取 venderDataPrimaryKey）
-# 2. dm_m9.purchase_t_dm_m9_vender_contacts_9 - 供方联系人表（获取 venderContactPrimaryKey）
-# 注意：这是一个完整的采购合同创建流程，包含19个步骤，严格按照文档顺序执行
-# 小数点位限制：13位（quantity 和 unitPrice 字段支持13位小数）
-# 产品获取区分甲方（source=0）和乙方（source=1）
-
+# 1. dm_m9.purchase_t_dm_m9_venders_9 - 供方信息表（获取 venderDataPrimaryKey�?# 2. dm_m9.purchase_t_dm_m9_vender_contacts_9 - 供方联系人表（获�?venderContactPrimaryKey�?# 注意：这是一个完整的采购合同创建流程，包�?9个步骤，严格按照文档顺序执行
+# 小数点位限制�?3位（quantity �?unitPrice 字段支持13位小数）
+# 产品获取区分甲方（source=0）和乙方（source=1�?
 case_code: PurchaseContractCreate
 case_name: purchaseContractCreate
 priority: 2
@@ -65,10 +62,8 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data != null or $..data.records != null
   extract:
-    # 优先提取：从pageDetails数组的第一个元素提取（根据实际响应结构，这是正确的路径）
-    - extract: $set_variable(venderDataPrimaryKey,$get_response_data($.data.pageDetails[0].venderDataPrimaryKey))
-    # 备选：从records数组的第一个元素提取
-    - extract: $set_variable(venderDataPrimaryKey,$get_response_data($.data.records[0].venderDataPrimaryKey))
+    # 优先提取：从pageDetails数组的第一个元素提取（根据实际响应结构，这是正确的路径�?    - extract: $set_variable(venderDataPrimaryKey,$get_response_data($.data.pageDetails[0].venderDataPrimaryKey))
+    # 备选：从records数组的第一个元素提�?    - extract: $set_variable(venderDataPrimaryKey,$get_response_data($.data.records[0].venderDataPrimaryKey))
     # 备选：从data数组提取
     - extract: $set_variable(venderDataPrimaryKey,$get_response_data($.data[0].venderDataPrimaryKey))
     # 最后尝试：使用通配符查找（不使用[0]索引，避免匹配到字符串的第一个字符）
@@ -109,15 +104,12 @@ steps:
     - extract: $set_variable(paymentStrategyCode,$get_response_data($.data[0].primaryKey))
     - extract: $set_variable(paymentStrategyCode,$get_response_data($.data.records[0].code))
     - extract: $set_variable(paymentStrategyCode,$get_response_data($.data.records[0].paymentStrategyCode))
-    # 备选：使用通配符查找
-    - extract: $set_variable(paymentStrategyCode,$get_response_data($..code[0]))
+    # 备选：使用通配符查�?    - extract: $set_variable(paymentStrategyCode,$get_response_data($..code[0]))
     - extract: $set_variable(paymentStrategyCode,$get_response_data($..paymentStrategyCode[0]))
-  # 重试配置：直到响应成功才停止，默认最大重试10次
-  retry_until:
+  # 重试配置：直到响应成功才停止，默认最大重�?0�?  retry_until:
     jsonpath: $..resCode == 200
 
-- step_name: 步骤6-查询供方联系人
-  host: $get_host(ERP_TEST,pms_host)
+- step_name: 步骤6-查询供方联系�?  host: $get_host(ERP_TEST,pms_host)
   path: /purchase/vender/contacts
   headers: $generate_token(pms_host)
   method: POST
@@ -130,19 +122,16 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data != null
   extract:
-    # 优先提取：从data数组的第一个元素提取
-    - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data[0].venderContactPrimaryKey))
+    # 优先提取：从data数组的第一个元素提�?    - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data[0].venderContactPrimaryKey))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data[0].contactKey))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data[0].primaryKey))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data.records[0].venderContactPrimaryKey))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data.records[0].contactKey))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($.data.records[0].primaryKey))
-    # 备选：使用通配符查找
-    - extract: $set_variable(venderContactPrimaryKey,$get_response_data($..venderContactPrimaryKey[0]))
+    # 备选：使用通配符查�?    - extract: $set_variable(venderContactPrimaryKey,$get_response_data($..venderContactPrimaryKey[0]))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($..contactKey[0]))
     - extract: $set_variable(venderContactPrimaryKey,$get_response_data($..primaryKey[0]))
-  # 重试配置：直到resCode的值为200才停止，默认最大重试10次，可在config.yaml中配置
-  retry_until:
+  # 重试配置：直到resCode的值为200才停止，默认最大重�?0次，可在config.yaml中配�?  retry_until:
     jsonpath: $..resCode == 200
 
 - step_name: 步骤7-修改供方
@@ -165,21 +154,17 @@ steps:
     - extract: $set_variable(sellerEnterpriseCode,$get_response_data($.data.usingEnterpriseCode))
     - extract: $set_variable(sellerEnterpriseCode,$get_response_data($..seller.usingEnterpriseCode))
     - extract: $set_variable(sellerEnterpriseCode,$get_response_data($..usingEnterpriseCode))
-  # 重试配置：直到resCode的值为200才停止，默认最大重试10次，可在config.yaml中配置
-  retry_until:
+  # 重试配置：直到resCode的值为200才停止，默认最大重�?0次，可在config.yaml中配�?  retry_until:
     jsonpath: $..resCode == 200
 
 - step_name: 步骤7.5-查询供方是否有产品数据（数据库查询）
   # 根据供方的enterprise_code查询product_part_*表是否有数据
   # 如果供方有产品数据，则设置hasSellerProduct=true；否则设置为false
-  # 注意：此步骤用于判断是否需要执行步骤11、11.1、11.2（乙方获取产品）
-  # 步骤说明：
-  # 1. 从步骤7（修改供方）接口响应中提取seller.usingEnterpriseCode作为供方的enterprise_code
-  # 2. 使用框架的智能查询功能（$get_db_field）自动处理分片查询
-  # 3. 框架会自动根据enterprise_code定位分片库和表，查询product_part_*表
-  # 如果查询到数据，说明供方有产品，hasSellerProduct=true；否则hasSellerProduct=false
-  # 注意：此步骤使用框架的智能查询功能，在步骤7的extract中执行，不需要单独的HTTP请求
-  # 此步骤已合并到步骤7的extract中，此处仅作为占位符
+  # 注意：此步骤用于判断是否需要执行步�?1�?1.1�?1.2（乙方获取产品）
+  # 步骤说明�?  # 1. 从步�?（修改供方）接口响应中提取seller.usingEnterpriseCode作为供方的enterprise_code
+  # 2. 使用框架的智能查询功能（$get_db_field）自动处理分片查�?  # 3. 框架会自动根据enterprise_code定位分片库和表，查询product_part_*�?  # 如果查询到数据，说明供方有产品，hasSellerProduct=true；否则hasSellerProduct=false
+  # 注意：此步骤使用框架的智能查询功能，在步�?的extract中执行，不需要单独的HTTP请求
+  # 此步骤已合并到步�?的extract中，此处仅作为占位符
   skip_when: true
   skip_result: PASS
 
@@ -209,11 +194,9 @@ steps:
     contractCode: $get_variable(contractCode)
     paymentStrategyCode: $get_variable(paymentStrategyCode)
   response_assert:
-    # 只要HTTP状态码是200，就认为成功（无论返回"成功"还是"无需更新"）
-    status_code_assert: 200
+    # 只要HTTP状态码�?00，就认为成功（无论返�?成功"还是"无需更新"�?    status_code_assert: 200
 
-- step_name: 步骤10-甲方获取产品（方法1）
-  host: $get_host(ERP_TEST,pms_host)
+- step_name: 步骤10-甲方获取产品（方�?�?  host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/sellProduct/page
   headers: $generate_token(pms_host)
   method: POST
@@ -229,22 +212,14 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data.records != null or $..data != null or $..data.pageDetails != null
   extract:
-    # 使用JSONPath提取productCode，优先使用精确路径
-    # 优先：$.data.pageDetails[0].productCode（pageDetails数组第一个元素的productCode）
-    # 如果第一个提取失败，尝试使用通配符查找
-    # 注意：如果pageDetails为空数组，说明合同中还没有产品，需要等待产品被添加
+    # 使用JSONPath提取productCode，优先使用精确路�?    # 优先�?.data.pageDetails[0].productCode（pageDetails数组第一个元素的productCode�?    # 如果第一个提取失败，尝试使用通配符查�?    # 注意：如果pageDetails为空数组，说明合同中还没有产品，需要等待产品被添加
     - extract: $set_variable(productCode,$get_response_data($.data.pageDetails[0].productCode))
     - extract: $set_variable(productCode,$get_response_data($.data.pageDetails[0].sellProductCode))  # 备选字段名
     # 如果第一个提取失败（productCode仍为空），尝试其他路径（不使用[0]索引，避免匹配到字符串的第一个字符）
     - extract: $set_variable(productCode,$get_response_data($..productCode))
-  # 重试配置：直到productCode有值才停止，最大重试5次
-  retry_until:
-    variable: productCode  # 检查变量productCode是否有值
-    max_retries: 5  # 最多重试5次
-
-- step_name: 步骤10.1-甲方获取产品（方法2-步骤1）
-  # 如果步骤10成功获取了productCode，则跳过此步骤（显示PASS）
-  skip_when: $get_variable(productCode) != null and $get_variable(productCode) != ''
+  # 重试配置：直到productCode有值才停止，最大重�?�?  retry_until:
+    variable: productCode  # 检查变量productCode是否有�?    max_retries: 5  # 最多重�?�?
+- step_name: 步骤10.1-甲方获取产品（方�?-步骤1�?  # 如果步骤10成功获取了productCode，则跳过此步骤（显示PASS�?  skip_when: $get_variable(productCode) != null and $get_variable(productCode) != ''
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /pas/product/part/type/optional
@@ -260,14 +235,11 @@ steps:
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data != null
-  # 重试配置：直到响应成功才停止，最大重试5次
-  retry_until:
+  # 重试配置：直到响应成功才停止，最大重�?�?  retry_until:
     jsonpath: $..resCode == 200
     max_retries: 5
 
-- step_name: 步骤10.2-甲方获取产品（方法2-步骤2）
-  # 如果步骤10成功获取了productCode，则跳过此步骤（显示PASS）
-  skip_when: $get_variable(productCode) != null and $get_variable(productCode) != ''
+- step_name: 步骤10.2-甲方获取产品（方�?-步骤2�?  # 如果步骤10成功获取了productCode，则跳过此步骤（显示PASS�?  skip_when: $get_variable(productCode) != null and $get_variable(productCode) != ''
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /pas/product/part/optional
@@ -290,20 +262,14 @@ steps:
     # 优先提取第一个productCode作为productCode
     - extract: $set_variable(productCode,$get_response_data($.data.records[0].productCode))
     - extract: $set_variable(productCode,$get_response_data($.data[0].productCode))
-    # 不使用[0]索引，避免匹配到字符串的第一个字符
-    - extract: $set_variable(productCode,$get_response_data($..productCode))
+    # 不使用[0]索引，避免匹配到字符串的第一个字�?    - extract: $set_variable(productCode,$get_response_data($..productCode))
     # 提取所有productCode作为productCodes数组（用于批量添加）
     - extract: $set_variable(productCodes,$get_response_data($..productCode))
     - extract: $set_variable(productCodes,$get_response_data($.data.records[*].productCode))
-  # 重试配置：直到productCode或productCodes有值才停止，最大重试5次
-  retry_until:
-    variable: productCode  # 检查变量productCode是否有值
-    max_retries: 5  # 最多重试5次
+  # 重试配置：直到productCode或productCodes有值才停止，最大重�?�?  retry_until:
+    variable: productCode  # 检查变量productCode是否有�?    max_retries: 5  # 最多重�?�?
 
-
-- step_name: 步骤11-乙方获取产品（方法1）
-  # 前置条件：如果供方没有产品数据（hasSellerProduct=false），则跳过此步骤（显示PASS）
-  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == ''
+- step_name: 步骤11-乙方获取产品（方�?�?  # 前置条件：如果供方没有产品数据（hasSellerProduct=false），则跳过此步骤（显示PASS�?  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == ''
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/sellProduct/page
@@ -321,20 +287,13 @@ steps:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data.records != null or $..data != null or $..data.pageDetails != null
   extract:
-    # 使用JSONPath提取乙方productCode，优先使用精确路径
-    - extract: $set_variable(productCodeSeller,$get_response_data($.data.pageDetails[0].productCode))
+    # 使用JSONPath提取乙方productCode，优先使用精确路�?    - extract: $set_variable(productCodeSeller,$get_response_data($.data.pageDetails[0].productCode))
     - extract: $set_variable(productCodeSeller,$get_response_data($.data.pageDetails[0].sellProductCode))  # 备选字段名
     # 如果第一个提取失败，尝试其他路径
     - extract: $set_variable(productCodeSeller,$get_response_data($..productCode))
-  # 重试配置：直到productCodeSeller有值才停止，最大重试5次
-  retry_until:
-    variable: productCodeSeller  # 检查变量productCodeSeller是否有值
-    max_retries: 5  # 最多重试5次
-
-- step_name: 步骤11.1-乙方获取产品（方法2-步骤1）
-  # 前置条件：如果供方没有产品数据，则跳过此步骤（显示PASS）
-  # 或者如果步骤11成功获取了productCodeSeller，则跳过此步骤（显示PASS）
-  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == '' or ($get_variable(productCodeSeller) != null and $get_variable(productCodeSeller) != '')
+  # 重试配置：直到productCodeSeller有值才停止，最大重�?�?  retry_until:
+    variable: productCodeSeller  # 检查变量productCodeSeller是否有�?    max_retries: 5  # 最多重�?�?
+- step_name: 步骤11.1-乙方获取产品（方�?-步骤1�?  # 前置条件：如果供方没有产品数据，则跳过此步骤（显示PASS�?  # 或者如果步�?1成功获取了productCodeSeller，则跳过此步骤（显示PASS�?  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == '' or ($get_variable(productCodeSeller) != null and $get_variable(productCodeSeller) != '')
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /pas/product/part/type/optional
@@ -350,15 +309,11 @@ steps:
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
     - $..data != null
-  # 重试配置：直到响应成功才停止，最大重试5次
-  retry_until:
+  # 重试配置：直到响应成功才停止，最大重�?�?  retry_until:
     jsonpath: $..resCode == 200
     max_retries: 5
 
-- step_name: 步骤11.2-乙方获取产品（方法2-步骤2）
-  # 前置条件：如果供方没有产品数据，则跳过此步骤（显示PASS）
-  # 或者如果步骤11成功获取了productCodeSeller，则跳过此步骤（显示PASS）
-  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == '' or ($get_variable(productCodeSeller) != null and $get_variable(productCodeSeller) != '')
+- step_name: 步骤11.2-乙方获取产品（方�?-步骤2�?  # 前置条件：如果供方没有产品数据，则跳过此步骤（显示PASS�?  # 或者如果步�?1成功获取了productCodeSeller，则跳过此步骤（显示PASS�?  skip_when: $get_variable(hasSellerProduct) == false or $get_variable(hasSellerProduct) == null or $get_variable(sellerEnterpriseCode) == null or $get_variable(sellerEnterpriseCode) == '' or ($get_variable(productCodeSeller) != null and $get_variable(productCodeSeller) != '')
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /pas/product/part/optional
@@ -384,15 +339,10 @@ steps:
     # 提取所有乙方productCode作为productCodesSeller数组
     - extract: $set_variable(productCodesSeller,$get_response_data($..productCode))
     - extract: $set_variable(productCodesSeller,$get_response_data($.data.records[*].productCode))
-  # 重试配置：直到productCodeSeller有值才停止，最大重试5次
-  retry_until:
-    variable: productCodeSeller  # 检查变量productCodeSeller是否有值
-    max_retries: 5  # 最多重试5次
-
-- step_name: 步骤12.1-添加产品（方法2-批量添加，优先）
-  # 如果已添加产品，或者productCodes为空/不存在，则跳过此步骤（显示PASS）
-  # 优先使用批量添加，因为它更高效
-  skip_when: $get_variable(productAdded) == true or $get_variable(productKey) != null or ($get_variable(productCodes) == null or $get_variable(productCodes) == [])
+  # 重试配置：直到productCodeSeller有值才停止，最大重�?�?  retry_until:
+    variable: productCodeSeller  # 检查变量productCodeSeller是否有�?    max_retries: 5  # 最多重�?�?
+- step_name: 步骤12.1-添加产品（方�?-批量添加，优先）
+  # 如果已添加产品，或者productCodes为空/不存在，则跳过此步骤（显示PASS�?  # 优先使用批量添加，因为它更高�?  skip_when: $get_variable(productAdded) == true or $get_variable(productKey) != null or ($get_variable(productCodes) == null or $get_variable(productCodes) == [])
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/sellProduct/add/batch
@@ -408,18 +358,15 @@ steps:
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
   extract:
-    # 提取productKey，优先取第一个
-    - extract: $set_variable(productKey,$get_response_data($..key[0]))
+    # 提取productKey，优先取第一�?    - extract: $set_variable(productKey,$get_response_data($..key[0]))
     - extract: $set_variable(productKey,$get_response_data($..key))
     - extract: $set_variable(productAdded,true)
-  # 重试配置：直到响应成功才停止，最大重试5次
-  retry_until:
+  # 重试配置：直到响应成功才停止，最大重�?�?  retry_until:
     jsonpath: $..resCode == 200
     max_retries: 5
 
-- step_name: 步骤12-添加产品（方法1-单个添加，备选）
-  # 如果步骤12.1成功添加了产品，则跳过此步骤（显示PASS）
-  skip_when: $get_variable(productAdded) == true or $get_variable(productKey) != null
+- step_name: 步骤12-添加产品（方�?-单个添加，备选）
+  # 如果步骤12.1成功添加了产品，则跳过此步骤（显示PASS�?  skip_when: $get_variable(productAdded) == true or $get_variable(productKey) != null
   skip_result: PASS
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/sellProduct/add
@@ -437,12 +384,9 @@ steps:
   extract:
     - extract: $set_variable(productKey,$get_response_data($..key))
     - extract: $set_variable(productAdded,true)
-  # 重试配置：直到productKey有值或响应成功才停止，最大重试5次
-  retry_until:
-    variable: productKey  # 检查变量productKey是否有值
-    max_retries: 5  # 最多重试5次
-
-- step_name: 步骤13-修改数量（13位小数精度测试-随机数）
+  # 重试配置：直到productKey有值或响应成功才停止，最大重�?�?  retry_until:
+    variable: productKey  # 检查变量productKey是否有�?    max_retries: 5  # 最多重�?�?
+- step_name: 步骤13-修改数量�?3位小数精度测�?随机数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/product/quantity
   headers: $generate_token(pms_host)
@@ -457,7 +401,7 @@ steps:
     jsonpath_assert:
     - $..code == 200 or $..resCode == 200 or $..code == 202 or $..resCode == 202
 
-- step_name: 步骤14-修改单价（13位小数精度测试-随机数）
+- step_name: 步骤14-修改单价�?3位小数精度测�?随机数）
   host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/product/unitPrice
   headers: $generate_token(pms_host)
@@ -484,7 +428,7 @@ steps:
     contractCode: $get_variable(contractCode)
     clauseCode: $get_variable(clauseCode)
     userInputs:
-      "456189212708175872": "<div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >1.技术条款: </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >2.付款条款:</div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >3.质量条款: </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >4.运输条款: </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >5.售后条款:</div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >6.其他条款:</div>"
+      "456189212708175872": "<div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >1.技术条�? </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >2.付款条款:</div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >3.质量条款: </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >4.运输条款: </div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >5.售后条款:</div><div data-w-e-type=\"todo\"><input type=\"checkbox\" disabled >6.其他条款:</div>"
     aiEnable: null
   response_assert:
     response_assert_data: 成功
@@ -509,8 +453,7 @@ steps:
   extract:
     - extract: $set_variable(dataVersion,$get_response_data($..dataVersion))
 
-- step_name: 步骤17-印章检查
-  host: $get_host(ERP_TEST,pms_host)
+- step_name: 步骤17-印章检�?  host: $get_host(ERP_TEST,pms_host)
   path: /purchase/contract/sign/check
   headers: $generate_token(pms_host)
   method: POST
@@ -521,8 +464,7 @@ steps:
     response_assert_data: 货期还未维护哦~,是否继续?
     status_code_assert: 200
     jsonpath_assert:
-    # 接受200、202、105000（业务确认码）等业务成功码
-    - $..resCode == 200 or $..resCode == 202 or $..resCode == 105000 or $..code == 200 or $..code == 202 or $..code == 105000
+    # 接受200�?02�?05000（业务确认码）等业务成功�?    - $..resCode == 200 or $..resCode == 202 or $..resCode == 105000 or $..code == 200 or $..code == 202 or $..code == 105000
 
 - step_name: 步骤18-获取员工印章
   host: $get_host(ERP_TEST,pms_host)
@@ -538,8 +480,7 @@ steps:
     - $..data != null
   extract:
     # 提取sealCode，从响应中获取（如存在多个随机使用一个）
-    # 优先提取：从data数组的第一个元素提取
-    - extract: $set_variable(sealCode,$get_response_data($.data[0].sealCode))
+    # 优先提取：从data数组的第一个元素提�?    - extract: $set_variable(sealCode,$get_response_data($.data[0].sealCode))
     - extract: $set_variable(sealCode,$get_response_data($.data[0].code))
     - extract: $set_variable(sealCode,$get_response_data($.data[0].primaryKey))
     - extract: $set_variable(sealCode,$get_response_data($.data.records[0].sealCode))
@@ -561,7 +502,8 @@ steps:
   response_assert:
     status_code_assert: 200
     jsonpath_assert:
-    # 接受200、202或其他业务成功码（1601可能是业务错误码，需要检查实际响应）
+    # 接受200�?02或其他业务成功码�?601可能是业务错误码，需要检查实际响应）
     - $..resCode == 200 or $..resCode == 202 or $..resCode == 1601 or $..code == 200 or $..code == 202 or $..code == 1601
+
 
 

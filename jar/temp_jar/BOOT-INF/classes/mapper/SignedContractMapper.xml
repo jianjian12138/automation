@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.futurecraftsmen.pms.pas.service.dao.contract.SignedContractDao">
+
+
+    <resultMap id="SignedContractModel"
+               type="com.futurecraftsmen.pms.pas.service.po.newContract.SignedContractModel">
+        <result column="primary_key" property="signedContractCode"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="contract_type" property="contractType"/>
+        <result column="counterpart" property="counterpart"/>
+        <result column="enterprise_code" property="ownedEnterpriseCode"/>
+        <result column="identity" property="identity"/>
+        <result column="user_code" property="userCode"/>
+        <result column="user_name" property="userName"/>
+        <result column="contract_time" property="contractTime"/>
+        <result column="contract_amount" property="contractAmount"/>
+        <result column="products" property="products" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="money_records" property="moneyRecords" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="invoice_records" property="invoiceRecords" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="attachments" property="attachments" jdbcType="ARRAY"
+                typeHandler="com.futurecraftsmen.pms.service.domain.ArrayTypeHandler"/>
+        <result column="remark" property="remark"/>
+        <result column="contract" property="contract"/>
+        <result column="canceled" property="canceled"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="sell_order" property="sellOrder"/>
+        <result column="deliver_date" property="deliverDate"/>
+        <result column="new_payment_time" property="newPaymentTime"/>
+        <result column="payment_time_min" property="paymentTimeMin"/>
+        <result column="payment_time_max" property="paymentTimeMax"/>
+        <result column="son_enterprise_code" property="sonEnterpriseCode"/>
+        <result column="business_belong" property="businessBelong"/>
+        <result column="money_apply_confirming" property="moneyApplyConfirming"/>
+        <result column="invoice_apply_confirming" property="invoiceApplyConfirming"/>
+    </resultMap>
+
+
+    <insert id="addSignedContract">
+        INSERT INTO ${tableName} (primary_key, contract_number, contract_name, contract_type, counterpart,
+                                  enterprise_code, identity,
+                                  user_code, user_name, contract_time, contract_amount, products,
+                                  attachments,
+                                  remark, contract, sell_order, deliver_date, canceled, son_enterprise_code, money_apply_confirming,
+                                  invoice_apply_confirming, new_payment_time, payment_time_min, payment_time_max, business_belong)
+        VALUES (#{model.signedContractCode}, #{model.contractNumber}, #{model.contractName}, #{model.contractType},
+                #{model.counterpart},
+                #{model.ownedEnterpriseCode}, #{model.identity},
+                #{model.userCode}, #{model.userName},
+                #{model.contractTime}, #{model.contractAmount},
+                #{model.products}, #{model.attachments}, #{model.remark}, #{model.contract}, #{model.sellOrder}, #{model.deliverDate},
+                #{model.canceled}, #{model.sonEnterpriseCode}, 'f', 'f', #{model.newPaymentTime}, #{model.paymentTimeMin},
+                #{model.paymentTimeMax},
+                #{model.businessBelong})
+    </insert>
+
+
+
+    <select id="page"
+            resultMap="SignedContractModel">
+        SELECT primary_key, contract_number, contract_name, contract_type, counterpart,
+        enterprise_code, identity,
+        user_code, user_name, contract_time, contract_amount, products::BIGINT[],
+        money_records ::BIGINT[],invoice_records ::BIGINT[], attachments ::BIGINT[],
+        remark,
+        contract,canceled,cancel_reason,sell_order,deliver_date,son_enterprise_code,money_apply_confirming,invoice_apply_confirming,new_payment_time,payment_time_min,payment_time_max,business_belong
+        FROM ${tableName}
+        WHERE
+        enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="counterpart != null and counterpart !=''">
+            AND counterpart LIKE '%'|| #{counterpart} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="userCodes != null and userCodes.size()!=0">
+            AND user_code IN
+            <foreach collection="userCodes" index="index" item="userCode" open="(" separator="," close=")">
+                #{userCode}
+            </foreach>
+        </if>
+        <if test="contractTimePre != null">
+            AND contract_time IS NOT NULL
+            AND contract_time &gt;= #{contractTimePre}
+        </if>
+        <if test="contractTimePost != null">
+            AND contract_time IS NOT NULL
+            AND contract_time &lt;= #{contractTimePost}
+        </if>
+        <if test="paymentTimePre != null and paymentTimePost != null">
+            AND (
+            (payment_time_min IS NOT NULL AND payment_time_max IS NOT NULL 
+             AND payment_time_min &lt;= #{paymentTimePost} 
+             AND payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (new_payment_time IS NOT NULL 
+             AND new_payment_time &gt;= #{paymentTimePre} 
+             AND new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+
+        <if test="paymentTimePre != null and paymentTimePost == null">
+            AND (
+            (payment_time_max IS NOT NULL AND payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (new_payment_time IS NOT NULL AND new_payment_time &gt;= #{paymentTimePre})
+            )
+        </if>
+        <if test="paymentTimePre == null and paymentTimePost != null">
+            AND (
+            (payment_time_min IS NOT NULL AND payment_time_min &lt;= #{paymentTimePost}) 
+            OR
+            (new_payment_time IS NOT NULL AND new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+        ORDER BY
+        COALESCE(money_apply_confirming, false) DESC,
+        COALESCE(invoice_apply_confirming, false) DESC,
+        create_time DESC
+    </select>
+
+
+    <select id="pageSupportApplicantQuery"
+            resultMap="SignedContractModel">
+        SELECT contract.primary_key, contract.contract_number, contract.contract_name, contract.contract_type, contract.counterpart,
+        contract.enterprise_code, contract.identity,
+        contract.user_code, contract.user_name, contract.contract_time, contract.contract_amount,
+        contract.products::BIGINT[],
+        contract.money_records ::BIGINT[],contract.invoice_records ::BIGINT[], contract.attachments ::BIGINT[],
+        contract.remark,
+        contract.contract,contract.canceled,contract.cancel_reason,contract.sell_order,contract.deliver_date,contract.son_enterprise_code,
+        contract.money_apply_confirming,contract.invoice_apply_confirming,
+        contract.new_payment_time,contract.payment_time_min,contract.payment_time_max,contract.business_belong
+        FROM ${contractTableName} contract WHERE
+        EXISTS (
+        SELECT 1
+        FROM ${recordTableName} record
+        WHERE contract.primary_key = record.signed_contract
+        AND record.applicant IN
+        <foreach collection="applicants" index="index" item="applicant" open="(" separator="," close=")">
+            #{applicant}
+        </foreach>
+        AND record.approval_status = 'CONFIRMING'
+        )
+        AND contract.enterprise_code = #{enterpriseCode}
+        AND contract.delete_flag = 'f'
+        <if test="counterpart != null and counterpart !=''">
+            AND contract.counterpart LIKE '%'|| #{counterpart} ||'%'
+        </if>
+        <if test="contractNumber != null and contractNumber !=''">
+            AND contract.contract_number LIKE '%'|| #{contractNumber} ||'%'
+        </if>
+        <if test="paymentTimePre != null and paymentTimePost != null">
+            AND (
+            (contract.payment_time_min IS NOT NULL AND contract.payment_time_max IS NOT NULL 
+             AND contract.payment_time_min &lt;= #{paymentTimePost} 
+             AND contract.payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (contract.new_payment_time IS NOT NULL 
+             AND contract.new_payment_time &gt;= #{paymentTimePre} 
+             AND contract.new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+
+        <if test="paymentTimePre != null and paymentTimePost == null">
+            AND (
+            (contract.payment_time_max IS NOT NULL AND contract.payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (contract.new_payment_time IS NOT NULL AND contract.new_payment_time &gt;= #{paymentTimePre})
+            )
+        </if>
+        <if test="paymentTimePre == null and paymentTimePost != null">
+            AND (
+            (contract.payment_time_min IS NOT NULL AND contract.payment_time_min &lt;= #{paymentTimePost}) 
+            OR
+            (contract.new_payment_time IS NOT NULL AND contract.new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+        ORDER BY
+        COALESCE(contract.money_apply_confirming, false) DESC,
+        COALESCE(contract.invoice_apply_confirming, false) DESC,
+        contract.create_time DESC
+    </select>
+
+
+    <select id="signedContractDetail"
+            resultMap="SignedContractModel">
+        SELECT primary_key, contract_number, contract_name, contract_type, counterpart,
+               enterprise_code, identity, user_code, user_name, contract_time, contract_amount, products::BIGINT[], money_records ::BIGINT[], invoice_records ::BIGINT[], attachments ::BIGINT[], remark, contract, canceled, cancel_reason, sell_order, deliver_date, son_enterprise_code, money_apply_confirming, invoice_apply_confirming, new_payment_time, payment_time_min, payment_time_max, business_belong
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND primary_key = #{signedContractCode}
+          AND delete_flag = 'f'
+    </select>
+
+
+    <select id="querySignedContractDetails"
+            resultMap="SignedContractModel">
+        SELECT primary_key, contract_number, contract_name, contract_type, counterpart,
+        enterprise_code, identity,
+        user_code, user_name, contract_time, contract_amount, products::BIGINT[], money_records ::BIGINT[], invoice_records
+        ::BIGINT[], attachments ::BIGINT[], remark, contract, canceled, cancel_reason, sell_order, deliver_date, son_enterprise_code,
+        money_apply_confirming, invoice_apply_confirming, new_payment_time, payment_time_min, payment_time_max, business_belong
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+        AND primary_key IN
+        <foreach collection="signedContractCodes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND delete_flag = 'f'
+    </select>
+
+
+    <update id="updateMoneyRecords">
+        UPDATE ${tableName}
+        SET money_records = #{model.moneyRecords},
+            money_apply_confirming = #{model.moneyApplyConfirming},
+            new_payment_time = #{model.newPaymentTime},
+            payment_time_min = #{model.paymentTimeMin},
+            payment_time_max = #{model.paymentTimeMax}
+        WHERE primary_key = #{model.signedContractCode}
+          AND enterprise_code = #{model.ownedEnterpriseCode}
+          AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </update>
+
+
+    <update id="batchUpdateMoneyRecords">
+        UPDATE ${tableName}
+        SET
+        <trim prefix="money_records = case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.signedContractCode} then
+                #{model.moneyRecords,jdbcType=ARRAY,typeHandler=com.futurecraftsmen.pms.service.domain.ArrayTypeHandler}::bigint[]
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="money_apply_confirming = case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.signedContractCode} then #{model.moneyApplyConfirming}::boolean
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="new_payment_time = case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.signedContractCode} then #{model.newPaymentTime}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="payment_time_min = case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.signedContractCode} then #{model.paymentTimeMin}::timestamptz
+            </foreach>
+        </trim>
+        ,
+        <trim prefix="payment_time_max = case" suffix="end">
+            <foreach collection="models" item="model" index="index">
+                when primary_key=#{model.signedContractCode} then #{model.paymentTimeMax}::timestamptz
+            </foreach>
+        </trim>
+        WHERE primary_key IN
+        <foreach collection="models" index="index" item="model" separator="," open="(" close=")">
+            #{model.signedContractCode}
+        </foreach>
+        AND enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </update>
+
+
+    <update id="updateInvoiceRecords">
+        UPDATE ${tableName}
+        SET invoice_records = #{model.invoiceRecords},
+            invoice_apply_confirming = #{model.invoiceApplyConfirming}
+        WHERE primary_key = #{model.signedContractCode}
+          AND enterprise_code = #{model.ownedEnterpriseCode}
+          AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </update>
+
+
+    <delete id="delete">
+        DELETE
+        FROM ${tableName}
+        WHERE primary_key = #{model.signedContractCode}
+          AND enterprise_code = #{model.ownedEnterpriseCode}
+          AND money_records is null
+          AND invoice_records is null
+          AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </delete>
+
+    <update id="cancel">
+        UPDATE ${tableName}
+        SET canceled      = #{model.canceled},
+            cancel_reason = #{model.cancelReason},
+            money_apply_confirming = 'f',
+            invoice_apply_confirming = 'f'
+        WHERE primary_key = #{model.signedContractCode}
+          AND enterprise_code = #{model.ownedEnterpriseCode}
+          AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </update>
+
+    <update id="updateAfterSellDoProduction">
+        UPDATE ${tableName}
+        SET sell_order      = #{model.sellOrder}
+        WHERE primary_key = #{model.signedContractCode}
+          AND enterprise_code = #{model.ownedEnterpriseCode}
+          AND delete_flag = 'f' AND (canceled = false OR canceled IS NULL)
+    </update>
+
+    <select id="statisticsInfos" resultMap="SignedContractModel">
+        SELECT primary_key, contract_amount, counterpart,identity
+        FROM ${tableName}
+        WHERE
+        enterprise_code = #{enterpriseCode}
+        AND delete_flag = 'f'
+        <if test="param.counterpart != null and param.counterpart !=''">
+            AND counterpart LIKE '%'|| #{param.counterpart} ||'%'
+        </if>
+        <if test="param.contractNumber != null and param.contractNumber !=''">
+            AND contract_number = #{param.contractNumber}
+        </if>
+        <if test="param.userCode != null and param.userCode.size()!=0">
+            AND user_code IN
+            <foreach collection="param.userCode" index="index" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        <if test="paymentTimePre != null and paymentTimePost != null">
+            AND (
+            (payment_time_min IS NOT NULL AND payment_time_max IS NOT NULL 
+             AND payment_time_min &lt;= #{paymentTimePost} 
+             AND payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (new_payment_time IS NOT NULL 
+             AND new_payment_time &gt;= #{paymentTimePre} 
+             AND new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+
+        <if test="paymentTimePre != null and paymentTimePost == null">
+            AND (
+            (payment_time_max IS NOT NULL AND payment_time_max &gt;= #{paymentTimePre}) 
+            OR
+            (new_payment_time IS NOT NULL AND new_payment_time &gt;= #{paymentTimePre})
+            )
+        </if>
+        <if test="paymentTimePre == null and paymentTimePost != null">
+            AND (
+            (payment_time_min IS NOT NULL AND payment_time_min &lt;= #{paymentTimePost}) 
+            OR
+            (new_payment_time IS NOT NULL AND new_payment_time &lt;= #{paymentTimePost})
+            )
+        </if>
+        AND (canceled  =  'false' OR canceled  IS NULL)
+    </select>
+
+
+    <update id="updateMoneyApplyConfirming">
+        UPDATE ${tableName}
+        SET money_apply_confirming = #{moneyApplyConfirming}
+        WHERE
+            enterprise_code= #{enterpriseCode}
+          AND delete_flag= 'f'
+          AND primary_key = #{signedContractCode}
+          AND (canceled = 'false' OR canceled IS NULL)
+    </update>
+
+
+    <update id="updateMoneyApplyConfirmingAndPayTime">
+        UPDATE ${tableName}
+        SET money_apply_confirming = #{moneyApplyConfirming},
+            new_payment_time       = #{newPaymentTime},
+            payment_time_min       = #{paymentTimeMin},
+            payment_time_max       = #{paymentTimeMax}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key= #{signedContractCode}
+          AND (canceled  =  'false' OR canceled  IS NULL)
+    </update>
+
+
+    <update id="batchUpdateMoneyApplyConfirming">
+        UPDATE ${tableName}
+        SET money_apply_confirming = #{moneyApplyConfirming}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="signedContractCodes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND (canceled = 'false' OR canceled IS NULL)
+    </update>
+
+    <update id="updateInvoiceApplyConfirming">
+        UPDATE ${tableName}
+        SET invoice_apply_confirming = #{invoiceApplyConfirming}
+        WHERE
+            enterprise_code= #{enterpriseCode}
+          AND delete_flag= 'f'
+          AND primary_key= #{signedContractCode}
+          AND (canceled  =  'false' OR canceled  IS NULL)
+    </update>
+
+    <update id="batchUpdateInvoiceApplyConfirming">
+        UPDATE ${tableName}
+        SET invoice_apply_confirming = #{invoiceApplyConfirming}
+        WHERE
+        enterprise_code= #{enterpriseCode}
+        AND delete_flag= 'f'
+        AND primary_key IN
+        <foreach collection="signedContractCodes" index="index" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND (canceled = 'false' OR canceled IS NULL)
+    </update>
+
+    <update id="syncProductQuantityChangeInfo">
+        UPDATE ${tableName}
+        SET contract_amount = #{contractAmount}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{signedContractCode}
+    </update>
+
+    <update id="updateCounterpartAndContractNumber">
+        UPDATE ${tableName}
+        SET counterpart     = #{counterpart},
+            contract_number = #{contractNumber}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{signedContract}
+    </update>
+
+
+    <update id="updateContractNumber">
+        UPDATE ${tableName}
+        SET contract_number = #{contractNumber}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND primary_key = #{signedContract}
+    </update>
+
+    <!-- 查询当前年所有已签章的销售合同的销售总额 -->
+    <select id="queryCurrentYearSignedContractTotalAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(contract_amount), 0)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND contract_type = 'SELL_CONTRACT'
+          AND (canceled = false OR canceled IS NULL)
+          AND contract_time IS NOT NULL
+          AND contract_time &gt;= #{startDate}
+          AND contract_time &lt;= #{endDate}
+    </select>
+
+    <!-- 查询当前年所有已签章销售合同的客户总数（去重） -->
+    <select id="queryCurrentYearSignedContractCustomerCount" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT counterpart)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND contract_type = 'SELL_CONTRACT'
+          AND (canceled = false OR canceled IS NULL)
+          AND contract_time IS NOT NULL
+          AND contract_time &gt;= #{startDate}
+          AND contract_time &lt;= #{endDate}
+          AND counterpart IS NOT NULL
+          AND counterpart != ''
+    </select>
+
+    <!-- 查询该客户的销售合同列表总数 -->
+    <select id="queryCustomerContractCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE enterprise_code = #{enterpriseCode}
+          AND delete_flag = 'f'
+          AND contract_type = 'SELL_CONTRACT'
+          AND (canceled = false OR canceled IS NULL)
+          <if test="counterpart != null and counterpart != ''">
+              AND counterpart = #{counterpart}
+          </if>
+    </select>
+
+</mapper>
