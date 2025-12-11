@@ -35,3 +35,4 @@ web/
 # Others
 simulate_login_after.html
 *.bak
+jar/
